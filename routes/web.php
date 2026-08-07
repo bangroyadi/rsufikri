@@ -10,6 +10,19 @@ use App\Http\Controllers\Admin\DashboardController;
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/lang/{locale}', [LanguageController::class, 'switch'])->name('lang.switch');
 
+// Layanan & Informasi Subpage Routes
+Route::get('/layanan/{slug}', [HomeController::class, 'layananPage'])->name('layanan.show');
+Route::get('/informasi/{slug}', [HomeController::class, 'informasiPage'])->name('informasi.show');
+
+// Dedicated Page Routes
+Route::get('/profil', [HomeController::class, 'profilPage'])->name('profil');
+Route::get('/jadwal-dokter', [HomeController::class, 'jadwalDokterPage'])->name('jadwal.dokter');
+Route::get('/kontak', [HomeController::class, 'kontakPage'])->name('kontak');
+Route::get('/karir', [HomeController::class, 'karirPage'])->name('karir');
+Route::get('/buat-janji', [HomeController::class, 'buatJanjiPage'])->name('buat.janji');
+
+
+
 // Admin Auth Routes
 Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');

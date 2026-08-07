@@ -17,68 +17,84 @@
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="antialiased flex flex-col min-h-screen bg-[#f7faf8]">
+<body class="antialiased flex flex-col min-h-screen bg-[#f7faf8] pb-14 lg:pb-0" x-data="{ mobileMenuOpen: false, searchOpen: false, scrolled: false }">
 
     <!-- TOP EMERGENCY & INFO BAR -->
-    <div class="bg-[#0e7c47] text-white text-xs sm:text-sm py-2 px-4 border-b border-[#096237]/50">
-        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-2">
-            <div class="flex items-center gap-4 flex-wrap justify-center sm:justify-start">
-                <span class="inline-flex items-center gap-1.5 font-semibold text-yellow-300">
-                    <i class="fa-solid fa-phone-volume text-red-300 animate-pulse"></i>
-                    <span>{{ __('IGD 24 Jam') }}: <strong>(0267) 8454999</strong></span>
-                </span>
-                <span class="hidden md:inline-block text-[#159b5a]">|</span>
-                <span class="hidden md:inline-flex items-center gap-1.5 text-gray-100">
-                    <i class="fa-brands fa-whatsapp text-emerald-300"></i>
-                    <span>WA: 0812-3456-7890</span>
-                </span>
-                <span class="hidden lg:inline-block text-[#159b5a]">|</span>
-                <span class="hidden lg:inline-flex items-center gap-1.5 text-gray-100">
-                    <i class="fa-regular fa-clock text-yellow-300"></i>
-                    <span>{{ __('Buka 24 Jam / 7 Hari') }}</span>
-                </span>
+    <div class="bg-[#0e7c47] text-white text-xs py-1 px-3 sm:px-6 lg:px-8 border-b border-[#096237]/60">
+        <div class="max-w-6xl mx-auto flex flex-row justify-between items-center gap-2">
+            
+            <!-- LEFT INFO ITEMS -->
+            <div class="flex items-center gap-2 sm:gap-4 truncate">
+                <a href="https://maps.google.com" target="_blank" class="inline-flex items-center gap-1 text-gray-100 hover:text-yellow-300 transition-colors text-[11px] sm:text-xs">
+                    <i class="fa-solid fa-location-dot text-yellow-300 text-xs"></i>
+                    <span class="inline">{{ __('Lokasi') }}</span>
+                </a>
+
+                <span class="text-[#159b5a]/60">|</span>
+
+                <!-- CLICKABLE IGD NUMBER -->
+                <a href="tel:02678454999" class="inline-flex items-center gap-1.5 font-bold text-yellow-300 hover:text-yellow-200 transition-colors shrink-0 text-[11px] sm:text-xs">
+                    <i class="fa-solid fa-phone-volume text-red-300 animate-pulse text-xs"></i>
+                    <span>{{ __('IGD 24 Jam') }}: <span class="underline decoration-yellow-300/50">(0267) 8454999</span></span>
+                </a>
+
+                <span class="hidden sm:inline-block text-[#159b5a]/60">|</span>
+
+                <!-- CLICKABLE EMAIL -->
+                <a href="mailto:fikri.medika@gmail.com" class="hidden sm:inline-flex items-center gap-1.5 text-gray-100 hover:text-white transition-colors text-[11px] sm:text-xs">
+                    <i class="fa-regular fa-envelope text-yellow-300 text-xs"></i>
+                    <span>fikri.medika@gmail.com</span>
+                </a>
+
+                <span class="hidden md:inline-block text-[#159b5a]/60">|</span>
+
+                <!-- LIVE TIME CLOCK -->
+                <div x-data="{ liveTime: '' }" 
+                     x-init="const updateClock = () => { const now = new Date(); liveTime = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' }) + ' WIB'; }; updateClock(); setInterval(updateClock, 1000);" 
+                     class="hidden lg:inline-flex items-center gap-1.5 text-gray-100 font-medium text-xs">
+                    <i class="fa-regular fa-clock text-yellow-300 text-xs"></i>
+                    <span x-text="liveTime" class="font-mono text-yellow-200"></span>
+                </div>
             </div>
 
-            <!-- LANGUAGE SWITCHER -->
-            <div class="flex items-center gap-3">
-                <span class="text-gray-200 text-xs hidden sm:inline">{{ __('Bahasa') }}:</span>
-                <div class="inline-flex items-center bg-[#096237] rounded-full p-1 border border-[#159b5a]/40">
+            <!-- RIGHT LANGUAGE SWITCHER -->
+            <div class="flex items-center gap-1.5 shrink-0">
+                <div class="inline-flex items-center bg-[#096237] rounded-full p-0.5 border border-[#159b5a]/40">
                     <a href="{{ route('lang.switch', 'id') }}" 
-                       class="px-2.5 py-0.5 rounded-full text-xs font-bold transition-all flex items-center gap-1 {{ app()->getLocale() == 'id' ? 'bg-yellow-400 text-gray-900 shadow-sm' : 'text-gray-200 hover:text-white' }}">
-                        <span>🇮🇩</span> <span>ID</span>
+                       class="px-2 py-0.5 rounded-full text-[10px] sm:text-xs font-bold transition-all flex items-center gap-1 {{ app()->getLocale() == 'id' ? 'bg-yellow-400 text-gray-900 shadow-sm' : 'text-gray-200 hover:text-white' }}">
+                        <span>ID</span>
                     </a>
                     <a href="{{ route('lang.switch', 'en') }}" 
-                       class="px-2.5 py-0.5 rounded-full text-xs font-bold transition-all flex items-center gap-1 {{ app()->getLocale() == 'en' ? 'bg-yellow-400 text-gray-900 shadow-sm' : 'text-gray-200 hover:text-white' }}">
-                        <span>🇬🇧</span> <span>EN</span>
+                       class="px-2 py-0.5 rounded-full text-[10px] sm:text-xs font-bold transition-all flex items-center gap-1 {{ app()->getLocale() == 'en' ? 'bg-yellow-400 text-gray-900 shadow-sm' : 'text-gray-200 hover:text-white' }}">
+                        <span>EN</span>
                     </a>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- MAIN NAVBAR -->
-    <header x-data="{ mobileMenuOpen: false, scrolled: false }" 
-            @scroll.window="scrolled = (window.pageYOffset > 20)" 
-            class="sticky top-0 z-50 bg-white/95 backdrop-blur-md shadow-sm transition-all duration-300 border-b border-gray-100">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-20">
+    <!-- MAIN NAVBAR HEADER -->
+    <header @scroll.window="scrolled = (window.pageYOffset > 20)" 
+            class="sticky top-0 z-40 bg-white/95 backdrop-blur-md shadow-sm transition-all duration-300 border-b border-gray-100">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-14 sm:h-16">
                 <!-- OFFICIAL HORIZONTAL LOGO -->
-                <a href="{{ route('home') }}" class="flex items-center py-2 group">
+                <a href="{{ route('home') }}" class="flex items-center py-1 group shrink-0">
                     <img src="{{ asset('logodasboard.png') }}" 
                          alt="RSU Fikri Medika Logo" 
-                         class="h-12 sm:h-14 w-auto object-contain group-hover:scale-105 transition-transform">
+                         class="h-8 sm:h-10 w-auto object-contain group-hover:scale-105 transition-transform">
                 </a>
 
                 <!-- DESKTOP NAV -->
-                <nav class="hidden lg:flex items-center gap-7 text-sm font-semibold text-gray-700">
-                    <a href="{{ route('home') }}" class="hover:text-[#0e7c47] transition-colors text-[#0e7c47] font-bold relative after:content-[''] after:absolute after:-bottom-1 after:left-0 after:w-full after:h-0.5 after:bg-[#0e7c47]">
+                <nav class="hidden lg:flex items-center gap-5 xl:gap-7 text-xs sm:text-sm font-semibold text-gray-700 h-full">
+                    <a href="{{ route('home') }}" class="flex items-center h-full transition-colors {{ request()->is('/') ? 'text-[#0e7c47] font-bold relative after:content-[\'\'] after:absolute after:bottom-0 after:left-0 after:w-full after:h-0.5 after:bg-[#0e7c47]' : 'hover:text-[#0e7c47]' }}">
                         {{ __('Beranda') }}
                     </a>
-                    <a href="#profil" class="hover:text-[#0e7c47] transition-colors">{{ __('Profil') }}</a>
+                    <a href="{{ url('/profil') }}" class="flex items-center h-full transition-colors {{ request()->is('profil') ? 'text-[#0e7c47] font-bold relative after:content-[\'\'] after:absolute after:bottom-0 after:left-0 after:w-full after:h-0.5 after:bg-[#0e7c47]' : 'hover:text-[#0e7c47]' }}">{{ __('Profil') }}</a>
                     
                     <!-- LAYANAN DROPDOWN -->
-                    <div class="relative py-6" x-data="{ dropdownOpen: false, subOpen: false }" @mouseenter="dropdownOpen = true" @mouseleave="dropdownOpen = false; subOpen = false">
-                        <button class="hover:text-[#0e7c47] transition-colors flex items-center gap-1.5 focus:outline-none">
+                    <div class="relative flex items-center h-full" x-data="{ dropdownOpen: false }" @mouseenter="dropdownOpen = true" @mouseleave="dropdownOpen = false">
+                        <button class="transition-colors flex items-center gap-1.5 focus:outline-none h-full {{ request()->is('layanan*') ? 'text-[#0e7c47] font-bold relative after:content-[\'\'] after:absolute after:bottom-0 after:left-0 after:w-full after:h-0.5 after:bg-[#0e7c47]' : 'hover:text-[#0e7c47]' }}">
                             <span>{{ __('Layanan') }}</span>
                             <i class="fa-solid fa-chevron-down text-[10px] transition-transform duration-200" :class="dropdownOpen ? 'rotate-180 text-[#0e7c47]' : ''"></i>
                         </button>
@@ -91,115 +107,223 @@
                              x-transition:leave="transition ease-in duration-100"
                              x-transition:leave-start="opacity-100 translate-y-0 scale-100"
                              x-transition:leave-end="opacity-0 translate-y-1 scale-95"
-                             class="absolute left-0 mt-0 w-64 bg-[#0e7c47] rounded-xl shadow-2xl py-2 z-50 text-white text-xs font-semibold border border-[#096237]"
+                             class="absolute top-full left-0 w-60 bg-[#0e7c47] rounded-xl shadow-2xl py-2 z-50 text-white text-xs font-semibold border border-[#096237]"
                              style="display: none;">
-                            
-                            <!-- PERAWATAN WITH SUBMENU -->
-                            <div class="relative" @mouseenter="subOpen = true" @mouseleave="subOpen = false">
-                                <a href="#layanan" class="flex items-center justify-between px-4 py-2.5 text-yellow-300 font-extrabold hover:bg-[#096237] transition-colors">
-                                    <span>{{ __('Perawatan') }}</span>
-                                    <i class="fa-solid fa-chevron-right text-[10px]"></i>
-                                </a>
-
-                                <!-- SUBMENU PERAWATAN -->
-                                <div x-show="subOpen" 
-                                     x-transition:enter="transition ease-out duration-150"
-                                     x-transition:enter-start="opacity-0 translate-x-1"
-                                     x-transition:enter-end="opacity-100 translate-x-0"
-                                     class="absolute left-full top-0 w-48 bg-[#0e7c47] rounded-xl shadow-2xl py-2 text-white text-xs font-semibold border border-[#096237]"
-                                     style="display: none;">
-                                    <a href="#layanan" class="block px-4 py-2.5 hover:bg-[#096237] hover:text-yellow-300 transition-colors">{{ __('Rawat Jalan') }}</a>
-                                    <a href="#layanan" class="block px-4 py-2.5 hover:bg-[#096237] hover:text-yellow-300 transition-colors">{{ __('Rawat Inap') }}</a>
-                                </div>
-                            </div>
-
-                            <!-- OTHER SERVICES -->
-                            <a href="#layanan" class="block px-4 py-2.5 hover:bg-[#096237] hover:text-yellow-300 transition-colors">{{ __('Instalasi Gawat Darurat') }}</a>
-                            <a href="#layanan" class="block px-4 py-2.5 hover:bg-[#096237] hover:text-yellow-300 transition-colors">{{ __('Kamar Operasi') }}</a>
-                            <a href="#layanan" class="block px-4 py-2.5 hover:bg-[#096237] hover:text-yellow-300 transition-colors">{{ __('ICU, NICU') }}</a>
-                            <a href="#layanan" class="block px-4 py-2.5 hover:bg-[#096237] hover:text-yellow-300 transition-colors">{{ __('Hemodialisa') }}</a>
-                            <a href="#layanan" class="block px-4 py-2.5 hover:bg-[#096237] hover:text-yellow-300 transition-colors">{{ __('X-Ray (FotoRontgent)') }}</a>
-                            <a href="#layanan" class="block px-4 py-2.5 hover:bg-[#096237] hover:text-yellow-300 transition-colors">{{ __('IR (Fisioteraphy)') }}</a>
-                            <a href="#layanan" class="block px-4 py-2.5 hover:bg-[#096237] hover:text-yellow-300 transition-colors">{{ __('Laboratorium') }}</a>
-                            <a href="#layanan" class="block px-4 py-2.5 hover:bg-[#096237] hover:text-yellow-300 transition-colors">{{ __('Rehab Medik') }}</a>
-                            <a href="#layanan" class="block px-4 py-2.5 hover:bg-[#096237] hover:text-yellow-300 transition-colors">{{ __('Medical Check Up') }}</a>
-                            <a href="#layanan" class="block px-4 py-2.5 hover:bg-[#096237] hover:text-yellow-300 transition-colors">{{ __('Instalasi Farmasi') }}</a>
-                            <a href="#layanan" class="block px-4 py-2.5 hover:bg-[#096237] hover:text-yellow-300 transition-colors">{{ __('USG 3D & USG 4D') }}</a>
-                            <a href="#layanan" class="block px-4 py-2.5 hover:bg-[#096237] hover:text-yellow-300 transition-colors">{{ __('Ambulance') }}</a>
+                            <a href="{{ url('/layanan/igd') }}" class="block px-4 py-2 hover:bg-[#096237] hover:text-yellow-300 transition-colors {{ request()->is('layanan/igd') ? 'text-yellow-300 font-bold bg-[#096237]' : '' }}">{{ __('IGD') }}</a>
+                            <a href="{{ url('/layanan/rawat-jalan') }}" class="block px-4 py-2 hover:bg-[#096237] hover:text-yellow-300 transition-colors {{ request()->is('layanan/rawat-jalan') ? 'text-yellow-300 font-bold bg-[#096237]' : '' }}">{{ __('Instalasi Rawat Jalan') }}</a>
+                            <a href="{{ url('/layanan/rawat-inap') }}" class="block px-4 py-2 hover:bg-[#096237] hover:text-yellow-300 transition-colors {{ request()->is('layanan/rawat-inap') ? 'text-yellow-300 font-bold bg-[#096237]' : '' }}">{{ __('Instalasi Rawat Inap') }}</a>
+                            <a href="{{ url('/layanan/penunjang-medik') }}" class="block px-4 py-2 hover:bg-[#096237] hover:text-yellow-300 transition-colors {{ request()->is('layanan/penunjang-medik') ? 'text-yellow-300 font-bold bg-[#096237]' : '' }}">{{ __('Penunjang Medik') }}</a>
+                            <a href="{{ url('/layanan/unggulan') }}" class="block px-4 py-2 hover:bg-[#096237] hover:text-yellow-300 transition-colors {{ request()->is('layanan/unggulan') ? 'text-yellow-300 font-bold bg-[#096237]' : '' }}">{{ __('Layanan Unggulan') }}</a>
                         </div>
                     </div>
 
-                    <a href="#jadwal-dokter" class="hover:text-[#0e7c47] transition-colors">{{ __('Jadwal Dokter') }}</a>
-                    <a href="#berita" class="hover:text-[#0e7c47] transition-colors">{{ __('Berita') }}</a>
-                    <a href="#kontak" class="hover:text-[#0e7c47] transition-colors">{{ __('Kontak') }}</a>
-                    <a href="#karir" class="hover:text-[#0e7c47] transition-colors">{{ __('Karir') }}</a>
+                    <a href="{{ url('/jadwal-dokter') }}" class="flex items-center h-full transition-colors {{ request()->is('jadwal-dokter') ? 'text-[#0e7c47] font-bold relative after:content-[\'\'] after:absolute after:bottom-0 after:left-0 after:w-full after:h-0.5 after:bg-[#0e7c47]' : 'hover:text-[#0e7c47]' }}">{{ __('Jadwal Dokter') }}</a>
+                    
+                    <!-- INFORMASI DROPDOWN -->
+                    <div class="relative flex items-center h-full" x-data="{ dropdownOpen: false }" @mouseenter="dropdownOpen = true" @mouseleave="dropdownOpen = false">
+                        <button class="transition-colors flex items-center gap-1.5 focus:outline-none h-full {{ request()->is('informasi*') ? 'text-[#0e7c47] font-bold relative after:content-[\'\'] after:absolute after:bottom-0 after:left-0 after:w-full after:h-0.5 after:bg-[#0e7c47]' : 'hover:text-[#0e7c47]' }}">
+                            <span>{{ __('Informasi') }}</span>
+                            <i class="fa-solid fa-chevron-down text-[10px] transition-transform duration-200" :class="dropdownOpen ? 'rotate-180 text-[#0e7c47]' : ''"></i>
+                        </button>
+
+                        <!-- DROPDOWN MENU CONTAINER -->
+                        <div x-show="dropdownOpen" 
+                             x-transition:enter="transition ease-out duration-150"
+                             x-transition:enter-start="opacity-0 translate-y-1 scale-95"
+                             x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+                             x-transition:leave="transition ease-in duration-100"
+                             x-transition:leave-start="opacity-100 translate-y-0 scale-100"
+                             x-transition:leave-end="opacity-0 translate-y-1 scale-95"
+                             class="absolute top-full left-0 w-60 bg-[#0e7c47] rounded-xl shadow-2xl py-2 z-50 text-white text-xs font-semibold border border-[#096237]"
+                             style="display: none;">
+                            <a href="{{ url('/informasi/artikel-kesehatan') }}" class="block px-4 py-2 hover:bg-[#096237] hover:text-yellow-300 transition-colors {{ request()->is('informasi/artikel-kesehatan') ? 'text-yellow-300 font-bold bg-[#096237]' : '' }}">{{ __('Artikel Kesehatan') }}</a>
+                            <a href="{{ url('/informasi/event') }}" class="block px-4 py-2 hover:bg-[#096237] hover:text-yellow-300 transition-colors {{ request()->is('informasi/event') ? 'text-yellow-300 font-bold bg-[#096237]' : '' }}">{{ __('Event') }}</a>
+                            <a href="{{ url('/informasi/penawaran-khusus') }}" class="block px-4 py-2 hover:bg-[#096237] hover:text-yellow-300 transition-colors {{ request()->is('informasi/penawaran-khusus') ? 'text-yellow-300 font-bold bg-[#096237]' : '' }}">{{ __('Penawaran Khusus') }}</a>
+                            <a href="{{ url('/informasi/aduan-layanan') }}" class="block px-4 py-2 hover:bg-[#096237] hover:text-yellow-300 transition-colors {{ request()->is('informasi/aduan-layanan') ? 'text-yellow-300 font-bold bg-[#096237]' : '' }}">{{ __('Aduan Layanan') }}</a>
+                            <a href="{{ url('/informasi/ikm') }}" class="block px-4 py-2 hover:bg-[#096237] hover:text-yellow-300 transition-colors {{ request()->is('informasi/ikm') ? 'text-yellow-300 font-bold bg-[#096237]' : '' }}">{{ __('Indeks Kepuasan Masyarakat') }}</a>
+                        </div>
+                    </div>
+
+                    <a href="{{ url('/karir') }}" class="flex items-center h-full transition-colors {{ request()->is('karir') ? 'text-[#0e7c47] font-bold relative after:content-[\'\'] after:absolute after:bottom-0 after:left-0 after:w-full after:h-0.5 after:bg-[#0e7c47]' : 'hover:text-[#0e7c47]' }}">{{ __('Karir') }}</a>
                 </nav>
 
-                <!-- HEADER CTA BUTTONS -->
-                <div class="hidden lg:flex items-center gap-3">
-                    <a href="#kontak" class="px-5 py-2.5 rounded-lg text-xs font-semibold bg-[#e31e24] text-white hover:bg-red-700 shadow-md shadow-red-200 transition-all flex items-center gap-2">
+                <!-- RIGHT CONTROLS: SEARCH ICON AND DESKTOP CTA -->
+                <div class="flex items-center gap-2 sm:gap-3 shrink-0">
+                    <!-- SEARCH BUTTON -->
+                    <button @click="searchOpen = !searchOpen" class="p-1.5 rounded-lg text-[#0e7c47] hover:bg-emerald-50 transition-colors focus:outline-none" title="Cari">
+                        <i class="fa-solid fa-magnifying-glass text-base sm:text-lg"></i>
+                    </button>
+
+                    <!-- DESKTOP CTA BUTTON -->
+                    <a href="{{ url('/buat-janji') }}" class="hidden lg:flex px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-[#e31e24] text-white hover:bg-red-700 shadow-md shadow-red-200 transition-all items-center gap-2">
                         <i class="fa-solid fa-heart-pulse"></i>
                         <span>{{ __('Daftar / Buat Janji') }}</span>
                     </a>
                 </div>
+            </div>
 
-                <!-- MOBILE MENU TOGGLE -->
-                <button @click="mobileMenuOpen = !mobileMenuOpen" class="lg:hidden p-2 rounded-lg text-gray-700 hover:bg-gray-100 focus:outline-none">
-                    <i class="fa-solid" :class="mobileMenuOpen ? 'fa-xmark text-2xl' : 'fa-bars text-2xl'"></i>
-                </button>
+            <!-- SEARCH OVERLAY INPUT -->
+            <div x-show="searchOpen" 
+                 x-transition:enter="transition ease-out duration-150"
+                 x-transition:enter-start="opacity-0 -translate-y-2"
+                 x-transition:enter-end="opacity-100 translate-y-0"
+                 x-transition:leave="transition ease-in duration-100"
+                 x-transition:leave-start="opacity-100 translate-y-0"
+                 x-transition:leave-end="opacity-0 -translate-y-2"
+                 class="pb-3 pt-1 border-t border-gray-100"
+                 style="display: none;">
+                <form action="{{ url('/jadwal-dokter') }}" method="GET" class="relative max-w-xl mx-auto flex items-center px-1">
+                    <input type="text" name="q" placeholder="Cari dokter, poliklinik, atau layanan..." 
+                           class="w-full pl-9 pr-14 py-2 rounded-xl border border-gray-300 focus:outline-none focus:border-[#0e7c47] focus:ring-1 focus:ring-[#0e7c47] text-xs sm:text-sm text-gray-800 shadow-sm">
+                    <i class="fa-solid fa-magnifying-glass absolute left-4 text-gray-400 text-xs sm:text-sm"></i>
+                    <button type="submit" class="absolute right-3 px-3 py-1 bg-[#0e7c47] text-white rounded-lg text-xs font-bold hover:bg-[#096237] transition-colors">
+                        Cari
+                    </button>
+                </form>
             </div>
         </div>
 
-        <!-- MOBILE MENU DRAWER -->
+    </header>
+
+    <!-- MOBILE SLIDE-UP BOTTOM SHEET MENU DRAWER -->
+    <div x-show="mobileMenuOpen" 
+         class="fixed inset-0 z-50 lg:hidden flex flex-col justify-end" 
+         style="display: none;">
+        
+        <!-- BACKDROP OVERLAY -->
         <div x-show="mobileMenuOpen" 
-             x-transition:enter="transition ease-out duration-200"
-             x-transition:enter-start="opacity-0 -translate-y-2"
-             x-transition:enter-end="opacity-100 translate-y-0"
-             x-transition:leave="transition ease-in duration-150"
-             x-transition:leave-start="opacity-100 translate-y-0"
-             x-transition:leave-end="opacity-0 -translate-y-2"
-             class="lg:hidden bg-white border-b border-gray-200 px-4 pt-2 pb-6 space-y-3 shadow-xl max-h-[85vh] overflow-y-auto">
-            <a href="{{ route('home') }}" @click="mobileMenuOpen = false" class="block py-2 font-bold text-[#0e7c47] border-b border-gray-100">{{ __('Beranda') }}</a>
-            <a href="#profil" @click="mobileMenuOpen = false" class="block py-2 text-gray-700 hover:text-[#0e7c47] border-b border-gray-100">{{ __('Profil') }}</a>
+             x-transition:enter="transition ease-out duration-300"
+             x-transition:enter-start="opacity-0"
+             x-transition:enter-end="opacity-100"
+             x-transition:leave="transition ease-in duration-200"
+             x-transition:leave-start="opacity-100"
+             x-transition:leave-end="opacity-0"
+             @click="mobileMenuOpen = false" 
+             class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs"></div>
+
+        <!-- SLIDE-UP BOTTOM PANEL -->
+        <div x-show="mobileMenuOpen" 
+             x-transition:enter="transition ease-out duration-300 transform"
+             x-transition:enter-start="translate-y-full"
+             x-transition:enter-end="translate-y-0"
+             x-transition:leave="transition ease-in duration-200 transform"
+             x-transition:leave-start="translate-y-0"
+             x-transition:leave-end="translate-y-full"
+             class="relative bg-white rounded-t-3xl shadow-2xl p-4 pb-20 space-y-1.5 z-10 border-t border-emerald-900/10">
+            
+            <!-- GRAB HANDLE BAR & CLOSE ICON -->
+            <div class="relative flex items-center justify-center pt-1 pb-1 mb-1">
+                <div class="w-12 h-1.5 bg-gray-300 rounded-full"></div>
+                <button @click="mobileMenuOpen = false" class="absolute right-0 -top-1 w-7 h-7 rounded-full bg-gray-100 flex items-center justify-center text-gray-500 hover:text-gray-700">
+                    <i class="fa-solid fa-xmark text-xs"></i>
+                </button>
+            </div>
+
+            <!-- MENU LINKS (FIT PERFECTLY WITHOUT SCROLL) -->
+            <a href="{{ route('home') }}" @click="mobileMenuOpen = false" class="flex items-center justify-between py-2 px-1 font-bold text-[#0e7c47] border-b border-gray-100 text-sm">
+                <span>{{ __('Beranda') }}</span>
+                <i class="fa-solid fa-chevron-right text-xs text-emerald-600"></i>
+            </a>
+
+            <a href="{{ url('/profil') }}" @click="mobileMenuOpen = false" class="flex items-center justify-between py-2 px-1 font-semibold text-gray-700 hover:text-[#0e7c47] border-b border-gray-100 text-sm">
+                <span>{{ __('Profil') }}</span>
+                <i class="fa-solid fa-chevron-right text-xs text-gray-400"></i>
+            </a>
             
             <!-- MOBILE LAYANAN ACCORDION -->
-            <div x-data="{ mobileLayananOpen: false }">
-                <button @click="mobileLayananOpen = !mobileLayananOpen" class="w-full flex items-center justify-between py-2 text-gray-700 font-semibold border-b border-gray-100">
+            <div x-data="{ mobileLayananOpen: false }" class="border-b border-gray-100">
+                <button @click="mobileLayananOpen = !mobileLayananOpen" class="w-full flex items-center justify-between py-2 px-1 text-gray-700 font-semibold focus:outline-none text-sm">
                     <span>{{ __('Layanan') }}</span>
-                    <i class="fa-solid fa-chevron-down text-xs transition-transform" :class="mobileLayananOpen ? 'rotate-180 text-[#0e7c47]' : ''"></i>
+                    <i class="fa-solid fa-chevron-down text-xs transition-transform" :class="mobileLayananOpen ? 'rotate-180 text-[#0e7c47]' : 'text-gray-400'"></i>
                 </button>
-                <div x-show="mobileLayananOpen" class="pl-4 py-2 space-y-2 bg-[#0e7c47] text-white rounded-xl my-2 text-xs font-semibold">
-                    <div class="font-extrabold text-yellow-300 pb-1 border-b border-[#096237]">{{ __('Perawatan') }}:</div>
-                    <a href="#layanan" @click="mobileMenuOpen = false" class="block pl-2 py-1 hover:text-yellow-300">• {{ __('Rawat Jalan') }}</a>
-                    <a href="#layanan" @click="mobileMenuOpen = false" class="block pl-2 py-1 hover:text-yellow-300">• {{ __('Rawat Inap') }}</a>
-                    <div class="border-t border-[#096237] pt-2 space-y-1.5">
-                        <a href="#layanan" @click="mobileMenuOpen = false" class="block py-1 hover:text-yellow-300">{{ __('Instalasi Gawat Darurat') }}</a>
-                        <a href="#layanan" @click="mobileMenuOpen = false" class="block py-1 hover:text-yellow-300">{{ __('Kamar Operasi') }}</a>
-                        <a href="#layanan" @click="mobileMenuOpen = false" class="block py-1 hover:text-yellow-300">{{ __('ICU, NICU') }}</a>
-                        <a href="#layanan" @click="mobileMenuOpen = false" class="block py-1 hover:text-yellow-300">{{ __('Hemodialisa') }}</a>
-                        <a href="#layanan" @click="mobileMenuOpen = false" class="block py-1 hover:text-yellow-300">{{ __('X-Ray (FotoRontgent)') }}</a>
-                        <a href="#layanan" @click="mobileMenuOpen = false" class="block py-1 hover:text-yellow-300">{{ __('IR (Fisioteraphy)') }}</a>
-                        <a href="#layanan" @click="mobileMenuOpen = false" class="block py-1 hover:text-yellow-300">{{ __('Laboratorium') }}</a>
-                        <a href="#layanan" @click="mobileMenuOpen = false" class="block py-1 hover:text-yellow-300">{{ __('Rehab Medik') }}</a>
-                        <a href="#layanan" @click="mobileMenuOpen = false" class="block py-1 hover:text-yellow-300">{{ __('Medical Check Up') }}</a>
-                        <a href="#layanan" @click="mobileMenuOpen = false" class="block py-1 hover:text-yellow-300">{{ __('Instalasi Farmasi') }}</a>
-                        <a href="#layanan" @click="mobileMenuOpen = false" class="block py-1 hover:text-yellow-300">{{ __('USG 3D & USG 4D') }}</a>
-                        <a href="#layanan" @click="mobileMenuOpen = false" class="block py-1 hover:text-yellow-300">{{ __('Ambulance') }}</a>
-                    </div>
+                <div x-show="mobileLayananOpen" class="pl-4 py-1.5 space-y-1 bg-[#0e7c47] text-white rounded-xl my-1.5 text-xs font-semibold">
+                    <a href="{{ url('/layanan/igd') }}" @click="mobileMenuOpen = false" class="block py-1.5 px-2 hover:text-yellow-300">{{ __('IGD') }}</a>
+                    <a href="{{ url('/layanan/rawat-jalan') }}" @click="mobileMenuOpen = false" class="block py-1.5 px-2 hover:text-yellow-300">{{ __('Instalasi Rawat Jalan') }}</a>
+                    <a href="{{ url('/layanan/rawat-inap') }}" @click="mobileMenuOpen = false" class="block py-1.5 px-2 hover:text-yellow-300">{{ __('Instalasi Rawat Inap') }}</a>
+                    <a href="{{ url('/layanan/penunjang-medik') }}" @click="mobileMenuOpen = false" class="block py-1.5 px-2 hover:text-yellow-300">{{ __('Penunjang Medik') }}</a>
+                    <a href="{{ url('/layanan/unggulan') }}" @click="mobileMenuOpen = false" class="block py-1.5 px-2 hover:text-yellow-300">{{ __('Layanan Unggulan') }}</a>
                 </div>
             </div>
 
-            <a href="#jadwal-dokter" @click="mobileMenuOpen = false" class="block py-2 text-gray-700 hover:text-[#0e7c47] border-b border-gray-100">{{ __('Jadwal Dokter') }}</a>
-            <a href="#berita" @click="mobileMenuOpen = false" class="block py-2 text-gray-700 hover:text-[#0e7c47] border-b border-gray-100">{{ __('Berita & Artikel') }}</a>
-            <a href="#kontak" @click="mobileMenuOpen = false" class="block py-2 text-gray-700 hover:text-[#0e7c47] border-b border-gray-100">{{ __('Kontak') }}</a>
-            <a href="#karir" @click="mobileMenuOpen = false" class="block py-2 text-gray-700 hover:text-[#0e7c47] border-b border-gray-100">{{ __('Karir') }}</a>
-            <div class="pt-2 flex flex-col gap-2">
-                <a href="#kontak" @click="mobileMenuOpen = false" class="w-full text-center py-2.5 rounded-lg text-sm font-semibold bg-[#e31e24] text-white">
-                    {{ __('Daftar / Buat Janji') }}
-                </a>
+            <a href="{{ url('/jadwal-dokter') }}" @click="mobileMenuOpen = false" class="flex items-center justify-between py-2 px-1 font-semibold text-gray-700 hover:text-[#0e7c47] border-b border-gray-100 text-sm">
+                <span>{{ __('Jadwal Dokter') }}</span>
+                <i class="fa-solid fa-chevron-right text-xs text-gray-400"></i>
+            </a>
+            
+            <!-- MOBILE INFORMASI ACCORDION -->
+            <div x-data="{ mobileInformasiOpen: false }" class="border-b border-gray-100">
+                <button @click="mobileInformasiOpen = !mobileInformasiOpen" class="w-full flex items-center justify-between py-2 px-1 text-gray-700 font-semibold focus:outline-none text-sm">
+                    <span>{{ __('Informasi') }}</span>
+                    <i class="fa-solid fa-chevron-down text-xs transition-transform" :class="mobileInformasiOpen ? 'rotate-180 text-[#0e7c47]' : 'text-gray-400'"></i>
+                </button>
+                <div x-show="mobileInformasiOpen" class="pl-4 py-1.5 space-y-1 bg-[#0e7c47] text-white rounded-xl my-1.5 text-xs font-semibold">
+                    <a href="{{ url('/informasi/artikel-kesehatan') }}" @click="mobileMenuOpen = false" class="block py-1.5 px-2 hover:text-yellow-300">{{ __('Artikel Kesehatan') }}</a>
+                    <a href="{{ url('/informasi/event') }}" @click="mobileMenuOpen = false" class="block py-1.5 px-2 hover:text-yellow-300">{{ __('Event') }}</a>
+                    <a href="{{ url('/informasi/penawaran-khusus') }}" @click="mobileMenuOpen = false" class="block py-1.5 px-2 hover:text-yellow-300">{{ __('Penawaran Khusus') }}</a>
+                    <a href="{{ url('/informasi/aduan-layanan') }}" @click="mobileMenuOpen = false" class="block py-1.5 px-2 hover:text-yellow-300">{{ __('Aduan Layanan') }}</a>
+                    <a href="{{ url('/informasi/ikm') }}" @click="mobileMenuOpen = false" class="block py-1.5 px-2 hover:text-yellow-300">{{ __('Indeks Kepuasan Masyarakat') }}</a>
+                </div>
             </div>
+
+            <a href="{{ url('/karir') }}" @click="mobileMenuOpen = false" class="flex items-center justify-between py-2 px-1 font-semibold text-gray-700 hover:text-[#0e7c47] text-sm">
+                <span>{{ __('Karir') }}</span>
+                <i class="fa-solid fa-chevron-right text-xs text-gray-400"></i>
+            </a>
+
         </div>
-    </header>
+    </div>
+
+    <!-- ULTRA-PREMIUM MOBILE BOTTOM NAVIGATION BAR -->
+    <div class="fixed bottom-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-xl border-t border-emerald-900/10 lg:hidden shadow-[0_-4px_25px_rgba(14,124,71,0.12)]">
+        <div class="grid grid-cols-5 h-16 max-w-md mx-auto items-center px-1">
+            
+            <!-- TAB 1: MENU -->
+            <button @click="mobileMenuOpen = !mobileMenuOpen" 
+                    class="flex flex-col items-center justify-center gap-1 transition-all focus:outline-none py-1 group">
+                <div class="w-8 h-8 rounded-xl flex items-center justify-center transition-all group-active:scale-95 text-slate-500 group-hover:text-[#0e7c47] group-hover:bg-emerald-50">
+                    <i class="fa-solid fa-bars-staggered text-base"></i>
+                </div>
+                <span class="text-[10px] font-semibold text-slate-500 group-hover:text-[#0e7c47]">Menu</span>
+            </button>
+
+            <!-- TAB 2: BERANDA -->
+            <a href="{{ route('home') }}" 
+               class="flex flex-col items-center justify-center gap-1 transition-all py-1 group">
+                <div class="w-8 h-8 rounded-xl flex items-center justify-center transition-all {{ request()->is('/') ? 'bg-emerald-50 text-[#0e7c47] shadow-sm' : 'text-slate-500 group-hover:text-[#0e7c47]' }}">
+                    <i class="fa-solid fa-house text-base"></i>
+                </div>
+                <span class="text-[10px] {{ request()->is('/') ? 'font-bold text-[#0e7c47]' : 'font-medium text-slate-500' }}">Beranda</span>
+            </a>
+
+            <!-- TAB 3: CENTER FLOATING ACTION (BUAT JANJI) -->
+            <a href="{{ url('/buat-janji') }}" 
+               class="flex flex-col items-center justify-center -mt-5 transition-all group">
+                <div class="w-12 h-12 rounded-full bg-gradient-to-tr from-red-600 via-red-600 to-red-500 text-white flex items-center justify-center shadow-lg shadow-red-600/35 border-4 border-white group-active:scale-95 group-hover:scale-105 transition-transform">
+                    <i class="fa-solid fa-heart-pulse text-base animate-pulse"></i>
+                </div>
+                <span class="text-[10px] font-bold text-red-600 mt-0.5">Buat Janji</span>
+            </a>
+
+            <!-- TAB 4: JADWAL DOKTER -->
+            <a href="{{ url('/jadwal-dokter') }}" 
+               class="flex flex-col items-center justify-center gap-1 transition-all py-1 group">
+                <div class="w-8 h-8 rounded-xl flex items-center justify-center transition-all {{ request()->is('jadwal-dokter') ? 'bg-emerald-50 text-[#0e7c47] shadow-sm' : 'text-slate-500 group-hover:text-[#0e7c47]' }}">
+                    <i class="fa-solid fa-user-doctor text-base"></i>
+                </div>
+                <span class="text-[10px] {{ request()->is('jadwal-dokter') ? 'font-bold text-[#0e7c47]' : 'font-medium text-slate-500' }}">Jadwal</span>
+            </a>
+
+            <!-- TAB 5: PROFIL -->
+            <a href="{{ url('/profil') }}" 
+               class="flex flex-col items-center justify-center gap-1 transition-all py-1 group">
+                <div class="w-8 h-8 rounded-xl flex items-center justify-center transition-all {{ request()->is('profil') ? 'bg-emerald-50 text-[#0e7c47] shadow-sm' : 'text-slate-500 group-hover:text-[#0e7c47]' }}">
+                    <i class="fa-solid fa-hospital text-base"></i>
+                </div>
+                <span class="text-[10px] {{ request()->is('profil') ? 'font-bold text-[#0e7c47]' : 'font-medium text-slate-500' }}">Profil</span>
+            </a>
+
+        </div>
+    </div>
 
     <!-- CONTENT -->
     <main class="flex-grow">
