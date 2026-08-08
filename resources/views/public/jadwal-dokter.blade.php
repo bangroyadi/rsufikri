@@ -1,45 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<!-- BREADCRUMB & HERO BANNER -->
- <!-- BREADCRUMB & HERO BANNER -->
-<section class="relative bg-gradient-to-r from-[#0e7c47] via-[#096237] to-[#084b2a] text-white py-12 px-4 sm:px-6 lg:px-8 overflow-hidden shadow-inner">
-    <!-- BACKGROUND DECORATIVE GLOW -->
-    <div class="absolute -right-20 -bottom-20 w-96 h-96 bg-yellow-400/10 rounded-full blur-3xl pointer-events-none"></div>
-    <div class="absolute left-10 top-0 w-72 h-72 bg-emerald-400/10 rounded-full blur-2xl pointer-events-none"></div>
 
-    <div class="max-w-6xl mx-auto relative z-10">
-        <!-- BREADCRUMB -->
-        <div class="flex items-center gap-2 text-xs sm:text-sm text-yellow-300 mb-3 font-semibold">
-            <a href="{{ route('home') }}" class="hover:underline flex items-center gap-1">
-                <i class="fa-solid fa-house text-xs"></i> {{ __('Beranda') }}
-            </a>
-            <i class="fa-solid fa-chevron-right text-[10px] text-emerald-200"></i>
-            <span class="text-emerald-100">{{ __('Jadwal Dokter') }}</span>
-            <i class="fa-solid fa-chevron-right text-[10px] text-emerald-200"></i>
-            <span class="text-white font-bold">{{ __('Jadwal Praktik Poliklinik') }}</span>
-        </div>
-
-        <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
-            <div>
-                <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 text-yellow-300 text-xs font-bold border border-yellow-300/30 backdrop-blur-sm mb-2.5">
-                    <i class="fa-solid fa-calendar-check text-xs"></i> Update Real-Time Database Dokter
-                </span>
-                <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight leading-tight">
-                    Jadwal Praktik Dokter Spesialis
-                </h1>
-                <p class="mt-2 text-sm sm:text-base text-emerald-100 leading-relaxed max-w-2xl">
-                    Periksa jadwal praktik harian dokter spesialis RSU Fikri Medika Karawang secara resmi dan terintegrasi langsung dengan database.
-                </p>
-            </div>
-            
-            <a href="{{ url('/buat-janji') }}" class="px-5 py-3 rounded-xl bg-yellow-400 text-gray-900 font-extrabold text-xs sm:text-sm hover:bg-yellow-300 transition-all shadow-lg hover:scale-105 flex items-center justify-center gap-2 shrink-0 border-2 border-yellow-300">
-                <i class="fa-solid fa-heart-pulse text-red-600 text-base"></i>
-                <span>Daftar / Buat Janji Temu</span>
-            </a>
-        </div>
-    </div>
-</section>
 
 <!-- MAIN CONTENT & INTERACTIVE PAGINATED TABLE (MATCHING DATABASE STRUCTURE) -->
 <section class="py-12 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto" x-data="{
