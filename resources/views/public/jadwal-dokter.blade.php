@@ -2,6 +2,7 @@
 
 @section('content')
 <!-- BREADCRUMB & HERO BANNER -->
+ <!-- BREADCRUMB & HERO BANNER -->
 <section class="relative bg-gradient-to-r from-[#0e7c47] via-[#096237] to-[#084b2a] text-white py-12 px-4 sm:px-6 lg:px-8 overflow-hidden shadow-inner">
     <!-- BACKGROUND DECORATIVE GLOW -->
     <div class="absolute -right-20 -bottom-20 w-96 h-96 bg-yellow-400/10 rounded-full blur-3xl pointer-events-none"></div>
