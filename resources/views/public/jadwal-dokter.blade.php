@@ -113,17 +113,17 @@
              x-transition:enter="transition ease-out duration-200"
              x-transition:enter-start="opacity-0 translate-y-2"
              x-transition:enter-end="opacity-100 translate-y-0"
-             class="bg-white rounded-3xl border border-gray-100 shadow-sm p-6 space-y-4 border-b-2 border-emerald-600">
+             class="bg-white rounded-2xl border-2 border-emerald-100/90 p-5 sm:p-6 shadow-sm hover:shadow-md transition-all space-y-4">
             
-            <!-- POLYCLINIC / SPECIALTY TITLE -->
+            <!-- POLYCLINIC / SPECIALTY TITLE BAR -->
             <div class="flex items-center justify-between border-b border-gray-100 pb-3">
                 <div class="flex items-center gap-2">
                     <span class="w-3 h-3 rounded-full bg-[#0e7c47]"></span>
-                    <h4 class="text-base sm:text-lg font-extrabold text-[#0e7c47] tracking-tight">
+                    <h4 class="text-base sm:text-lg font-black text-[#0e7c47] tracking-tight">
                         {{ $poliName }}
                     </h4>
                 </div>
-                <span class="text-xs font-semibold px-3 py-1 rounded-full bg-emerald-50 text-[#0e7c47] border border-emerald-200/50">
+                <span class="text-xs font-bold px-3 py-1 rounded-full bg-emerald-50 text-[#0e7c47] border border-emerald-200">
                     RSU Fikri Medika Karawang
                 </span>
             </div>
@@ -146,23 +146,23 @@
                     </div>
                 </div>
 
-                <!-- DOCTOR INFO & WEEKLY SCHEDULE TABLE -->
+                <!-- DOCTOR INFO & SCHEDULE -->
                 <div class="flex-grow w-full space-y-4">
                     
                     <!-- DOCTOR NAME & APPOINTMENT BUTTON -->
                     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                         <div>
-                            <h3 class="text-base sm:text-xl font-extrabold text-gray-900 leading-snug">
+                            <h3 class="text-lg sm:text-xl font-black text-slate-900 leading-snug">
                                 {{ $doc->name }}
                             </h3>
-                            <div class="text-xs text-gray-500 font-semibold mt-0.5">
-                                {{ is_array($doc->specialization) ? ($doc->specialization[app()->getLocale()] ?? $doc->specialization['id']) : ($doc->specialization ?? 'Dokter Spesialis') }}
+                            <div class="text-xs text-gray-500 font-bold mt-1">
+                                Spesialisasi: <span class="text-[#0e7c47] font-extrabold">{{ is_array($doc->specialization) ? ($doc->specialization[app()->getLocale()] ?? $doc->specialization['id']) : ($doc->specialization ?? 'Dokter Spesialis') }}</span>
                             </div>
                         </div>
 
                         <div class="flex items-center gap-2 self-start sm:self-auto">
-                            <a href="{{ url('/buat-janji?dokter_id=' . $doc->id) }}" class="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-[#0e7c47] hover:bg-[#096237] text-white text-xs font-extrabold shadow-sm transition-all">
-                                <i class="fa-solid fa-calendar-check"></i>
+                            <a href="{{ url('/buat-janji?dokter_id=' . $doc->id) }}" class="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-[#0e7c47] hover:bg-[#096237] text-white text-xs font-black uppercase tracking-wider shadow-sm transition-all">
+                                <i class="fa-solid fa-calendar-check text-sm"></i>
                                 <span>BUAT JANJI</span>
                             </a>
                             <a href="https://wa.me/6281234567890?text=Halo%20RSU%20Fikri%20Medika,%20saya%20ingin%20tanya%20jadwal%20{{ urlencode($doc->name) }}" target="_blank" class="p-2.5 rounded-xl bg-emerald-50 text-[#0e7c47] hover:bg-emerald-100 transition-colors border border-emerald-200 text-xs font-bold" title="Tanya CS WhatsApp">
@@ -171,22 +171,35 @@
                         </div>
                     </div>
 
-                    <!-- SIMPLE & CLEAN JADWAL BADGES (ONLY ACTIVE DAYS) -->
-                    <div class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-7 gap-2 pt-1">
-                        @foreach(['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'] as $day)
-                            <div class="p-2.5 rounded-xl text-center border transition-all {{ count($dayMap[$day]) > 0 ? 'bg-emerald-50/80 border-emerald-200 text-[#0e7c47]' : 'bg-gray-50/50 border-gray-100 text-gray-300' }}">
-                                <div class="text-[11px] font-bold uppercase tracking-wider {{ count($dayMap[$day]) > 0 ? 'text-[#0e7c47]' : 'text-gray-400' }}">{{ __($day) }}</div>
-                                <div class="text-[11px] font-bold mt-1">
-                                    @if(count($dayMap[$day]) > 0)
-                                        @foreach($dayMap[$day] as $timeStr)
-                                            <span class="block text-gray-800 font-mono font-semibold">{{ $timeStr }}</span>
-                                        @endforeach
-                                    @else
-                                        <span class="text-gray-300 font-normal">-</span>
-                                    @endif
-                                </div>
-                            </div>
-                        @endforeach
+                    <!-- HIGH CONTRAST CLEAR PRACTICE SCHEDULE BADGES -->
+                    <div class="space-y-2 pt-1">
+                        <div class="text-xs font-extrabold text-slate-600 uppercase tracking-wider flex items-center gap-1.5">
+                            <i class="fa-solid fa-calendar-days text-[#0e7c47]"></i>
+                            <span>{{ __('Jadwal Praktik Dokter') }}:</span>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5">
+                            @php $hasAnySched = false; @endphp
+                            @foreach(['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'] as $dayKey)
+                                @if(!empty($dayMap[$dayKey]))
+                                    @php $hasAnySched = true; @endphp
+                                    @foreach($dayMap[$dayKey] as $timeSlot)
+                                        <div class="flex items-center justify-between p-2.5 px-3.5 rounded-xl bg-gradient-to-r from-emerald-50 to-teal-50/60 border-2 border-emerald-200/90 shadow-2xs">
+                                            <span class="px-2.5 py-1 rounded-lg bg-[#0e7c47] text-white text-xs font-black uppercase tracking-wider shrink-0 shadow-2xs">
+                                                {{ __($dayKey) }}
+                                            </span>
+                                            <div class="flex items-center gap-1.5 text-slate-900 font-black text-sm sm:text-base font-mono">
+                                                <i class="fa-regular fa-clock text-emerald-600 text-xs"></i>
+                                                <span>{{ $timeSlot }}</span>
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                @endif
+                            @endforeach
+                            @if(!$hasAnySched)
+                                <div class="text-xs text-gray-400 font-semibold italic py-1">{{ __('Tidak ada jadwal harian') }}</div>
+                            @endif
+                        </div>
                     </div>
 
                 </div>

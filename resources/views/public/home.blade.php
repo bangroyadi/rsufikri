@@ -2,199 +2,213 @@
 
 @section('content')
 
-<!-- HERO SECTION -->
-<section class="relative bg-gradient-to-r from-[#0e7c47] via-[#096237] to-[#0e7c47] text-white overflow-hidden py-16 lg:py-24">
-    <!-- Decorative background elements -->
-    <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#f8ec1d_1px,transparent_1px)] [background-size:16px_16px]"></div>
-    <div class="absolute -bottom-24 -right-24 w-96 h-96 rounded-full bg-emerald-500/20 blur-3xl"></div>
+<!-- HERO SECTION (DYNAMIC SWIPEABLE BANNER SLIDER - COMPACT) -->
+<section class="relative bg-gradient-to-br from-[#0e7c47] via-[#096237] to-[#0a5c34] text-white py-6 lg:py-10 overflow-hidden shadow-xl"
+         x-data="{
+             activeSlide: 0,
+             totalSlides: {{ $banners->count() > 0 ? $banners->count() : 1 }},
+             touchStartX: 0,
+             touchEndX: 0,
+             timer: null,
+             startAutoSlide() {
+                 this.timer = setInterval(() => {
+                     this.nextSlide();
+                 }, 6000);
+             },
+             stopAutoSlide() {
+                 if (this.timer) clearInterval(this.timer);
+             },
+             nextSlide() {
+                 this.activeSlide = (this.activeSlide + 1) % this.totalSlides;
+             },
+             prevSlide() {
+                 this.activeSlide = (this.activeSlide - 1 + this.totalSlides) % this.totalSlides;
+             },
+             handleTouchStart(e) {
+                 this.touchStartX = e.changedTouches[0].screenX;
+             },
+             handleTouchEnd(e) {
+                 this.touchEndX = e.changedTouches[0].screenX;
+                 if (this.touchStartX - this.touchEndX > 40) {
+                     this.nextSlide();
+                 } else if (this.touchEndX - this.touchStartX > 40) {
+                     this.prevSlide();
+                 }
+             }
+         }"
+         x-init="startAutoSlide()"
+         @mouseenter="stopAutoSlide()"
+         @mouseleave="startAutoSlide()"
+         @touchstart="handleTouchStart($event)"
+         @touchend="handleTouchEnd($event)">
     
+    <!-- DYNAMIC LIGHTING & GLOW ORBS -->
+    <div class="absolute inset-0 opacity-15 bg-[radial-gradient(#ffffff_1.5px,transparent_1.5px)] [background-size:24px_24px] pointer-events-none"></div>
+    <div class="absolute -right-16 -top-16 w-80 h-80 bg-yellow-400/20 rounded-full blur-3xl pointer-events-none animate-pulse"></div>
+    <div class="absolute left-1/4 -bottom-20 w-64 h-64 bg-emerald-400/15 rounded-full blur-3xl pointer-events-none"></div>
+
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+        
+        <!-- BANNERS LOOP CONTAINER -->
+        <div class="relative overflow-hidden min-h-[320px] sm:min-h-[340px] flex items-center">
             
-            <!-- LEFT HERO TEXT -->
-            <div class="lg:col-span-7 space-y-6 text-center lg:text-left">
-                <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-yellow-400/20 border border-yellow-400/40 text-yellow-300 text-xs font-bold uppercase tracking-wider">
-                    <i class="fa-solid fa-star text-yellow-300"></i>
-                    <span>{{ __('Pelayanan Kesehatan Islami & Modern') }}</span>
-                </div>
+            @foreach($banners as $index => $banner)
+            <div x-show="activeSlide === {{ $index }}"
+                 x-transition:enter="transition ease-out duration-700"
+                 x-transition:enter-start="opacity-0 translate-x-6 scale-98"
+                 x-transition:enter-end="opacity-100 translate-x-0 scale-100"
+                 x-transition:leave="transition ease-in duration-500 absolute inset-0"
+                 x-transition:leave-start="opacity-100 translate-x-0 scale-100"
+                 x-transition:leave-end="opacity-0 -translate-x-6 scale-98"
+                 class="w-full grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-10 items-center">
                 
-                <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight leading-tight text-white">
-                    {{ $banners->first()?->tr('title') }}
-                </h1>
-                
-                <p class="text-base sm:text-lg text-emerald-100/90 max-w-2xl mx-auto lg:mx-0 leading-relaxed font-normal">
-                    {{ $banners->first()?->tr('subtitle') }}
-                </p>
-                
-                <div class="pt-2 flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
-                    <a href="#jadwal-dokter" class="w-full sm:w-auto px-6 py-3.5 rounded-xl font-bold bg-yellow-400 text-gray-900 hover:bg-yellow-300 shadow-lg shadow-yellow-400/20 transition-all flex items-center justify-center gap-2 text-sm">
-                        <i class="fa-regular fa-calendar-check text-base"></i>
-                        <span>{{ __('Lihat Jadwal Dokter') }}</span>
-                    </a>
-                    <a href="#kontak" class="w-full sm:w-auto px-6 py-3.5 rounded-xl font-bold bg-[#e31e24] hover:bg-red-700 text-white shadow-lg shadow-red-900/30 transition-all flex items-center justify-center gap-2 text-sm">
-                        <i class="fa-solid fa-hospital-user text-base"></i>
-                        <span>{{ __('Daftar / Buat Janji') }}</span>
-                    </a>
+                <!-- LEFT HERO TEXT & CHECK BULLETS -->
+                <div class="lg:col-span-7 space-y-4 text-left">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/20 border border-white/30 text-yellow-300 text-[11px] font-black uppercase tracking-wider backdrop-blur-md shadow-xs">
+                        <i class="fa-solid fa-hospital-user text-[10px]"></i>
+                        <span>RSU FIKRI MEDIKA KARAWANG</span>
+                    </div>
+                    
+                    <h1 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight leading-snug text-white drop-shadow-sm">
+                        {{ $banner->tr('title') }}
+                    </h1>
+                    
+                    <p class="text-xs sm:text-sm text-emerald-50 max-w-xl leading-relaxed font-medium">
+                        {{ $banner->tr('subtitle') }}
+                    </p>
+                    
+                    <div class="pt-1">
+                        <a href="{{ $banner->button_link ?? '#kontak' }}" class="inline-flex items-center justify-center px-6 py-2.5 rounded-full font-extrabold bg-white text-[#0e7c47] hover:bg-yellow-300 hover:text-slate-950 shadow-lg transition-all text-xs transform hover:scale-105">
+                            <span>{{ $banner->tr('button_text') }}</span>
+                        </a>
+                    </div>
+
+                    <!-- CHECKMARK BULLETS -->
+                    <div class="pt-3 space-y-1.5 text-[11px] sm:text-xs font-bold text-white border-t border-white/20 max-w-md">
+                        <div class="flex items-center gap-2">
+                            <div class="w-4.5 h-4.5 rounded-full bg-white/25 flex items-center justify-center text-yellow-300 text-[10px] shrink-0">
+                                <i class="fa-solid fa-check"></i>
+                            </div>
+                            <span>Pelayanan Hemodialisa & USG 4 Dimensi</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <div class="w-4.5 h-4.5 rounded-full bg-white/25 flex items-center justify-center text-yellow-300 text-[10px] shrink-0">
+                                <i class="fa-solid fa-check"></i>
+                            </div>
+                            <span>Tersedia Pendaftaran Online 24 Jam Siap</span>
+                        </div>
+                    </div>
+
                 </div>
 
-                <!-- KEY HIGHLIGHT BADGES -->
-                <div class="pt-6 grid grid-cols-3 gap-4 border-t border-emerald-600/50 max-w-xl mx-auto lg:mx-0">
-                    <div class="text-center lg:text-left">
-                        <div class="text-xl sm:text-2xl font-extrabold text-yellow-300">24/7</div>
-                        <div class="text-xs text-gray-200 font-medium">{{ __('IGD & Ambulans') }}</div>
-                    </div>
-                    <div class="text-center lg:text-left">
-                        <div class="text-xl sm:text-2xl font-extrabold text-yellow-300">15+</div>
-                        <div class="text-xs text-gray-200 font-medium">{{ __('Dokter Spesialis') }}</div>
-                    </div>
-                    <div class="text-center lg:text-left">
-                        <div class="text-xl sm:text-2xl font-extrabold text-yellow-300">100%</div>
-                        <div class="text-xs text-gray-200 font-medium">{{ __('Pelayanan Islami') }}</div>
+                <!-- RIGHT HERO VISUAL IMAGE & FLOATING CARDS (FRAMELESS SEAMLESS CUTOUT) -->
+                <div class="lg:col-span-5 relative flex justify-center lg:justify-end">
+                    <div class="relative w-full max-w-xs sm:max-w-sm flex justify-center">
+                        
+                        <!-- FRAMELESS BANNER IMAGE -->
+                        <div class="relative z-10 flex justify-center">
+                            <img src="{{ Str::startsWith($banner->image, 'http') ? $banner->image : asset($banner->image) }}" 
+                                 alt="{{ $banner->tr('title') }}" 
+                                 class="w-auto max-h-64 sm:max-h-72 object-contain drop-shadow-2xl filter hover:brightness-105 transition-all">
+                        </div>
+
+                        <!-- FLOATING GLASS BADGE TOP-LEFT -->
+                        <div class="absolute top-2 -left-4 z-20 bg-white/25 backdrop-blur-md border border-white/30 p-2.5 px-3 rounded-xl text-white shadow-xl flex items-center gap-2.5 hidden sm:flex transform -rotate-2 hover:rotate-0 transition-transform">
+                            <div class="w-8 h-8 rounded-lg bg-yellow-400 text-slate-950 flex items-center justify-center text-sm shrink-0 shadow-xs">
+                                <i class="fa-solid fa-vial-circle-check"></i>
+                            </div>
+                            <div>
+                                <div class="text-[9px] text-yellow-300 font-bold uppercase tracking-wider">Layanan Utama</div>
+                                <div class="text-[11px] font-black text-white">Hemodialisa & IGD 24 Jam</div>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
+
+            </div>
+            @endforeach
+
+        </div>
+
+        <!-- CAROUSEL CONTROLS & INDICATOR DOTS (CENTERED) -->
+        <div class="pt-4 flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-6 border-t border-white/10 mt-4">
+            
+            <!-- SWIPE INDICATOR DOTS -->
+            <div class="flex items-center gap-1.5">
+                @foreach($banners as $index => $banner)
+                <button @click="activeSlide = {{ $index }}" 
+                        :class="activeSlide === {{ $index }} ? 'w-7 bg-yellow-400' : 'w-2 bg-white/30 hover:bg-white/60'"
+                        class="h-2 rounded-full transition-all duration-300 focus:outline-none"
+                        title="Slide {{ $index + 1 }}"></button>
+                @endforeach
             </div>
 
-            <!-- RIGHT HERO VISUAL -->
-            <div class="lg:col-span-5 relative">
-                <div class="relative mx-auto max-w-md lg:max-w-none">
-                    <div class="rounded-3xl overflow-hidden shadow-2xl border-4 border-white/20 transform lg:rotate-1 hover:rotate-0 transition-transform duration-500 bg-white p-2">
-                        <img src="{{ $banners->first()?->image ?? 'https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&w=1200&q=80' }}" 
-                             alt="RSU Fikri Medika" 
-                             class="w-full h-80 lg:h-[390px] object-cover rounded-2xl"
-                             loading="lazy">
-                    </div>
-                    <!-- Floating emergency highlight card -->
-                    <div class="absolute -bottom-6 -left-6 bg-white text-gray-900 p-4 rounded-2xl shadow-xl border border-emerald-100 hidden sm:flex items-center gap-3">
-                        <div class="w-12 h-12 rounded-xl bg-red-100 text-red-600 flex items-center justify-center text-xl font-bold">
-                            <i class="fa-solid fa-truck-medical animate-bounce"></i>
-                        </div>
-                        <div>
-                            <div class="text-xs text-gray-500 font-bold uppercase tracking-wider">{{ __('IGD Siaga') }}</div>
-                            <div class="text-sm font-extrabold text-[#0e7c47]">(0267) 8454999</div>
-                        </div>
-                    </div>
-                </div>
+            <!-- PREV / NEXT SWIPE ARROW BUTTONS -->
+            <div class="flex items-center gap-2">
+                <button @click="prevSlide()" 
+                        class="w-8.5 h-8.5 rounded-full bg-white/15 hover:bg-white/30 border border-white/25 text-white flex items-center justify-center transition-all focus:outline-none backdrop-blur-md shadow-sm transform hover:scale-105 active:scale-95">
+                    <i class="fa-solid fa-chevron-left text-xs"></i>
+                </button>
+                <button @click="nextSlide()" 
+                        class="w-8.5 h-8.5 rounded-full bg-white/15 hover:bg-white/30 border border-white/25 text-white flex items-center justify-center transition-all focus:outline-none backdrop-blur-md shadow-sm transform hover:scale-105 active:scale-95">
+                    <i class="fa-solid fa-chevron-right text-xs"></i>
+                </button>
             </div>
 
         </div>
-    </div>
-</section>
-
-<!-- QUICK INFO ACTION BAR -->
-<section class="relative -mt-8 z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="bg-white rounded-2xl shadow-xl border border-gray-100 p-6 grid grid-cols-2 md:grid-cols-5 gap-4 text-center">
-        
-        <a href="#jadwal-dokter" class="group p-4 rounded-xl hover:bg-emerald-50/80 transition-colors flex flex-col items-center gap-2">
-            <div class="w-12 h-12 rounded-full bg-emerald-100 text-[#0e7c47] flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
-                <i class="fa-regular fa-calendar-days"></i>
-            </div>
-            <span class="text-xs sm:text-sm font-bold text-gray-800 group-hover:text-[#0e7c47]">{{ __('Jadwal Dokter') }}</span>
-        </a>
-
-        <a href="#layanan" class="group p-4 rounded-xl hover:bg-emerald-50/80 transition-colors flex flex-col items-center gap-2">
-            <div class="w-12 h-12 rounded-full bg-emerald-100 text-[#0e7c47] flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
-                <i class="fa-solid fa-notes-medical"></i>
-            </div>
-            <span class="text-xs sm:text-sm font-bold text-gray-800 group-hover:text-[#0e7c47]">{{ __('Layanan RS') }}</span>
-        </a>
-
-        <a href="#kontak" class="group p-4 rounded-xl hover:bg-emerald-50/80 transition-colors flex flex-col items-center gap-2">
-            <div class="w-12 h-12 rounded-full bg-emerald-100 text-[#0e7c47] flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
-                <i class="fa-solid fa-clipboard-user"></i>
-            </div>
-            <span class="text-xs sm:text-sm font-bold text-gray-800 group-hover:text-[#0e7c47]">{{ __('Pendaftaran') }}</span>
-        </a>
-
-        <a href="#kontak" class="group p-4 rounded-xl hover:bg-red-50 transition-colors flex flex-col items-center gap-2">
-            <div class="w-12 h-12 rounded-full bg-red-100 text-[#e31e24] flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
-                <i class="fa-solid fa-kit-medical"></i>
-            </div>
-            <span class="text-xs sm:text-sm font-bold text-red-600">{{ __('IGD 24 Jam') }}</span>
-        </a>
-
-        <a href="#kontak" class="group p-4 rounded-xl hover:bg-emerald-50/80 transition-colors flex flex-col items-center gap-2 col-span-2 md:col-span-1">
-            <div class="w-12 h-12 rounded-full bg-emerald-100 text-[#0e7c47] flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
-                <i class="fa-solid fa-headset"></i>
-            </div>
-            <span class="text-xs sm:text-sm font-bold text-gray-800 group-hover:text-[#0e7c47]">{{ __('Kontak RS') }}</span>
-        </a>
 
     </div>
 </section>
 
-<!-- SECTION: TENTANG RSU FIKRI MEDIKA -->
-<section id="profil" class="py-20 bg-white">
+<!-- SECTION: TENTANG KAMI / SEJARAH SINGKAT (MATCHING REFERENCE DESIGN) -->
+<section id="profil" class="py-16 lg:py-24 bg-slate-50/50">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
             
-            <!-- LEFT IMAGE -->
-            <div class="lg:col-span-5 relative">
-                <div class="relative rounded-2xl overflow-hidden shadow-lg border border-gray-100">
-                    <img src="https://images.unsplash.com/photo-1586773860418-d37222d8fce3?auto=format&fit=crop&w=800&q=80" 
-                         alt="Gedung RSU Fikri Medika" 
-                         class="w-full h-[420px] object-cover"
-                         loading="lazy">
-                    <div class="absolute inset-0 bg-gradient-to-t from-[#0e7c47]/80 via-transparent to-transparent"></div>
-                    <div class="absolute bottom-6 left-6 right-6 text-white">
-                        <div class="font-bold text-lg">RSU Fikri Medika</div>
-                        <div class="text-xs text-yellow-300">Jl. Raya Kosambi - Telagasari No. 9, Klari, Karawang</div>
-                    </div>
+            <!-- LEFT CONTENT -->
+            <div class="lg:col-span-7 space-y-6">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-100 text-[#0e7c47] text-xs font-extrabold uppercase tracking-wider">
+                    <span>TENTANG KAMI</span>
+                </div>
+                
+                <h2 class="text-3xl sm:text-4xl font-black text-gray-900 tracking-tight leading-snug">
+                    Sejarah Singkat Berdirinya RSU. Fikri Medika
+                </h2>
+                
+                <p class="text-gray-600 text-sm sm:text-base leading-relaxed font-medium">
+                    RSU Fikri Medika bernaung di bawah <strong>PT. Karya Mandiri Medika Utama</strong>, didirikan untuk memberikan kontribusi nyata di bidang pelayanan jasa kesehatan yang komprehensif, cepat, dan profesional bagi seluruh masyarakat Karawang dan sekitarnya dengan mengedepankan keramahan dan nilai-nilai Islami.
+                </p>
+
+                <div>
+                    <a href="{{ route('profil') }}" class="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-[#0e7c47] hover:bg-[#096237] text-white text-xs font-extrabold shadow-md transition-all">
+                        <span>Selengkapnya</span>
+                        <i class="fa-solid fa-arrow-right text-xs"></i>
+                    </a>
                 </div>
             </div>
 
-            <!-- RIGHT CONTENT -->
-            <div class="lg:col-span-7 space-y-6">
-                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-100 text-[#0e7c47] text-xs font-bold uppercase tracking-wider">
-                    <i class="fa-solid fa-hospital-user"></i>
-                    <span>{{ __('Tentang Kami') }}</span>
-                </div>
-
-                <h2 class="text-2xl sm:text-3xl font-extrabold text-[#0e7c47] tracking-tight">
-                    {{ __('Rumah Sakit Umum Terpercaya Berorientasi Islami & Modern') }}
-                </h2>
-
-                <p class="text-gray-600 leading-relaxed text-sm sm:text-base">
-                    {{ $profile?->tr('about') }}
-                </p>
-
-                <!-- VISION & MISSION TABS -->
-                <div x-data="{ activeTab: 'vision' }" class="bg-[#f7faf8] rounded-xl p-5 border border-emerald-100 space-y-4">
-                    <div class="flex gap-2 border-b border-gray-200 pb-3">
-                        <button @click="activeTab = 'vision'" 
-                                :class="activeTab === 'vision' ? 'bg-[#0e7c47] text-white shadow-sm' : 'bg-white text-gray-700 hover:bg-gray-100'"
-                                class="px-4 py-2 rounded-lg text-xs font-bold transition-all">
-                            <i class="fa-solid fa-eye mr-1.5"></i> {{ __('Visi') }}
-                        </button>
-                        <button @click="activeTab = 'mission'" 
-                                :class="activeTab === 'mission' ? 'bg-[#0e7c47] text-white shadow-sm' : 'bg-white text-gray-700 hover:bg-gray-100'"
-                                class="px-4 py-2 rounded-lg text-xs font-bold transition-all">
-                            <i class="fa-solid fa-bullseye mr-1.5"></i> {{ __('Misi') }}
-                        </button>
-                        <button @click="activeTab = 'values'" 
-                                :class="activeTab === 'values' ? 'bg-[#0e7c47] text-white shadow-sm' : 'bg-white text-gray-700 hover:bg-gray-100'"
-                                class="px-4 py-2 rounded-lg text-xs font-bold transition-all">
-                            <i class="fa-solid fa-gem mr-1.5"></i> {{ __('Nilai Kami') }}
-                        </button>
-                    </div>
-
-                    <div x-show="activeTab === 'vision'" class="text-sm text-gray-700 font-medium leading-relaxed">
-                        {{ $profile?->tr('vision') }}
-                    </div>
-
-                    <div x-show="activeTab === 'mission'" class="text-sm text-gray-700 whitespace-pre-line leading-relaxed">
-                        {{ $profile?->tr('mission') }}
-                    </div>
-
-                    <div x-show="activeTab === 'values'" class="text-sm text-gray-700 font-semibold text-[#0e7c47]">
-                        {{ $profile?->tr('values') }}
+            <!-- RIGHT HOSPITAL BUILDING IMAGE CARD WITH FLOATING BADGE -->
+            <div class="lg:col-span-5 relative">
+                <div class="relative rounded-3xl overflow-hidden shadow-2xl border-4 border-white bg-white p-2">
+                    <img src="https://images.unsplash.com/photo-1586773860418-d37222d8fce3?auto=format&fit=crop&w=800&q=80" 
+                         alt="Gedung RSU Fikri Medika" 
+                         class="w-full h-72 sm:h-80 object-cover rounded-2xl"
+                         loading="lazy">
+                    
+                    <!-- FLOATING YEAR BADGE -->
+                    <div class="absolute top-6 left-6 bg-white/95 backdrop-blur-md border border-gray-100 p-3 px-4 rounded-2xl shadow-xl text-center space-y-0.5">
+                        <div class="text-[10px] text-gray-500 font-extrabold uppercase tracking-wider">Berdiri Sejak</div>
+                        <div class="text-base font-black text-[#0e7c47]">2008</div>
                     </div>
                 </div>
-
             </div>
 
         </div>
     </div>
 </section>
+
+
 
 <!-- SECTION: LAYANAN UNGGULAN -->
 <section id="layanan" class="py-20 bg-[#f7faf8] border-t border-b border-gray-100">
@@ -253,242 +267,7 @@
     </div>
 </section>
 
-<!-- SECTION: JADWAL DOKTER WITH PAGINATED TABLE DESIGN -->
-<section id="jadwal-dokter" class="py-20 bg-white" x-data="{
-    searchName: '',
-    selectedPoli: '',
-    selectedDay: '',
-    currentPage: 1,
-    perPage: 10,
-    doctorsData: [
-        @foreach($doctors as $doc)
-        {
-            id: {{ $doc->id }},
-            name: '{{ addslashes($doc->name) }}',
-            poliId: {{ $doc->polyclinic_id }},
-            days: [ @foreach($doc->schedules as $s)'{{ $s->day }}', @endforeach ]
-        },
-        @endforeach
-    ],
-    get filteredDoctors() {
-        return this.doctorsData.filter(d => {
-            let matchN = !this.searchName || d.name.toLowerCase().includes(this.searchName.toLowerCase());
-            let matchP = !this.selectedPoli || d.poliId == this.selectedPoli;
-            let matchD = !this.selectedDay || d.days.includes(this.selectedDay);
-            return matchN && matchP && matchD;
-        });
-    },
-    get totalPages() {
-        return Math.ceil(this.filteredDoctors.length / this.perPage) || 1;
-    },
-    isDoctorVisible(docId) {
-        let index = this.filteredDoctors.findIndex(d => d.id === docId);
-        if (index === -1) return false;
-        let page = Math.floor(index / this.perPage) + 1;
-        return page === this.currentPage;
-    },
-    goToPage(p) {
-        if (p >= 1 && p <= this.totalPages) {
-            this.currentPage = p;
-        }
-    }
-}">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        
-        <div class="text-center max-w-3xl mx-auto mb-12">
-            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-100 text-[#0e7c47] text-xs font-bold uppercase tracking-wider mb-3">
-                <i class="fa-regular fa-calendar-check"></i>
-                <span>{{ __('Tim Medis Kami') }}</span>
-            </div>
-            <h2 class="text-2xl sm:text-3xl font-extrabold text-[#0e7c47] tracking-tight">
-                {{ __('Jadwal Dokter') }} {{ __('& Praktik Poliklinik') }}
-            </h2>
-            <p class="text-gray-600 text-sm sm:text-base mt-2">
-                {{ __('Temukan dokter spesialis pilihan Anda dan periksa jadwal praktik harian di RSU Fikri Medika.') }}
-            </p>
-        </div>
 
-        <!-- SEARCH & FILTER BAR -->
-        <div class="bg-[#f7faf8] p-6 rounded-2xl border border-emerald-100 shadow-sm mb-10 grid grid-cols-1 sm:grid-cols-3 gap-4">
-            
-            <!-- SEARCH BY NAME -->
-            <div>
-                <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">{{ __('Cari Nama Dokter') }}</label>
-                <div class="relative">
-                    <input type="text" 
-                           x-model="searchName" 
-                           @input="currentPage = 1"
-                           placeholder="{{ __('Ketik nama dokter...') }}" 
-                           class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:ring-2 focus:ring-[#0e7c47] focus:border-[#0e7c47] outline-none">
-                    <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3.5 text-gray-400 text-xs"></i>
-                </div>
-            </div>
-
-            <!-- FILTER BY POLICLINIC -->
-            <div>
-                <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">{{ __('Pilih Poliklinik') }}</label>
-                <select x-model="selectedPoli" @change="currentPage = 1" class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:ring-2 focus:ring-[#0e7c47] focus:border-[#0e7c47] outline-none bg-white">
-                    <option value="">-- {{ __('Semua Poli') }} --</option>
-                    @foreach($polyclinics as $poli)
-                        <option value="{{ $poli->id }}">{{ $poli->tr('name') }}</option>
-                    @endforeach
-                </select>
-            </div>
-
-            <!-- FILTER BY DAY -->
-            <div>
-                <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">{{ __('Pilih Hari Praktik') }}</label>
-                <select x-model="selectedDay" @change="currentPage = 1" class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:ring-2 focus:ring-[#0e7c47] focus:border-[#0e7c47] outline-none bg-white">
-                    <option value="">-- {{ __('Semua Hari') }} --</option>
-                    <option value="Senin">{{ __('Senin') }}</option>
-                    <option value="Selasa">{{ __('Selasa') }}</option>
-                    <option value="Rabu">{{ __('Rabu') }}</option>
-                    <option value="Kamis">{{ __('Kamis') }}</option>
-                    <option value="Jumat">{{ __('Jumat') }}</option>
-                    <option value="Sabtu">{{ __('Sabtu') }}</option>
-                    <option value="Minggu">{{ __('Minggu') }}</option>
-                </select>
-            </div>
-
-        </div>
-
-        <!-- DOCTORS SCHEDULE LIST (REVISED DESIGN MATCHING ATTACHED IMAGE) -->
-        <div class="space-y-10 min-h-[500px]">
-            @foreach($doctors as $doc)
-            @php
-                $dayMap = [
-                    'Senin' => [],
-                    'Selasa' => [],
-                    'Rabu' => [],
-                    'Kamis' => [],
-                    'Jumat' => [],
-                    'Sabtu' => [],
-                    'Minggu' => []
-                ];
-                foreach($doc->schedules as $sched) {
-                    if (isset($dayMap[$sched->day])) {
-                        $dayMap[$sched->day][] = \Carbon\Carbon::parse($sched->start_time)->format('H:i') . ' - ' . \Carbon\Carbon::parse($sched->end_time)->format('H:i');
-                    }
-                }
-            @endphp
-            <div x-show="isDoctorVisible({{ $doc->id }})" 
-                 x-transition:enter="transition ease-out duration-200"
-                 x-transition:enter-start="opacity-0 translate-y-2"
-                 x-transition:enter-end="opacity-100 translate-y-0"
-                 class="space-y-4 pb-8 mb-4 border-b-2 border-yellow-400 last:border-b-0">
-                
-                <!-- POLYCLINIC / SPECIALTY TITLE (GREEN SUBHEADING) -->
-                <div class="flex items-center gap-2 border-b-2 border-gray-100 pb-2">
-                    <h4 class="text-base sm:text-lg font-extrabold text-[#0e7c47] tracking-tight">
-                        {{ $doc->polyclinic?->tr('name') }}
-                    </h4>
-                </div>
-
-                <!-- DOCTOR ROW ITEM -->
-                <div class="flex flex-col md:flex-row items-start md:items-center gap-6 pt-2">
-                    
-                    <!-- CIRCULAR DOCTOR PHOTO -->
-                    <div class="flex-shrink-0 mx-auto md:mx-0">
-                        <div class="w-28 h-28 sm:w-32 sm:h-32 rounded-full overflow-hidden border-4 border-emerald-600 p-1 bg-white shadow-md">
-                            <img src="{{ $doc->photo ?? 'https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&w=400&q=80' }}" 
-                                 alt="{{ $doc->name }}" 
-                                 class="w-full h-full rounded-full object-cover"
-                                 loading="lazy">
-                        </div>
-                    </div>
-
-                    <!-- DOCTOR INFO & WEEKLY SCHEDULE TABLE -->
-                    <div class="flex-grow w-full space-y-3">
-                        
-                        <!-- DOCTOR NAME & SUBTITLE & APPOINTMENT BUTTON -->
-                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                            <div>
-                                <h3 class="text-base sm:text-lg font-extrabold text-gray-900 leading-snug">
-                                    {{ $doc->name }}, {{ $doc->title_degree }}
-                                </h3>
-                                <div class="text-xs text-gray-500 font-semibold mt-0.5">
-                                    RSU Fikri Medika Karawang <span class="text-gray-300">|</span> <span class="text-[#0e7c47]">{{ $doc->tr('specialty') }}</span>
-                                </div>
-                            </div>
-
-                            <a href="#kontak" class="inline-flex items-center justify-center gap-2 px-5 py-2 rounded-lg bg-[#0e7c47] hover:bg-[#096237] text-white text-xs font-extrabold uppercase tracking-wider shadow-sm transition-all self-start sm:self-auto">
-                                <i class="fa-solid fa-calendar-check"></i>
-                                <span>APPOINTMENT</span>
-                            </a>
-                        </div>
-
-                        <!-- SIMPLE & CLEAN JADWAL BADGES (ONLY ACTIVE DAYS) -->
-                        <div class="pt-1">
-                            <div class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 flex items-center gap-1.5">
-                                <i class="fa-regular fa-clock text-[#0e7c47]"></i>
-                                <span>{{ __('Jadwal Praktik Harian') }}:</span>
-                            </div>
-                            <div class="flex flex-wrap items-center gap-2.5">
-                                @php $hasAnySched = false; @endphp
-                                @foreach(['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'] as $dayKey)
-                                    @if(!empty($dayMap[$dayKey]))
-                                        @php $hasAnySched = true; @endphp
-                                        @foreach($dayMap[$dayKey] as $timeSlot)
-                                            <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-emerald-50/80 border border-emerald-200/80 text-xs shadow-2xs">
-                                                <span class="font-extrabold uppercase tracking-wide text-[#0e7c47]">{{ __($dayKey) }}</span>
-                                                <span class="text-emerald-300 font-bold">•</span>
-                                                <span class="font-semibold text-gray-700">{{ $timeSlot }}</span>
-                                            </div>
-                                        @endforeach
-                                    @endif
-                                @endforeach
-                                @if(!$hasAnySched)
-                                    <span class="text-xs text-gray-400 font-medium italic">{{ __('Tidak ada jadwal harian') }}</span>
-                                @endif
-                            </div>
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </div>
-            @endforeach
-
-            <!-- NO RESULTS NOTIFICATION -->
-            <div x-show="filteredDoctors.length === 0" class="text-center py-16 text-gray-500 font-medium">
-                <i class="fa-solid fa-user-doctor text-4xl text-gray-300 mb-3 block"></i>
-                <div>{{ __('Jadwal belum tersedia') }}</div>
-            </div>
-        </div>
-
-        <!-- PAGINATION CONTROLS (10 DOCTORS PER PAGE, MATCHING IMAGE CIRCULAR NUMBERS) -->
-        <div x-show="totalPages > 1" class="mt-12 flex items-center justify-center gap-2">
-            
-            <!-- PREVIOUS BUTTON -->
-            <button @click="goToPage(currentPage - 1)" 
-                    :disabled="currentPage === 1" 
-                    :class="currentPage === 1 ? 'opacity-40 cursor-not-allowed text-gray-400 bg-gray-100' : 'text-gray-700 bg-white hover:bg-[#0e7c47] hover:text-white border border-gray-200 shadow-sm'"
-                    class="w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm transition-all">
-                <i class="fa-solid fa-chevron-left text-xs"></i>
-            </button>
-
-            <!-- PAGE NUMBER BUTTONS -->
-            <template x-for="p in totalPages" :key="p">
-                <button @click="goToPage(p)" 
-                        :class="currentPage === p ? 'bg-[#0e7c47] text-white font-extrabold shadow-md scale-105' : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-200 shadow-xs'"
-                        class="w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm transition-all"
-                        x-text="p">
-                </button>
-            </template>
-
-            <!-- NEXT BUTTON -->
-            <button @click="goToPage(currentPage + 1)" 
-                    :disabled="currentPage === totalPages" 
-                    :class="currentPage === totalPages ? 'opacity-40 cursor-not-allowed text-gray-400 bg-gray-100' : 'text-gray-700 bg-white hover:bg-[#0e7c47] hover:text-white border border-gray-200 shadow-sm'"
-                    class="w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm transition-all">
-                <i class="fa-solid fa-chevron-right text-xs"></i>
-            </button>
-
-        </div>
-
-    </div>
-</section>
 
 <!-- SECTION: BERITA & ARTIKEL KESEHATAN -->
 <section id="berita" class="py-20 bg-[#f7faf8] border-t border-gray-100">

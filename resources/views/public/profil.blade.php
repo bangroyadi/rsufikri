@@ -1,11 +1,11 @@
 @extends('layouts.app')
 
 @section('content')
-<!-- BREADCRUMB & HERO BANNER -->
-<section class="relative bg-gradient-to-r from-[#0e7c47] via-[#096237] to-[#084b2a] text-white py-14 px-4 sm:px-6 lg:px-8 overflow-hidden shadow-inner">
-    <!-- BACKGROUND DECORATIVE GLOW -->
-    <div class="absolute -right-20 -bottom-20 w-96 h-96 bg-yellow-400/10 rounded-full blur-3xl pointer-events-none"></div>
-    <div class="absolute left-10 top-0 w-72 h-72 bg-emerald-400/10 rounded-full blur-2xl pointer-events-none"></div>
+<!-- BREADCRUMB & REAL HOSPITAL HERO BANNER -->
+<section class="relative text-white py-16 px-4 sm:px-6 lg:px-8 overflow-hidden shadow-xl bg-cover bg-center" style="background-image: url('{{ asset('banner-profil.png') }}');">
+    <!-- DARK GREEN OVERLAY WITH ACCENT GLOW -->
+    <div class="absolute inset-0 bg-gradient-to-r from-[#063e23]/95 via-[#0e7c47]/85 to-[#042817]/90 backdrop-blur-[2px]"></div>
+    <div class="absolute -right-20 -bottom-20 w-96 h-96 bg-yellow-400/15 rounded-full blur-3xl pointer-events-none"></div>
 
     <div class="max-w-6xl mx-auto relative z-10">
         <!-- BREADCRUMB -->
@@ -21,27 +21,24 @@
 
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
             <div class="lg:col-span-8">
-                <span class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white/10 text-yellow-300 text-xs font-bold border border-yellow-300/30 backdrop-blur-sm mb-3">
-                    <i class="fa-solid fa-hospital-user text-xs"></i> PT. Karya Mandiri Medika Utama
-                </span>
-                <h1 class="text-3xl sm:text-5xl font-extrabold tracking-tight leading-tight">
-                    Profil, Visi, Misi & Motto
+                <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/15 text-yellow-300 text-xs font-black border border-yellow-300/40 backdrop-blur-md mb-3 shadow-sm">
+                    <i class="fa-solid fa-quote-left text-xs"></i> MOTTO UTAMA RSU FIKRI MEDIKA
+                </div>
+                <h1 class="text-2xl sm:text-4xl lg:text-5xl font-black tracking-tight leading-tight drop-shadow-md text-white">
+                    "Kesehatan Anda Prioritas Layanan Utama Kami"
                 </h1>
-                <p class="mt-3 text-sm sm:text-base text-emerald-100 leading-relaxed max-w-3xl">
-                    RSU Fikri Medika Karawang berkomitmen memberikan pelayanan medis terbaik, berkualitas, unggul, dan terpercaya bagi seluruh masyarakat.
-                </p>
             </div>
             
             <!-- ACCREDITATION & LEGALITY BADGE CARD -->
             <div class="lg:col-span-4 flex lg:justify-end">
-                <div class="bg-white/10 backdrop-blur-md border border-white/20 p-5 rounded-2xl text-center shadow-2xl w-full max-w-xs">
-                    <div class="w-14 h-14 bg-yellow-400 text-gray-900 rounded-full flex items-center justify-center mx-auto text-2xl font-bold mb-3 shadow-lg shadow-yellow-400/30">
+                <div class="bg-white/15 backdrop-blur-md border-2 border-white/20 p-6 rounded-2xl text-center shadow-2xl w-full max-w-xs transform hover:scale-105 transition-transform">
+                    <div class="w-14 h-14 bg-gradient-to-tr from-yellow-400 to-amber-300 text-slate-950 rounded-2xl flex items-center justify-center mx-auto text-2xl font-black mb-3 shadow-lg shadow-yellow-400/30">
                         <i class="fa-solid fa-award"></i>
                     </div>
-                    <h3 class="font-bold text-white text-base">Terakreditasi Paripurna</h3>
-                    <p class="text-xs text-yellow-200 mt-1">Komisi Akreditasi Rumah Sakit (KARS)</p>
-                    <span class="inline-block mt-3 px-3 py-1 rounded-lg bg-emerald-900/60 text-emerald-200 text-[11px] font-semibold border border-emerald-500/30">
-                        Standar Mutu Medis Nasional
+                    <h3 class="font-black text-white text-lg">Terakreditasi Paripurna</h3>
+                    <p class="text-xs text-yellow-300 font-bold mt-1">Komisi Akreditasi Rumah Sakit (KARS)</p>
+                    <span class="inline-block mt-3 px-3.5 py-1 rounded-xl bg-emerald-950/80 text-emerald-200 text-xs font-extrabold border border-emerald-400/30 shadow-xs">
+                        ⭐ Standar Mutu Medis Nasional ⭐
                     </span>
                 </div>
             </div>
@@ -49,71 +46,7 @@
     </div>
 </section>
 
-<!-- MOTTO HIGHLIGHT BANNER -->
-<section class="relative -mt-7 z-20 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto">
-    <div class="bg-gradient-to-r from-yellow-400 via-amber-400 to-yellow-500 rounded-2xl shadow-xl p-6 text-gray-900 flex flex-col sm:flex-row items-center justify-between gap-4 border-2 border-yellow-300">
-        <div class="flex items-center gap-4">
-            <div class="w-14 h-14 rounded-2xl bg-gray-900 text-yellow-400 flex items-center justify-center text-2xl shrink-0 shadow-md">
-                <i class="fa-solid fa-quote-left"></i>
-            </div>
-            <div>
-                <span class="text-xs font-extrabold uppercase tracking-widest text-gray-800">Motto Utama RSU Fikri Medika</span>
-                <h3 class="text-xl sm:text-2xl font-black text-gray-900 tracking-tight mt-0.5">
-                    "Kesehatan Anda Prioritas Layanan Utama Kami"
-                </h3>
-            </div>
-        </div>
-        <a href="{{ url('/buat-janji') }}" class="px-5 py-2.5 rounded-xl bg-gray-900 text-white text-xs sm:text-sm font-bold hover:bg-gray-800 transition-colors shadow shrink-0 flex items-center gap-2">
-            <i class="fa-solid fa-heart-pulse text-red-500"></i>
-            <span>Daftar / Buat Janji</span>
-        </a>
-    </div>
-</section>
 
-<!-- STATS COUNTER BAR -->
-<section class="pt-8 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto">
-    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 grid grid-cols-2 md:grid-cols-4 gap-6 divide-y md:divide-y-0 md:divide-x divide-gray-100">
-        <div class="flex items-center gap-4 pt-2 md:pt-0">
-            <div class="w-12 h-12 rounded-2xl bg-emerald-50 text-[#0e7c47] flex items-center justify-center text-xl shrink-0">
-                <i class="fa-solid fa-bed-pulse"></i>
-            </div>
-            <div>
-                <h4 class="text-2xl font-extrabold text-gray-900">150+</h4>
-                <p class="text-xs text-gray-500 font-medium">Tempat Tidur Rawat Inap</p>
-            </div>
-        </div>
-
-        <div class="flex items-center gap-4 pt-2 md:pt-0 md:pl-6">
-            <div class="w-12 h-12 rounded-2xl bg-emerald-50 text-[#0e7c47] flex items-center justify-center text-xl shrink-0">
-                <i class="fa-solid fa-user-doctor"></i>
-            </div>
-            <div>
-                <h4 class="text-2xl font-extrabold text-gray-900">50+</h4>
-                <p class="text-xs text-gray-500 font-medium">Dokter Spesialis & Subspesialis</p>
-            </div>
-        </div>
-
-        <div class="flex items-center gap-4 pt-2 md:pt-0 md:pl-6">
-            <div class="w-12 h-12 rounded-2xl bg-emerald-50 text-[#0e7c47] flex items-center justify-center text-xl shrink-0">
-                <i class="fa-solid fa-truck-medical"></i>
-            </div>
-            <div>
-                <h4 class="text-2xl font-extrabold text-gray-900">24/7</h4>
-                <p class="text-xs text-gray-500 font-medium">Layanan IGD & Ambulans Siaga</p>
-            </div>
-        </div>
-
-        <div class="flex items-center gap-4 pt-2 md:pt-0 md:pl-6">
-            <div class="w-12 h-12 rounded-2xl bg-emerald-50 text-[#0e7c47] flex items-center justify-center text-xl shrink-0">
-                <i class="fa-solid fa-star text-yellow-500"></i>
-            </div>
-            <div>
-                <h4 class="text-2xl font-extrabold text-gray-900">98.6%</h4>
-                <p class="text-xs text-gray-500 font-medium">Tingkat Kepuasan Pasien</p>
-            </div>
-        </div>
-    </div>
-</section>
 
 <!-- MAIN CONTENT SECTION -->
 <section class="py-12 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto space-y-16">
@@ -185,17 +118,91 @@
             <p class="text-gray-600 text-sm">Pedoman resmi RSU Fikri Medika dalam melayani masyarakat.</p>
         </div>
 
-        <!-- VISI BANNER CARD -->
-        <div class="bg-gradient-to-r from-[#0e7c47] via-[#096237] to-[#074728] rounded-3xl p-8 text-white shadow-xl relative overflow-hidden">
-            <div class="absolute right-0 top-0 w-80 h-80 bg-yellow-400/10 rounded-full blur-2xl"></div>
-            <div class="relative z-10 max-w-4xl space-y-3">
-                <div class="flex items-center gap-3 text-yellow-300 font-bold text-sm">
-                    <i class="fa-solid fa-compass text-lg"></i>
-                    <span>VISI RSU FIKRI MEDIKA</span>
+        <!-- HIGHLY ATTRACTIVE & HUMAN-CENTERED VISI SHOWCASE CARD -->
+        <div class="bg-gradient-to-br from-[#084829] via-[#0e7c47] to-[#042d19] rounded-3xl p-6 sm:p-8 lg:p-10 text-white shadow-2xl relative overflow-hidden border-2 border-emerald-400/30">
+            
+            <!-- BACKGROUND GLOW & ACCENTS -->
+            <div class="absolute -right-20 -top-20 w-96 h-96 bg-yellow-400/15 rounded-full blur-3xl pointer-events-none"></div>
+            <div class="absolute left-10 -bottom-20 w-80 h-80 bg-emerald-400/10 rounded-full blur-2xl pointer-events-none"></div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center relative z-10">
+                
+                <!-- LEFT COLUMN: VISI TEXT & CORE PILLARS -->
+                <div class="lg:col-span-7 space-y-6">
+                    
+                    <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/15 text-yellow-300 text-xs font-black uppercase tracking-wider border border-yellow-300/40 backdrop-blur-md shadow-xs">
+                        <i class="fa-solid fa-compass text-sm text-yellow-400 animate-pulse"></i>
+                        <span>Visi Utama RSU Fikri Medika</span>
+                    </div>
+
+                    <h3 class="text-2xl sm:text-3xl lg:text-4xl font-black leading-snug text-white drop-shadow-md">
+                        "Menjadikan rumah sakit swasta yang menyediakan layanan <span class="text-yellow-300 underline decoration-yellow-400/60 decoration-wavy decoration-2">berkualitas</span>, <span class="text-yellow-300 underline decoration-yellow-400/60 decoration-wavy decoration-2">unggul</span>, dan <span class="text-yellow-300 underline decoration-yellow-400/60 decoration-wavy decoration-2">terpercaya</span> di Karawang."
+                    </h3>
+
+                    <!-- 3 INTERACTIVE FEATURE BADGES -->
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
+                        <div class="flex items-center gap-2.5 p-3 rounded-2xl bg-white/10 border border-white/15 backdrop-blur-md">
+                            <div class="w-8 h-8 rounded-xl bg-yellow-400 text-slate-950 flex items-center justify-center text-sm font-black shrink-0 shadow-sm">
+                                <i class="fa-solid fa-star"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-extrabold text-white text-xs">Berkualitas</h4>
+                                <p class="text-[10px] text-emerald-100 font-medium">Standar Mutu Medis</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center gap-2.5 p-3 rounded-2xl bg-white/10 border border-white/15 backdrop-blur-md">
+                            <div class="w-8 h-8 rounded-xl bg-yellow-400 text-slate-950 flex items-center justify-center text-sm font-black shrink-0 shadow-sm">
+                                <i class="fa-solid fa-award"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-extrabold text-white text-xs">Unggul</h4>
+                                <p class="text-[10px] text-emerald-100 font-medium">Fasilitas Modern</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center gap-2.5 p-3 rounded-2xl bg-white/10 border border-white/15 backdrop-blur-md">
+                            <div class="w-8 h-8 rounded-xl bg-yellow-400 text-slate-950 flex items-center justify-center text-sm font-black shrink-0 shadow-sm">
+                                <i class="fa-solid fa-hand-holding-heart"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-extrabold text-white text-xs">Terpercaya</h4>
+                                <p class="text-[10px] text-emerald-100 font-medium">Karakter Islami</p>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
-                <h3 class="text-xl sm:text-2xl font-bold leading-relaxed text-white">
-                    "Menjadikan rumah sakit swasta yang menyediakan layanan berkualitas, unggul, dan terpercaya di Karawang."
-                </h3>
+
+                <!-- RIGHT COLUMN: HUMAN ELEMENT DOCTOR PORTRAIT CARD -->
+                <div class="lg:col-span-5 relative flex justify-center">
+                    <div class="relative w-full max-w-sm rounded-3xl overflow-hidden border-4 border-white/20 shadow-2xl group">
+                        
+                        <!-- DOCTOR PHOTO -->
+                        <img src="{{ asset('visi-doctor.png') }}" 
+                             alt="Tim Medis RSU Fikri Medika" 
+                             class="w-full h-72 sm:h-80 object-cover object-top transform group-hover:scale-105 transition-transform duration-500">
+
+                        <!-- GRADIENT OVERLAY ON PHOTO -->
+                        <div class="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/20 to-transparent"></div>
+
+                        <!-- FLOATING CAPTION ON PHOTO -->
+                        <div class="absolute bottom-4 left-4 right-4 p-3.5 rounded-2xl bg-white/15 backdrop-blur-md border border-white/20 text-white space-y-1">
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs font-black text-yellow-300 uppercase tracking-wider flex items-center gap-1.5">
+                                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+                                    <span>Tim Medis Siap Melayani</span>
+                                </span>
+                                <span class="text-[10px] font-bold px-2 py-0.5 rounded-md bg-yellow-400 text-slate-950">24/7 Siaga</span>
+                            </div>
+                            <p class="text-[11px] text-emerald-100 font-medium leading-snug">
+                                Melayani dengan kehangatan profesionalisme & nilai-nilai kedokteran Islami.
+                            </p>
+                        </div>
+
+                    </div>
+                </div>
+
             </div>
         </div>
 
@@ -288,21 +295,29 @@
         </div>
     </div>
 
-    <!-- CTA BANNER -->
-    <div class="bg-gradient-to-r from-red-600 via-red-600 to-red-700 rounded-3xl p-8 text-white shadow-xl flex flex-col md:flex-row items-center justify-between gap-6">
-        <div class="space-y-2 text-center md:text-left">
-            <span class="px-3 py-1 rounded-full bg-white/20 text-white text-xs font-bold uppercase tracking-wider">Layanan Terpercaya</span>
-            <h3 class="text-xl sm:text-2xl font-extrabold">Konsultasikan Kesehatan Anda Bersama Dokter Kami</h3>
-            <p class="text-xs sm:text-sm text-red-100 max-w-xl">
+    <!-- CTA BANNER (ELEGANT HOSPITAL GREEN THEME) -->
+    <div class="bg-gradient-to-r from-[#0a5c34] via-[#0e7c47] to-[#084b2a] rounded-3xl p-8 text-white shadow-xl flex flex-col md:flex-row items-center justify-between gap-6 border-2 border-emerald-500/20 relative overflow-hidden">
+        <!-- BACKGROUND DECORATIVE GLOW -->
+        <div class="absolute -right-16 -bottom-16 w-64 h-64 bg-yellow-400/10 rounded-full blur-2xl pointer-events-none"></div>
+
+        <div class="space-y-2 text-center md:text-left relative z-10">
+            <span class="px-3.5 py-1 rounded-full bg-white/15 text-yellow-300 text-xs font-black uppercase tracking-wider border border-yellow-300/30 backdrop-blur-md">
+                Layanan Terpercaya
+            </span>
+            <h3 class="text-xl sm:text-2xl font-black tracking-tight drop-shadow-xs">
+                Konsultasikan Kesehatan Anda Bersama Dokter Kami
+            </h3>
+            <p class="text-xs sm:text-sm text-emerald-100 max-w-xl font-medium">
                 Dapatkan pelayanan medis terbaik dari dokter spesialis RSU Fikri Medika Karawang.
             </p>
         </div>
-        <div class="flex flex-col sm:flex-row gap-3 shrink-0">
-            <a href="{{ url('/jadwal-dokter') }}" class="px-5 py-3 rounded-xl bg-white text-gray-900 font-bold text-xs sm:text-sm hover:bg-gray-100 transition-colors shadow flex items-center justify-center gap-2">
+
+        <div class="flex flex-col sm:flex-row gap-3 shrink-0 relative z-10">
+            <a href="{{ url('/jadwal-dokter') }}" class="px-5 py-3 rounded-xl bg-white text-[#0e7c47] font-extrabold text-xs sm:text-sm hover:bg-emerald-50 transition-colors shadow flex items-center justify-center gap-2">
                 <i class="fa-solid fa-calendar-days text-[#0e7c47]"></i>
                 <span>Jadwal Dokter</span>
             </a>
-            <a href="{{ url('/buat-janji') }}" class="px-5 py-3 rounded-xl bg-yellow-400 text-gray-900 font-bold text-xs sm:text-sm hover:bg-yellow-300 transition-colors shadow flex items-center justify-center gap-2">
+            <a href="{{ url('/buat-janji') }}" class="px-5 py-3 rounded-xl bg-yellow-400 text-slate-950 font-black text-xs sm:text-sm hover:bg-yellow-300 transition-colors shadow flex items-center justify-center gap-2">
                 <i class="fa-solid fa-heart-pulse text-red-600"></i>
                 <span>Buat Janji Online</span>
             </a>

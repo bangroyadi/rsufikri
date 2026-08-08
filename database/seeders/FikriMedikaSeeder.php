@@ -71,20 +71,58 @@ class FikriMedikaSeeder extends Seeder
         Banner::truncate();
         Banner::create([
             'title' => [
-                'id' => 'Pelayanan Kesehatan Profesional Berorientasi Islami',
-                'en' => 'Professional Healthcare with Islamic Values'
+                'id' => 'Program Unggulan Kemilau Cinta',
+                'en' => 'Kemilau Cinta Featured Program'
             ],
             'subtitle' => [
-                'id' => 'RSU Fikri Medika melayani pasien 24 jam dengan fasilitas medis modern dan tenaga dokter spesialis terpercaya.',
-                'en' => 'RSU Fikri Medika serves patients 24/7 with modern medical facilities and trusted specialist doctors.'
+                'id' => 'Pelayanan persalinan dan kesehatan ibu & anak secara komprehensif, aman, dan penuh kasih dengan sentuhan pelayanan kedokteran Islami & modern.',
+                'en' => 'Comprehensive, safe, and compassionate maternity and child health services with Islamic and modern medical care.'
             ],
-            'image' => 'https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&w=1200&q=80',
+            'image' => 'hero-doctor.png',
             'button_text' => [
-                'id' => 'Lihat Jadwal Dokter',
-                'en' => 'Doctor Schedule'
+                'id' => 'Daftar Online',
+                'en' => 'Online Registration'
             ],
-            'button_link' => '#jadwal-dokter',
+            'button_link' => '#kontak',
             'order' => 1,
+            'is_active' => true,
+        ]);
+
+        Banner::create([
+            'title' => [
+                'id' => 'Instalasi Gawat Darurat (IGD 24 Jam)',
+                'en' => '24-Hour Emergency Department (IGD)'
+            ],
+            'subtitle' => [
+                'id' => 'Pelayanan medis penanganan gawat darurat cepat, tanggap, dan terpercaya oleh dokter spesialis dan perawat profesional berpengalaman.',
+                'en' => 'Fast, responsive, and trusted emergency medical care by experienced specialists and professional nurses.'
+            ],
+            'image' => 'banner-igd.png',
+            'button_text' => [
+                'id' => 'Call Emergency: (0267) 8454999',
+                'en' => 'Emergency Call: (0267) 8454999'
+            ],
+            'button_link' => 'tel:02678454999',
+            'order' => 2,
+            'is_active' => true,
+        ]);
+
+        Banner::create([
+            'title' => [
+                'id' => 'Layanan Hemodialisa & Penunjang Medik',
+                'en' => 'Hemodialysis & Medical Support Services'
+            ],
+            'subtitle' => [
+                'id' => 'Fasilitas cuci darah modern berstandar medis tinggi dengan pendampingan dokter spesialis ginjal dan perawat bersertifikasi.',
+                'en' => 'Modern dialysis facilities meeting high medical standards with kidney specialists and certified nurses.'
+            ],
+            'image' => 'banner-profil.png',
+            'button_text' => [
+                'id' => 'Konsultasi Layanan',
+                'en' => 'Service Consultation'
+            ],
+            'button_link' => '#layanan',
+            'order' => 3,
             'is_active' => true,
         ]);
 
