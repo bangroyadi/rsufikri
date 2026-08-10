@@ -1,0 +1,206 @@
+@extends('layouts.admin')
+
+@section('title', 'Manajemen Berita Rumah Sakit')
+
+@section('content')
+<div x-data="{ addModalOpen: false, editModalOpen: false, editNews: {}, search: '', filterCat: '' }" class="space-y-6">
+    
+    @if(session('success'))
+    <div style="background-color: #f0fdf4; border: 1px solid #bbf7d0; color: #0e7c47;" class="p-4 rounded-2xl font-bold text-sm flex items-center gap-2">
+        <i class="fa-solid fa-circle-check text-base"></i>
+        <span>{{ session('success') }}</span>
+    </div>
+    @endif
+
+    <!-- PAGE HEADER WITH TOP ADD BUTTON -->
+    <div style="background-color: #ffffff; border: 1px solid #e2e8f0;" class="p-6 rounded-3xl shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+            <h2 class="text-xl font-black text-slate-900">Kelola Berita RS</h2>
+            <p class="text-xs text-slate-500 mt-0.5">Publikasi berita kegiatan dan informasi resmi RSU Fikri Medika.</p>
+        </div>
+
+        <button @click="addModalOpen = true" style="background-color: #0e7c47; color: #ffffff;" class="px-5 py-2.5 rounded-xl font-extrabold text-xs shadow-md hover:bg-[#096237] hover:shadow-lg transition-all flex items-center justify-center gap-2 shrink-0 cursor-pointer">
+            <i class="fa-solid fa-plus text-sm"></i>
+            <span>+ Tulis Berita Baru</span>
+        </button>
+    </div>
+
+    <!-- TABLE & SEARCH FILTER CONTAINER -->
+    <div style="background-color: #ffffff; border: 1px solid #e2e8f0;" class="rounded-3xl shadow-xs overflow-hidden">
+        
+        <!-- SEARCH & FILTER TOOLBAR -->
+        <div style="border-bottom: 1px solid #f1f5f9; background-color: #f8fafc;" class="p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div class="flex items-center gap-2">
+                <i class="fa-solid fa-filter text-emerald-600 text-sm"></i>
+                <h3 class="font-black text-slate-900 text-sm">Filter & Pencarian Berita</h3>
+            </div>
+
+            <div class="flex flex-wrap items-center gap-3">
+                <!-- INLINE CSS PERFECTLY CENTERED SEARCH INPUT -->
+                <div style="position: relative; width: 100%; max-width: 240px;">
+                    <i class="fa-solid fa-magnifying-glass" style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: #94a3b8; font-size: 12px; pointer-events: none; z-index: 10;"></i>
+                    <input type="text" x-model="search" placeholder="Cari judul berita..." style="padding-left: 38px; padding-right: 16px; padding-top: 8px; padding-bottom: 8px; border-radius: 12px; border: 1px solid #cbd5e1; font-size: 12px; width: 100%; background-color: #ffffff; outline: none;" class="focus:ring-2 focus:ring-[#0e7c47]">
+                </div>
+
+                <!-- CATEGORY FILTER DROPDOWN -->
+                <select x-model="filterCat" class="px-3.5 py-2 rounded-xl border border-slate-300 bg-white text-xs font-semibold focus:ring-2 focus:ring-[#0e7c47] outline-none">
+                    <option value="">Semua Kategori</option>
+                    @foreach($newsList->pluck('category')->unique() as $cat)
+                    @php $catName = is_array($cat) ? ($cat['id'] ?? '') : ($cat ?? 'Berita'); @endphp
+                    @if(!empty($catName))
+                    <option value="{{ $catName }}">{{ $catName }}</option>
+                    @endif
+                    @endforeach
+                </select>
+            </div>
+        </div>
+
+        <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+                <thead style="background-color: #f1f5f9; border-bottom: 1px solid #e2e8f0; color: #475569;" class="uppercase tracking-wider font-extrabold">
+                    <tr>
+                        <th class="p-4">Tanggal</th>
+                        <th class="p-4">Judul Berita</th>
+                        <th class="p-4">Kategori</th>
+                        <th class="p-4 text-center">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100 font-semibold text-slate-700">
+                    @foreach($newsList as $item)
+                    @php
+                        $nTitle = is_array($item->title) ? ($item->title['id'] ?? '') : $item->title;
+                        $nCat = is_array($item->category) ? ($item->category['id'] ?? '') : ($item->category ?? 'Berita');
+                        $nExcerpt = is_array($item->excerpt) ? ($item->excerpt['id'] ?? '') : ($item->excerpt ?? '');
+                    @endphp
+                    <tr x-show="(search === '' || '{{ addslashes(strtolower($nTitle)) }}'.includes(search.toLowerCase())) && (filterCat === '' || '{{ addslashes($nCat) }}' === filterCat)" class="hover:bg-slate-50/80 transition-colors">
+                        <td class="p-4 font-mono text-slate-400">
+                            {{ \Carbon\Carbon::parse($item->published_at)->format('d M Y') }}
+                        </td>
+                        <td class="p-4 font-bold text-slate-900 text-sm max-w-sm truncate">
+                            {{ $nTitle }}
+                        </td>
+                        <td class="p-4">
+                            <span style="background-color: #f0fdf4; border: 1px solid #bbf7d0; color: #0e7c47;" class="px-3 py-1 rounded-lg font-bold">
+                                {{ $nCat }}
+                            </span>
+                        </td>
+                        <td class="p-4 text-center">
+                            <div class="flex items-center justify-center gap-2">
+                                <button @click="editNews = { id: {{ $item->id }}, title_id: '{{ addslashes($nTitle) }}', category_id: '{{ addslashes($nCat) }}', excerpt_id: '{{ addslashes($nExcerpt) }}', thumbnail: '{{ addslashes($item->thumbnail ?? '') }}' }; editModalOpen = true" style="background-color: #fffbeb; color: #d97706; border: 1px solid #fde68a;" class="p-2 rounded-xl hover:bg-amber-100 transition-colors cursor-pointer" title="Edit Berita">
+                                    <i class="fa-solid fa-pen-to-square text-xs"></i>
+                                </button>
+                                <form action="{{ route('admin.news.destroy', $item->id) }}" method="POST" onsubmit="return confirm('Hapus berita ini?')">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" style="background-color: #fef2f2; color: #dc2626; border: 1px solid #fecaca;" class="p-2 rounded-xl hover:bg-red-100 transition-colors cursor-pointer" title="Hapus Berita">
+                                        <i class="fa-regular fa-trash-can text-xs"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- ADD NEWS MODAL -->
+    <div x-show="addModalOpen" x-cloak class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
+        <div @click.away="addModalOpen = false" class="bg-white rounded-3xl p-6 sm:p-8 max-w-lg w-full shadow-2xl space-y-5">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                <h3 class="font-black text-slate-900 text-base flex items-center gap-2">
+                    <i class="fa-regular fa-newspaper text-[#0e7c47]"></i>
+                    <span>Tulis & Terbitkan Berita RS Baru</span>
+                </h3>
+                <button @click="addModalOpen = false" class="text-slate-400 hover:text-slate-600">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <form action="{{ route('admin.news.store') }}" method="POST" class="space-y-4">
+                @csrf
+
+                <div>
+                    <label class="block text-xs font-extrabold text-slate-700 uppercase tracking-wider mb-1">Judul Berita</label>
+                    <input type="text" name="title_id" required placeholder="Judul Berita Utama..." class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs focus:ring-2 focus:ring-[#0e7c47] outline-none">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-extrabold text-slate-700 uppercase tracking-wider mb-1">Kategori</label>
+                    <input type="text" name="category_id" placeholder="Kegiatan RS / Fasilitas RS" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs focus:ring-2 focus:ring-[#0e7c47] outline-none">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-extrabold text-slate-700 uppercase tracking-wider mb-1">Kutipan / Excerpt Singkat</label>
+                    <input type="text" name="excerpt_id" placeholder="Ringkasan singkat berita..." class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs focus:ring-2 focus:ring-[#0e7c47] outline-none">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-extrabold text-slate-700 uppercase tracking-wider mb-1">URL Gambar Thumbnail (Opsional)</label>
+                    <input type="text" name="thumbnail" placeholder="https://images.unsplash.com/..." class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs focus:ring-2 focus:ring-[#0e7c47] outline-none">
+                </div>
+
+                <div class="pt-3 border-t border-slate-100 flex justify-end gap-2">
+                    <button type="button" @click="addModalOpen = false" class="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-extrabold">
+                        Batal
+                    </button>
+                    <button type="submit" style="background-color: #0e7c47; color: #ffffff;" class="px-5 py-2 rounded-xl text-xs font-extrabold shadow">
+                        Terbitkan Berita
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- EDIT NEWS MODAL -->
+    <div x-show="editModalOpen" x-cloak class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
+        <div @click.away="editModalOpen = false" class="bg-white rounded-3xl p-6 sm:p-8 max-w-lg w-full shadow-2xl space-y-5">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                <h3 class="font-black text-slate-900 text-base flex items-center gap-2">
+                    <i class="fa-solid fa-pen-to-square text-amber-500"></i>
+                    <span>Edit Berita RS</span>
+                </h3>
+                <button @click="editModalOpen = false" class="text-slate-400 hover:text-slate-600">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <form :action="'{{ url('admin/news') }}/' + editNews.id" method="POST" class="space-y-4">
+                @csrf
+                @method('PUT')
+
+                <div>
+                    <label class="block text-xs font-extrabold text-slate-700 uppercase tracking-wider mb-1">Judul Berita</label>
+                    <input type="text" name="title_id" x-model="editNews.title_id" required class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs focus:ring-2 focus:ring-[#0e7c47] outline-none">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-extrabold text-slate-700 uppercase tracking-wider mb-1">Kategori</label>
+                    <input type="text" name="category_id" x-model="editNews.category_id" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs focus:ring-2 focus:ring-[#0e7c47] outline-none">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-extrabold text-slate-700 uppercase tracking-wider mb-1">Kutipan / Excerpt Singkat</label>
+                    <input type="text" name="excerpt_id" x-model="editNews.excerpt_id" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs focus:ring-2 focus:ring-[#0e7c47] outline-none">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-extrabold text-slate-700 uppercase tracking-wider mb-1">URL Gambar Thumbnail</label>
+                    <input type="text" name="thumbnail" x-model="editNews.thumbnail" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs focus:ring-2 focus:ring-[#0e7c47] outline-none">
+                </div>
+
+                <div class="pt-3 border-t border-slate-100 flex justify-end gap-2">
+                    <button type="button" @click="editModalOpen = false" class="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-extrabold">
+                        Batal
+                    </button>
+                    <button type="submit" style="background-color: #0e7c47; color: #ffffff;" class="px-5 py-2 rounded-xl text-xs font-extrabold shadow">
+                        Simpan Perubahan
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+</div>
+@endsection

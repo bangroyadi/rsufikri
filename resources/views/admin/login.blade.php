@@ -80,5 +80,13 @@
 
     </div>
 
+    <script>
+        // Force server re-validation when pressing browser Back/Forward buttons
+        window.addEventListener('pageshow', function (event) {
+            if (event.persisted || (window.performance && window.performance.navigation.type === 2)) {
+                window.location.reload();
+            }
+        });
+    </script>
 </body>
 </html>

@@ -5,6 +5,16 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LanguageController;
 use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\AdminProfileController;
+use App\Http\Controllers\Admin\AdminDoctorController;
+use App\Http\Controllers\Admin\AdminScheduleController;
+use App\Http\Controllers\Admin\AdminPolyclinicController;
+use App\Http\Controllers\Admin\AdminServiceController;
+use App\Http\Controllers\Admin\AdminNewsController;
+use App\Http\Controllers\Admin\AdminArticleController;
+use App\Http\Controllers\Admin\AdminGalleryController;
+use App\Http\Controllers\Admin\AdminBannerController;
+use App\Http\Controllers\Admin\AdminContactController;
 
 // Public Routes
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -23,14 +33,64 @@ Route::get('/buat-janji', [HomeController::class, 'buatJanjiPage'])->name('buat.
 
 
 
+// Default Login Route Alias for Laravel Auth Middleware
+Route::get('/login', fn () => redirect()->route('admin.login'))->name('login');
+
 // Admin Auth Routes
-Route::prefix('admin')->name('admin.')->group(function () {
+Route::prefix('admin')->name('admin.')->middleware('prevent-back-history')->group(function () {
     Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
     Route::post('/login', [AuthController::class, 'login'])->name('login.submit');
-    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+    Route::match(['get', 'post'], '/logout', [AuthController::class, 'logout'])->name('logout');
 
     // Admin Protected Routes
     Route::middleware('auth')->group(function () {
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+        
+        // CMS Section Routes
+        Route::get('/profile', [AdminProfileController::class, 'index'])->name('profile.index');
+        Route::post('/profile', [AdminProfileController::class, 'update'])->name('profile.update');
+
+        Route::get('/doctors', [AdminDoctorController::class, 'index'])->name('doctors.index');
+        Route::post('/doctors', [AdminDoctorController::class, 'store'])->name('doctors.store');
+        Route::put('/doctors/{id}', [AdminDoctorController::class, 'update'])->name('doctors.update');
+        Route::delete('/doctors/{id}', [AdminDoctorController::class, 'destroy'])->name('doctors.destroy');
+
+        Route::get('/schedules', [AdminScheduleController::class, 'index'])->name('schedules.index');
+        Route::post('/schedules', [AdminScheduleController::class, 'store'])->name('schedules.store');
+        Route::put('/schedules/{id}', [AdminScheduleController::class, 'update'])->name('schedules.update');
+        Route::delete('/schedules/{id}', [AdminScheduleController::class, 'destroy'])->name('schedules.destroy');
+
+        Route::get('/polyclinics', [AdminPolyclinicController::class, 'index'])->name('polyclinics.index');
+        Route::post('/polyclinics', [AdminPolyclinicController::class, 'store'])->name('polyclinics.store');
+        Route::put('/polyclinics/{id}', [AdminPolyclinicController::class, 'update'])->name('polyclinics.update');
+        Route::delete('/polyclinics/{id}', [AdminPolyclinicController::class, 'destroy'])->name('polyclinics.destroy');
+
+        Route::get('/services', [AdminServiceController::class, 'index'])->name('services.index');
+        Route::post('/services', [AdminServiceController::class, 'store'])->name('services.store');
+        Route::put('/services/{id}', [AdminServiceController::class, 'update'])->name('services.update');
+        Route::delete('/services/{id}', [AdminServiceController::class, 'destroy'])->name('services.destroy');
+
+        Route::get('/news', [AdminNewsController::class, 'index'])->name('news.index');
+        Route::post('/news', [AdminNewsController::class, 'store'])->name('news.store');
+        Route::put('/news/{id}', [AdminNewsController::class, 'update'])->name('news.update');
+        Route::delete('/news/{id}', [AdminNewsController::class, 'destroy'])->name('news.destroy');
+
+        Route::get('/articles', [AdminArticleController::class, 'index'])->name('articles.index');
+        Route::post('/articles', [AdminArticleController::class, 'store'])->name('articles.store');
+        Route::put('/articles/{id}', [AdminArticleController::class, 'update'])->name('articles.update');
+        Route::delete('/articles/{id}', [AdminArticleController::class, 'destroy'])->name('articles.destroy');
+
+        Route::get('/galleries', [AdminGalleryController::class, 'index'])->name('galleries.index');
+        Route::post('/galleries', [AdminGalleryController::class, 'store'])->name('galleries.store');
+        Route::put('/galleries/{id}', [AdminGalleryController::class, 'update'])->name('galleries.update');
+        Route::delete('/galleries/{id}', [AdminGalleryController::class, 'destroy'])->name('galleries.destroy');
+
+        Route::get('/banners', [AdminBannerController::class, 'index'])->name('banners.index');
+        Route::post('/banners', [AdminBannerController::class, 'store'])->name('banners.store');
+        Route::put('/banners/{id}', [AdminBannerController::class, 'update'])->name('banners.update');
+        Route::delete('/banners/{id}', [AdminBannerController::class, 'destroy'])->name('banners.destroy');
+
+        Route::get('/contact', [AdminContactController::class, 'index'])->name('contact.index');
+        Route::post('/contact', [AdminContactController::class, 'update'])->name('contact.update');
     });
 });

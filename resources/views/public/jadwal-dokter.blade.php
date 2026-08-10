@@ -117,8 +117,10 @@
             
             <!-- POLYCLINIC / SPECIALTY TITLE BAR -->
             <div class="flex items-center justify-between border-b border-gray-100 pb-3">
-                <div class="flex items-center gap-2">
-                    <span class="w-3 h-3 rounded-full bg-[#0e7c47]"></span>
+                <div class="flex items-center gap-2.5">
+                    <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-[#0e7c47] to-emerald-600 text-white flex items-center justify-center text-xs sm:text-sm font-black shadow-xs shrink-0">
+                        <i class="fa-solid fa-{{ $doc->polyclinic->icon ?? 'stethoscope' }}"></i>
+                    </div>
                     <h4 class="text-base sm:text-lg font-black text-[#0e7c47] tracking-tight">
                         {{ $poliName }}
                     </h4>
@@ -133,13 +135,17 @@
                 
                 <!-- CIRCULAR DOCTOR PHOTO -->
                 <div class="flex-shrink-0 mx-auto md:mx-0">
-                    <div class="w-24 h-24 sm:w-28 sm:h-28 rounded-full overflow-hidden border-4 border-emerald-600 p-1 bg-white shadow-md">
-                        @if($doc->photo)
+                    <div class="w-24 h-24 sm:w-28 sm:h-28 rounded-full overflow-hidden border-4 border-emerald-600 p-1 bg-white shadow-md flex items-center justify-center">
+                        @if(!empty($doc->photo))
                             <img src="{{ \Illuminate\Support\Str::startsWith($doc->photo, 'http') ? $doc->photo : asset('storage/' . $doc->photo) }}" 
                                  alt="{{ $doc->name }}" 
-                                 class="w-full h-full rounded-full object-cover">
+                                 class="w-full h-full rounded-full object-cover"
+                                 onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                            <div class="w-full h-full rounded-full bg-gradient-to-tr from-[#0e7c47] to-emerald-500 text-white hidden items-center justify-center text-3xl sm:text-4xl font-bold shadow-inner">
+                                <i class="fa-solid fa-user-doctor"></i>
+                            </div>
                         @else
-                            <div class="w-full h-full rounded-full bg-gradient-to-tr from-[#0e7c47] to-emerald-500 text-white flex items-center justify-center text-3xl font-bold">
+                            <div class="w-full h-full rounded-full bg-gradient-to-tr from-[#0e7c47] to-emerald-500 text-white flex items-center justify-center text-3xl sm:text-4xl font-bold shadow-inner">
                                 <i class="fa-solid fa-user-doctor"></i>
                             </div>
                         @endif

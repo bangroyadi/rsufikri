@@ -132,7 +132,7 @@ class FikriMedikaSeeder extends Seeder
             'name' => ['id' => 'Bedah Plastik', 'en' => 'Plastic Surgery'],
             'slug' => 'bedah-plastik',
             'description' => ['id' => 'Layanan bedah plastik rekonstruksi dan estetika.', 'en' => 'Reconstructive and aesthetic plastic surgery services.'],
-            'icon' => 'user-md',
+            'icon' => 'wand-magic-sparkles',
             'is_active' => true,
         ]);
 
@@ -172,7 +172,7 @@ class FikriMedikaSeeder extends Seeder
             'name' => ['id' => 'Poli Bedah Umum', 'en' => 'General Surgery Clinic'],
             'slug' => 'poli-bedah-umum',
             'description' => ['id' => 'Konsultasi dan tindakan operatif bedah minor maupun mayor secara profesional.', 'en' => 'Consultation and surgical procedures for minor and major surgeries.'],
-            'icon' => 'scalpel',
+            'icon' => 'user-doctor',
             'is_active' => true,
         ]);
 
@@ -188,7 +188,7 @@ class FikriMedikaSeeder extends Seeder
             'name' => ['id' => 'Poli Jantung & Pembuluh Darah', 'en' => 'Cardiology Clinic'],
             'slug' => 'poli-jantung',
             'description' => ['id' => 'Pemeriksaan kesehatan jantung, EKG, Echocardiography, dan konsultasi kardiovaskular.', 'en' => 'Heart health checks, ECG, Echocardiography, and cardiovascular consultation.'],
-            'icon' => 'activity',
+            'icon' => 'heart-pulse',
             'is_active' => true,
         ]);
 
@@ -204,7 +204,7 @@ class FikriMedikaSeeder extends Seeder
             'name' => ['id' => 'Poli THT-KL', 'en' => 'ENT Clinic'],
             'slug' => 'poli-tht',
             'description' => ['id' => 'Pemeriksaan telinga, hidung, dan tenggorokan.', 'en' => 'Ear, nose, and throat examination.'],
-            'icon' => 'deaf',
+            'icon' => 'ear-listen',
             'is_active' => true,
         ]);
 
@@ -346,7 +346,7 @@ class FikriMedikaSeeder extends Seeder
                 'title_degree' => 'Sp.PD',
                 'polyclinic_id' => $poliDalam->id,
                 'specialty' => ['id' => 'Spesialis Penyakit Dalam', 'en' => 'Internal Medicine Specialist'],
-                'photo' => 'https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&w=400&q=80',
+                'photo' => null,
                 'schedules' => [
                     ['day' => 'Selasa', 'start_time' => '08:00:00', 'end_time' => '12:00:00'],
                     ['day' => 'Kamis', 'start_time' => '13:00:00', 'end_time' => '16:00:00'],
@@ -357,7 +357,7 @@ class FikriMedikaSeeder extends Seeder
                 'title_degree' => 'Sp.OG',
                 'polyclinic_id' => $poliObgyn->id,
                 'specialty' => ['id' => 'Spesialis Kebidanan & Kandungan', 'en' => 'Obstetrician & Gynecologist'],
-                'photo' => 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&w=400&q=80',
+                'photo' => null,
                 'schedules' => [
                     ['day' => 'Jumat', 'start_time' => '08:00:00', 'end_time' => '11:30:00'],
                     ['day' => 'Sabtu', 'start_time' => '13:00:00', 'end_time' => '16:00:00'],
