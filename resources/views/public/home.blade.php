@@ -2,8 +2,8 @@
 
 @section('content')
 
-<!-- HERO SECTION (DYNAMIC SWIPEABLE BANNER SLIDER - COMPACT) -->
-<section class="relative bg-gradient-to-br from-[#0e7c47] via-[#096237] to-[#0a5c34] text-white py-6 lg:py-10 overflow-hidden shadow-xl"
+<!-- HERO BANNER SECTION (FULL-WIDTH IMAGE SLIDER - MATCHING REFERENCE DESIGN) -->
+<section class="relative w-full overflow-hidden bg-slate-900"
          x-data="{
              activeSlide: 0,
              totalSlides: {{ $banners->count() > 0 ? $banners->count() : 1 }},
@@ -13,7 +13,7 @@
              startAutoSlide() {
                  this.timer = setInterval(() => {
                      this.nextSlide();
-                 }, 6000);
+                 }, 5000);
              },
              stopAutoSlide() {
                  if (this.timer) clearInterval(this.timer);
@@ -41,124 +41,65 @@
          @mouseleave="startAutoSlide()"
          @touchstart="handleTouchStart($event)"
          @touchend="handleTouchEnd($event)">
-    
-    <!-- DYNAMIC LIGHTING & GLOW ORBS -->
-    <div class="absolute inset-0 opacity-15 bg-[radial-gradient(#ffffff_1.5px,transparent_1.5px)] [background-size:24px_24px] pointer-events-none"></div>
-    <div class="absolute -right-16 -top-16 w-80 h-80 bg-yellow-400/20 rounded-full blur-3xl pointer-events-none animate-pulse"></div>
-    <div class="absolute left-1/4 -bottom-20 w-64 h-64 bg-emerald-400/15 rounded-full blur-3xl pointer-events-none"></div>
 
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        
-        <!-- BANNERS LOOP CONTAINER -->
-        <div class="relative overflow-hidden min-h-[320px] sm:min-h-[340px] flex items-center">
+    <!-- BANNERS FULL IMAGE TRACK -->
+    <div class="relative w-full overflow-hidden">
+        @foreach($banners as $index => $banner)
+        <div x-show="activeSlide === {{ $index }}"
+             x-transition:enter="transition ease-out duration-700"
+             x-transition:enter-start="opacity-0 scale-99"
+             x-transition:enter-end="opacity-100 scale-100"
+             x-transition:leave="transition ease-in duration-400 absolute inset-0"
+             x-transition:leave-start="opacity-100 scale-100"
+             x-transition:leave-end="opacity-0 scale-99"
+             class="w-full">
             
-            @foreach($banners as $index => $banner)
-            <div x-show="activeSlide === {{ $index }}"
-                 x-transition:enter="transition ease-out duration-700"
-                 x-transition:enter-start="opacity-0 translate-x-6 scale-98"
-                 x-transition:enter-end="opacity-100 translate-x-0 scale-100"
-                 x-transition:leave="transition ease-in duration-500 absolute inset-0"
-                 x-transition:leave-start="opacity-100 translate-x-0 scale-100"
-                 x-transition:leave-end="opacity-0 -translate-x-6 scale-98"
-                 class="w-full grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-10 items-center">
-                
-                <!-- LEFT HERO TEXT & CHECK BULLETS -->
-                <div class="lg:col-span-7 space-y-4 text-left">
-                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/20 border border-white/30 text-yellow-300 text-[11px] font-black uppercase tracking-wider backdrop-blur-md shadow-xs">
-                        <i class="fa-solid fa-hospital-user text-[10px]"></i>
-                        <span>RSU FIKRI MEDIKA KARAWANG</span>
-                    </div>
-                    
-                    <h1 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight leading-snug text-white drop-shadow-sm">
-                        {{ $banner->tr('title') }}
-                    </h1>
-                    
-                    <p class="text-xs sm:text-sm text-emerald-50 max-w-xl leading-relaxed font-medium">
-                        {{ $banner->tr('subtitle') }}
-                    </p>
-                    
-                    <div class="pt-1">
-                        <a href="{{ $banner->button_link ?? '#kontak' }}" class="inline-flex items-center justify-center px-6 py-2.5 rounded-full font-extrabold bg-white text-[#0e7c47] hover:bg-yellow-300 hover:text-slate-950 shadow-lg transition-all text-xs transform hover:scale-105">
-                            <span>{{ $banner->tr('button_text') }}</span>
-                        </a>
-                    </div>
-
-                    <!-- CHECKMARK BULLETS -->
-                    <div class="pt-3 space-y-1.5 text-[11px] sm:text-xs font-bold text-white border-t border-white/20 max-w-md">
-                        <div class="flex items-center gap-2">
-                            <div class="w-4.5 h-4.5 rounded-full bg-white/25 flex items-center justify-center text-yellow-300 text-[10px] shrink-0">
-                                <i class="fa-solid fa-check"></i>
-                            </div>
-                            <span>Pelayanan Hemodialisa & USG 4 Dimensi</span>
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <div class="w-4.5 h-4.5 rounded-full bg-white/25 flex items-center justify-center text-yellow-300 text-[10px] shrink-0">
-                                <i class="fa-solid fa-check"></i>
-                            </div>
-                            <span>Tersedia Pendaftaran Online 24 Jam Siap</span>
-                        </div>
-                    </div>
-
-                </div>
-
-                <!-- RIGHT HERO VISUAL IMAGE & FLOATING CARDS (FRAMELESS SEAMLESS CUTOUT) -->
-                <div class="lg:col-span-5 relative flex justify-center lg:justify-end">
-                    <div class="relative w-full max-w-xs sm:max-w-sm flex justify-center">
-                        
-                        <!-- FRAMELESS BANNER IMAGE -->
-                        <div class="relative z-10 flex justify-center">
-                            <img src="{{ Str::startsWith($banner->image, 'http') ? $banner->image : asset($banner->image) }}" 
-                                 alt="{{ $banner->tr('title') }}" 
-                                 class="w-auto max-h-64 sm:max-h-72 object-contain drop-shadow-2xl filter hover:brightness-105 transition-all">
-                        </div>
-
-                        <!-- FLOATING GLASS BADGE TOP-LEFT -->
-                        <div class="absolute top-2 -left-4 z-20 bg-white/25 backdrop-blur-md border border-white/30 p-2.5 px-3 rounded-xl text-white shadow-xl flex items-center gap-2.5 hidden sm:flex transform -rotate-2 hover:rotate-0 transition-transform">
-                            <div class="w-8 h-8 rounded-lg bg-yellow-400 text-slate-950 flex items-center justify-center text-sm shrink-0 shadow-xs">
-                                <i class="fa-solid fa-vial-circle-check"></i>
-                            </div>
-                            <div>
-                                <div class="text-[9px] text-yellow-300 font-bold uppercase tracking-wider">Layanan Utama</div>
-                                <div class="text-[11px] font-black text-white">Hemodialisa & IGD 24 Jam</div>
-                            </div>
-                        </div>
-
-                    </div>
-                </div>
-
-            </div>
-            @endforeach
+            @if(!empty($banner->button_link))
+            <a href="{{ $banner->button_link }}" class="block w-full">
+                <img src="{{ $banner->image }}" 
+                     alt="Banner RSU Fikri Medika" 
+                     class="w-full h-auto object-cover block min-h-[180px] sm:min-h-[320px] md:min-h-[400px] lg:min-h-[480px]"
+                     loading="{{ $index === 0 ? 'eager' : 'lazy' }}">
+            </a>
+            @else
+            <img src="{{ $banner->image }}" 
+                 alt="Banner RSU Fikri Medika" 
+                 class="w-full h-auto object-cover block min-h-[180px] sm:min-h-[320px] md:min-h-[400px] lg:min-h-[480px]"
+                 loading="{{ $index === 0 ? 'eager' : 'lazy' }}">
+            @endif
 
         </div>
-
-        <!-- CAROUSEL CONTROLS & INDICATOR DOTS (CENTERED) -->
-        <div class="pt-4 flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-6 border-t border-white/10 mt-4">
-            
-            <!-- SWIPE INDICATOR DOTS -->
-            <div class="flex items-center gap-1.5">
-                @foreach($banners as $index => $banner)
-                <button @click="activeSlide = {{ $index }}" 
-                        :class="activeSlide === {{ $index }} ? 'w-7 bg-yellow-400' : 'w-2 bg-white/30 hover:bg-white/60'"
-                        class="h-2 rounded-full transition-all duration-300 focus:outline-none"
-                        title="Slide {{ $index + 1 }}"></button>
-                @endforeach
-            </div>
-
-            <!-- PREV / NEXT SWIPE ARROW BUTTONS -->
-            <div class="flex items-center gap-2">
-                <button @click="prevSlide()" 
-                        class="w-8.5 h-8.5 rounded-full bg-white/15 hover:bg-white/30 border border-white/25 text-white flex items-center justify-center transition-all focus:outline-none backdrop-blur-md shadow-sm transform hover:scale-105 active:scale-95">
-                    <i class="fa-solid fa-chevron-left text-xs"></i>
-                </button>
-                <button @click="nextSlide()" 
-                        class="w-8.5 h-8.5 rounded-full bg-white/15 hover:bg-white/30 border border-white/25 text-white flex items-center justify-center transition-all focus:outline-none backdrop-blur-md shadow-sm transform hover:scale-105 active:scale-95">
-                    <i class="fa-solid fa-chevron-right text-xs"></i>
-                </button>
-            </div>
-
-        </div>
-
+        @endforeach
     </div>
+
+    @if($banners->count() > 1)
+    <!-- PREV BUTTON (ORANGE CIRCULAR CHEVRON LIKE REFERENCE) -->
+    <button @click="prevSlide()" 
+            type="button"
+            aria-label="Banner Sebelumnya"
+            class="absolute left-3 sm:left-6 top-1/2 -translate-y-1/2 z-20 w-8 h-8 sm:w-11 sm:h-11 rounded-full bg-[#f97316] hover:bg-[#ea580c] text-white shadow-xl flex items-center justify-center transition-all hover:scale-110 focus:outline-none cursor-pointer">
+        <i class="fa-solid fa-chevron-left text-xs sm:text-base"></i>
+    </button>
+
+    <!-- NEXT BUTTON (ORANGE CIRCULAR CHEVRON LIKE REFERENCE) -->
+    <button @click="nextSlide()" 
+            type="button"
+            aria-label="Banner Berikutnya"
+            class="absolute right-3 sm:right-6 top-1/2 -translate-y-1/2 z-20 w-8 h-8 sm:w-11 sm:h-11 rounded-full bg-[#f97316] hover:bg-[#ea580c] text-white shadow-xl flex items-center justify-center transition-all hover:scale-110 focus:outline-none cursor-pointer">
+        <i class="fa-solid fa-chevron-right text-xs sm:text-base"></i>
+    </button>
+
+    <!-- INDICATOR DOTS (BOTTOM CENTERED LIKE REFERENCE) -->
+    <div class="absolute bottom-3 sm:bottom-5 left-1/2 -translate-x-1/2 flex items-center gap-2 z-20 bg-slate-950/40 backdrop-blur-xs px-3.5 py-1.5 rounded-full border border-white/20">
+        @foreach($banners as $index => $banner)
+        <button @click="activeSlide = {{ $index }}" 
+                :class="activeSlide === {{ $index }} ? 'w-6 bg-[#f97316]' : 'w-2 bg-white/60 hover:bg-white'"
+                class="h-2 rounded-full transition-all duration-300 focus:outline-none cursor-pointer"
+                title="Slide {{ $index + 1 }}"></button>
+        @endforeach
+    </div>
+    @endif
+
 </section>
 
 <!-- SECTION: TENTANG KAMI / SEJARAH SINGKAT (MATCHING REFERENCE DESIGN) -->

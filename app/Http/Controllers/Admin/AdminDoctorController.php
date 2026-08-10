@@ -31,7 +31,7 @@ class AdminDoctorController extends Controller
         $photoUrl = $validated['photo'] ?? null;
         if ($request->hasFile('photo_file')) {
             $path = $request->file('photo_file')->store('doctors', 'public');
-            $photoUrl = asset('storage/' . $path);
+            $photoUrl = 'storage/' . $path;
         }
 
         Doctor::create([
@@ -62,7 +62,7 @@ class AdminDoctorController extends Controller
         $photoUrl = $doctor->photo;
         if ($request->hasFile('photo_file')) {
             $path = $request->file('photo_file')->store('doctors', 'public');
-            $photoUrl = asset('storage/' . $path);
+            $photoUrl = 'storage/' . $path;
         } elseif ($request->filled('photo')) {
             $photoUrl = $validated['photo'];
         }
