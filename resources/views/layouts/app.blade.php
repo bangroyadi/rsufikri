@@ -346,13 +346,13 @@
                         {{ app()->getLocale() == 'en' ? 'RSU Fikri Medika provides comprehensive, rapid, and professional healthcare services with Islamic warmth and hospitality.' : 'Rumah Sakit Umum Fikri Medika hadir memberikan pelayanan kesehatan komprehensif, cepat, dan profesional dengan mengedepankan keramahan dan nilai-nilai Islami.' }}
                     </p>
                     <div class="flex items-center gap-3 pt-2">
-                        <a href="https://facebook.com" target="_blank" class="w-9 h-9 rounded-full bg-[#096237] hover:bg-yellow-400 hover:text-gray-900 flex items-center justify-center transition-colors">
-                            <i class="fa-brands fa-facebook-f text-sm"></i>
-                        </a>
-                        <a href="https://instagram.com" target="_blank" class="w-9 h-9 rounded-full bg-[#096237] hover:bg-yellow-400 hover:text-gray-900 flex items-center justify-center transition-colors">
+                        <a href="https://www.instagram.com/rsu.fikrimedika/" target="_blank" class="w-9 h-9 rounded-full bg-[#096237] hover:bg-yellow-400 hover:text-gray-900 flex items-center justify-center transition-colors">
                             <i class="fa-brands fa-instagram text-sm"></i>
                         </a>
-                        <a href="https://youtube.com" target="_blank" class="w-9 h-9 rounded-full bg-[#096237] hover:bg-yellow-400 hover:text-gray-900 flex items-center justify-center transition-colors">
+                        <a href="https://www.tiktok.com/@rsu.fikrimedika" target="_blank" class="w-9 h-9 rounded-full bg-[#096237] hover:bg-slate-900 hover:text-cyan-300 flex items-center justify-center transition-colors">
+                            <i class="fa-brands fa-tiktok text-sm"></i>
+                        </a>
+                        <a href="https://www.youtube.com/@rsufikrimedika" target="_blank" class="w-9 h-9 rounded-full bg-[#096237] hover:bg-red-600 hover:text-white flex items-center justify-center transition-colors">
                             <i class="fa-brands fa-youtube text-sm"></i>
                         </a>
                         <a href="https://wa.me/6281234567890" target="_blank" class="w-9 h-9 rounded-full bg-[#096237] hover:bg-emerald-500 flex items-center justify-center transition-colors">

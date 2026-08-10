@@ -191,10 +191,11 @@
             <!-- RIGHT HOSPITAL BUILDING IMAGE CARD WITH FLOATING BADGE -->
             <div class="lg:col-span-5 relative">
                 <div class="relative rounded-3xl overflow-hidden shadow-2xl border-4 border-white bg-white p-2">
-                    <img src="https://images.unsplash.com/photo-1586773860418-d37222d8fce3?auto=format&fit=crop&w=800&q=80" 
+                    <img src="{{ asset('gedung1_web.jpg') }}" 
                          alt="Gedung RSU Fikri Medika" 
                          class="w-full h-72 sm:h-80 object-cover rounded-2xl"
-                         loading="lazy">
+                         loading="lazy"
+                         decoding="async">
                     
                     <!-- FLOATING YEAR BADGE -->
                     <div class="absolute top-6 left-6 bg-white/95 backdrop-blur-md border border-gray-100 p-3 px-4 rounded-2xl shadow-xl text-center space-y-0.5">
@@ -211,7 +212,7 @@
 
 
 <!-- SECTION: LAYANAN UNGGULAN -->
-<section id="layanan" class="py-20 bg-[#f7faf8] border-t border-b border-gray-100">
+<section id="layanan" class="py-20 bg-[#f7faf8] border-t border-gray-100">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         <div class="text-center max-w-3xl mx-auto mb-14">
@@ -265,12 +266,74 @@
         </div>
 
     </div>
+
+
+<!-- SECTION: YOUTUBE EMBED VIDEOS (ALIGNED TO TEMPLATE GRID SYSTEM) -->
+@php
+$youtubeVideos = [
+    [
+        'title' => 'Identifikasi Pasien - RSU Fikri Medika',
+        'youtubeId' => 'RtFTwr3NFI8',
+    ],
+    [
+        'title' => 'Fasilitas Medis & Pelayanan Kesehatan RSU Fikri Medika',
+        'youtubeId' => 'FjCMihXaQ6o',
+    ],
+    [
+        'title' => 'Layanan Kesehatan & Edukasi Medis Terpadu',
+        'youtubeId' => 'vKTq_3ApUYY',
+    ],
+];
+@endphp
+
+<section id="youtube-videos" class="py-16 sm:py-20 bg-[#ebf6f1]">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <!-- SECTION HEADER (WITH YOUTUBE CHANNEL LINK ON THE RIGHT) -->
+        <div class="flex flex-col sm:flex-row sm:items-end justify-between mb-8 sm:mb-10 gap-4">
+            <div>
+                <h2 class="text-2xl sm:text-3xl font-extrabold text-[#0e7c47] tracking-tight">
+                    Follow Youtube RSU Fikri Medika Official
+                </h2>
+                <p class="text-gray-600 text-sm sm:text-base mt-1 font-medium">
+                    Video dari youtube
+                </p>
+            </div>
+            <div>
+                <a href="https://www.youtube.com/@rsufikrimedika" 
+                   target="_blank" 
+                   rel="noopener noreferrer"
+                   class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-red-600 hover:bg-red-700 text-white text-xs sm:text-sm font-bold shadow-sm hover:shadow-md transition-all transform hover:-translate-y-0.5">
+                    <i class="fa-brands fa-youtube text-lg"></i>
+                    <span>YouTube Official</span>
+                    <i class="fa-solid fa-arrow-up-right-from-square text-[10px] opacity-80"></i>
+                </a>
+            </div>
+        </div>
+
+        <!-- VIDEO CARDS GRID (3 COLUMNS GAP-8 MATCHING LAYANAN & BERITA) -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
+            @foreach($youtubeVideos as $index => $video)
+            <div class="youtube-card bg-white p-2.5 rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden">
+                <div class="relative aspect-video w-full rounded-xl overflow-hidden bg-white">
+                    <iframe class="w-full h-full border-0 outline-none rounded-xl block" 
+                            style="border:0; outline:none;"
+                            src="https://www.youtube.com/embed/{{ $video['youtubeId'] }}?rel=0&modestbranding=1" 
+                            title="Video YouTube RSU Fikri Medika: {{ $video['title'] }}" 
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                            allowfullscreen
+                            loading="lazy"></iframe>
+                </div>
+            </div>
+            @endforeach
+        </div>
+
+    </div>
 </section>
 
 
 
-<!-- SECTION: BERITA & ARTIKEL KESEHATAN -->
-<section id="berita" class="py-20 bg-[#f7faf8] border-t border-gray-100">
+<section id="berita" class="py-20 bg-[#f7faf8]">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         <div class="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-4">
