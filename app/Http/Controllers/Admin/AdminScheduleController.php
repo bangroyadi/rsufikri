@@ -12,8 +12,8 @@ class AdminScheduleController extends Controller
 {
     public function index()
     {
-        $schedules = DoctorSchedule::with(['doctor', 'polyclinic'])->get();
-        $doctors = Doctor::where('is_active', true)->get();
+        $schedules = DoctorSchedule::with(['doctor', 'polyclinic'])->orderBy('day', 'asc')->get();
+        $doctors = Doctor::with('polyclinic')->where('is_active', true)->orderBy('name', 'asc')->get();
         $polyclinics = Polyclinic::where('is_active', true)->get();
         return view('admin.schedules.index', compact('schedules', 'doctors', 'polyclinics'));
     }
@@ -22,22 +22,25 @@ class AdminScheduleController extends Controller
     {
         $validated = $request->validate([
             'doctor_id' => 'required|exists:doctors,id',
-            'polyclinic_id' => 'required|exists:polyclinics,id',
+            'polyclinic_id' => 'nullable|exists:polyclinics,id',
             'day' => 'required|string|max:50',
             'start_time' => 'required',
             'end_time' => 'required',
         ]);
 
+        $doctor = Doctor::findOrFail($validated['doctor_id']);
+        $polyclinicId = $validated['polyclinic_id'] ?? $doctor->polyclinic_id;
+
         DoctorSchedule::create([
-            'doctor_id' => $validated['doctor_id'],
-            'polyclinic_id' => $validated['polyclinic_id'],
+            'doctor_id' => $doctor->id,
+            'polyclinic_id' => $polyclinicId,
             'day' => $validated['day'],
             'start_time' => $validated['start_time'],
             'end_time' => $validated['end_time'],
             'status' => 'active',
         ]);
 
-        return back()->with('success', 'Jadwal praktik berhasil ditambahkan!');
+        return back()->with('success', 'Jadwal praktik berhasil ditambahkan & tersinkronisasi!');
     }
 
     public function update(Request $request, $id)
@@ -46,15 +49,18 @@ class AdminScheduleController extends Controller
 
         $validated = $request->validate([
             'doctor_id' => 'required|exists:doctors,id',
-            'polyclinic_id' => 'required|exists:polyclinics,id',
+            'polyclinic_id' => 'nullable|exists:polyclinics,id',
             'day' => 'required|string|max:50',
             'start_time' => 'required',
             'end_time' => 'required',
         ]);
 
+        $doctor = Doctor::findOrFail($validated['doctor_id']);
+        $polyclinicId = $validated['polyclinic_id'] ?? $doctor->polyclinic_id;
+
         $schedule->update([
-            'doctor_id' => $validated['doctor_id'],
-            'polyclinic_id' => $validated['polyclinic_id'],
+            'doctor_id' => $doctor->id,
+            'polyclinic_id' => $polyclinicId,
             'day' => $validated['day'],
             'start_time' => $validated['start_time'],
             'end_time' => $validated['end_time'],

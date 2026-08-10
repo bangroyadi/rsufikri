@@ -2,7 +2,6 @@
 
 @section('content')
 
-
 <!-- MAIN CONTENT & INTERACTIVE PAGINATED TABLE (MATCHING DATABASE STRUCTURE) -->
 <section class="py-12 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto" x-data="{
     searchName: '{{ request()->get('q') }}',
@@ -15,8 +14,8 @@
         {
             id: {{ $doc->id }},
             name: '{{ addslashes($doc->name) }}',
-            poliId: {{ $doc->polyclinic_id }},
-            days: [ @foreach($doc->schedules as $s)'{{ $s->day }}', @endforeach ]
+            poliId: {{ $doc->polyclinic_id ?? 0 }},
+            days: [ @foreach($doc->schedules as $s)'{{ addslashes($s->day) }}', @endforeach ]
         },
         @endforeach
     ],
@@ -50,13 +49,14 @@
         <!-- SEARCH BY NAME -->
         <div>
             <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">{{ __('Cari Nama Dokter') }}</label>
-            <div class="relative">
+            <div style="position: relative; width: 100%;">
+                <i class="fa-solid fa-magnifying-glass" style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: #94a3b8; font-size: 12px; pointer-events: none; z-index: 10;"></i>
                 <input type="text" 
                        x-model="searchName" 
                        @input="currentPage = 1"
                        placeholder="{{ __('Ketik nama dokter...') }}" 
-                       class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:ring-2 focus:ring-[#0e7c47] focus:border-[#0e7c47] outline-none">
-                <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3.5 text-gray-400 text-xs"></i>
+                       style="padding-left: 38px; padding-right: 16px; padding-top: 10px; padding-bottom: 10px; border-radius: 12px; border: 1px solid #cbd5e1; font-size: 14px; width: 100%; outline: none;"
+                       class="focus:ring-2 focus:ring-[#0e7c47] bg-white">
             </div>
         </div>
 
@@ -66,7 +66,7 @@
             <select x-model="selectedPoli" @change="currentPage = 1" class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:ring-2 focus:ring-[#0e7c47] focus:border-[#0e7c47] outline-none bg-white">
                 <option value="">-- {{ __('Semua Poli') }} --</option>
                 @foreach($polyclinics as $poli)
-                    <option value="{{ $poli->id }}">{{ is_array($poli->name) ? ($poli->name[app()->getLocale()] ?? $poli->name['id']) : $poli->name }}</option>
+                    <option value="{{ $poli->id }}">{{ is_array($poli->name) ? ($poli->name[app()->getLocale()] ?? $poli->name['id'] ?? $poli->name['en']) : $poli->name }}</option>
                 @endforeach
             </select>
         </div>
@@ -88,7 +88,7 @@
 
     </div>
 
-    <!-- DOCTORS SCHEDULE LIST (REVISED TABLE DESIGN FETCHING FROM DATABASE) -->
+    <!-- DOCTORS SCHEDULE LIST (FETCHED DYNAMICALLY FROM DATABASE) -->
     <div class="space-y-8 min-h-[450px]">
         @foreach($doctors as $doc)
         @php
@@ -102,11 +102,25 @@
                 'Minggu' => []
             ];
             foreach($doc->schedules as $sched) {
-                if (isset($dayMap[$sched->day])) {
-                    $dayMap[$sched->day][] = \Carbon\Carbon::parse($sched->start_time)->format('H:i') . ' - ' . \Carbon\Carbon::parse($sched->end_time)->format('H:i');
+                $dName = ucfirst(trim($sched->day));
+                if (isset($dayMap[$dName])) {
+                    $dayMap[$dName][] = \Carbon\Carbon::parse($sched->start_time)->format('H:i') . ' - ' . \Carbon\Carbon::parse($sched->end_time)->format('H:i');
+                } else {
+                    $dayMap[$dName][] = \Carbon\Carbon::parse($sched->start_time)->format('H:i') . ' - ' . \Carbon\Carbon::parse($sched->end_time)->format('H:i');
                 }
             }
-            $poliName = is_array($doc->polyclinic->name) ? ($doc->polyclinic->name[app()->getLocale()] ?? $doc->polyclinic->name['id']) : ($doc->polyclinic->name ?? 'Poliklinik');
+            $poliName = is_array($doc->polyclinic?->name) ? ($doc->polyclinic?->name[app()->getLocale()] ?? $doc->polyclinic?->name['id'] ?? '') : ($doc->polyclinic?->name ?? 'Poliklinik');
+            
+            $specText = is_array($doc->specialty) ? ($doc->specialty[app()->getLocale()] ?? $doc->specialty['id'] ?? '') : ($doc->specialty ?? $doc->title_degree ?? 'Dokter Spesialis');
+
+            $docPhoto = $doc->photo;
+            if ($docPhoto) {
+                if (\Illuminate\Support\Str::contains($docPhoto, '/storage/')) {
+                    $docPhoto = asset('storage/' . \Illuminate\Support\Str::after($docPhoto, '/storage/'));
+                } elseif (!\Illuminate\Support\Str::startsWith($docPhoto, 'http')) {
+                    $docPhoto = asset(ltrim($docPhoto, '/'));
+                }
+            }
         @endphp
         
         <div x-show="isDoctorVisible({{ $doc->id }})" 
@@ -119,7 +133,7 @@
             <div class="flex items-center justify-between border-b border-gray-100 pb-3">
                 <div class="flex items-center gap-2.5">
                     <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-[#0e7c47] to-emerald-600 text-white flex items-center justify-center text-xs sm:text-sm font-black shadow-xs shrink-0">
-                        <i class="fa-solid fa-{{ $doc->polyclinic->icon ?? 'stethoscope' }}"></i>
+                        <i class="fa-solid fa-{{ $doc->polyclinic?->icon ?? 'stethoscope' }}"></i>
                     </div>
                     <h4 class="text-base sm:text-lg font-black text-[#0e7c47] tracking-tight">
                         {{ $poliName }}
@@ -136,8 +150,8 @@
                 <!-- CIRCULAR DOCTOR PHOTO -->
                 <div class="flex-shrink-0 mx-auto md:mx-0">
                     <div class="w-24 h-24 sm:w-28 sm:h-28 rounded-full overflow-hidden border-4 border-emerald-600 p-1 bg-white shadow-md flex items-center justify-center">
-                        @if(!empty($doc->photo))
-                            <img src="{{ \Illuminate\Support\Str::startsWith($doc->photo, 'http') ? $doc->photo : asset('storage/' . $doc->photo) }}" 
+                        @if(!empty($docPhoto))
+                            <img src="{{ $docPhoto }}" 
                                  alt="{{ $doc->name }}" 
                                  class="w-full h-full rounded-full object-cover"
                                  onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
@@ -162,7 +176,7 @@
                                 {{ $doc->name }}
                             </h3>
                             <div class="text-xs text-gray-500 font-bold mt-1">
-                                Spesialisasi: <span class="text-[#0e7c47] font-extrabold">{{ is_array($doc->specialization) ? ($doc->specialization[app()->getLocale()] ?? $doc->specialization['id']) : ($doc->specialization ?? 'Dokter Spesialis') }}</span>
+                                Spesialisasi: <span class="text-[#0e7c47] font-extrabold">{{ $specText }}</span>
                             </div>
                         </div>
 
@@ -186,10 +200,10 @@
 
                         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5">
                             @php $hasAnySched = false; @endphp
-                            @foreach(['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'] as $dayKey)
-                                @if(!empty($dayMap[$dayKey]))
+                            @foreach($dayMap as $dayKey => $timeSlots)
+                                @if(!empty($timeSlots))
                                     @php $hasAnySched = true; @endphp
-                                    @foreach($dayMap[$dayKey] as $timeSlot)
+                                    @foreach($timeSlots as $timeSlot)
                                         <div class="flex items-center justify-between p-2.5 px-3.5 rounded-xl bg-gradient-to-r from-emerald-50 to-teal-50/60 border-2 border-emerald-200/90 shadow-2xs">
                                             <span class="px-2.5 py-1 rounded-lg bg-[#0e7c47] text-white text-xs font-black uppercase tracking-wider shrink-0 shadow-2xs">
                                                 {{ __($dayKey) }}
@@ -203,7 +217,9 @@
                                 @endif
                             @endforeach
                             @if(!$hasAnySched)
-                                <div class="text-xs text-gray-400 font-semibold italic py-1">{{ __('Tidak ada jadwal harian') }}</div>
+                                <div class="text-xs text-amber-600 font-bold bg-amber-50 border border-amber-200 px-3 py-1.5 rounded-xl inline-block">
+                                    <i class="fa-regular fa-clock mr-1"></i> {{ __('Jadwal Praktik Belum Diatur') }}
+                                </div>
                             @endif
                         </div>
                     </div>
@@ -239,7 +255,7 @@
             </button>
         </template>
 
-        <button @click="goToPage(currentPage + 1)" 
+        <button @click="goToPage(p)" 
                 :disabled="currentPage === totalPages"
                 class="px-4 py-2 rounded-xl border border-gray-300 text-xs font-bold hover:bg-emerald-50 disabled:opacity-40 disabled:hover:bg-white transition-colors">
             {{ __('Selanjutnya') }} <i class="fa-solid fa-chevron-right"></i>

@@ -107,7 +107,7 @@
 
     <!-- ADD ARTICLE MODAL -->
     <div x-show="addModalOpen" x-cloak class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
-        <div @click.away="addModalOpen = false" class="bg-white rounded-3xl p-6 sm:p-8 max-w-lg w-full shadow-2xl space-y-5">
+        <div @click.away="addModalOpen = false" class="bg-white rounded-3xl p-6 sm:p-8 max-w-lg w-full shadow-2xl space-y-5 max-h-[90vh] overflow-y-auto">
             <div class="flex items-center justify-between border-b border-slate-100 pb-3">
                 <h3 class="font-black text-slate-900 text-base flex items-center gap-2">
                     <i class="fa-solid fa-file-medical text-[#0e7c47]"></i>
@@ -118,7 +118,7 @@
                 </button>
             </div>
 
-            <form action="{{ route('admin.articles.store') }}" method="POST" class="space-y-4">
+            <form action="{{ route('admin.articles.store') }}" method="POST" enctype="multipart/form-data" class="space-y-4">
                 @csrf
 
                 <div>
@@ -136,9 +136,21 @@
                     <input type="text" name="excerpt_id" placeholder="Ringkasan atau tips singkat artikel..." class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs focus:ring-2 focus:ring-[#0e7c47] outline-none">
                 </div>
 
-                <div>
-                    <label class="block text-xs font-extrabold text-slate-700 uppercase tracking-wider mb-1">URL Gambar Thumbnail (Opsional)</label>
-                    <input type="text" name="thumbnail" placeholder="https://images.unsplash.com/..." class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs focus:ring-2 focus:ring-[#0e7c47] outline-none">
+                <!-- FILE UPLOAD OR URL -->
+                <div style="background-color: #f8fafc; border: 1px solid #e2e8f0;" class="p-4 rounded-2xl space-y-3">
+                    <label class="block text-xs font-extrabold text-slate-900 uppercase tracking-wider">Thumbnail Artikel</label>
+                    
+                    <div>
+                        <span class="text-[11px] font-bold text-slate-600 block mb-1">📷 Upload File Gambar dari Komputer:</span>
+                        <input type="file" name="thumbnail_file" accept="image/*" class="w-full text-xs text-slate-500 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-extrabold file:bg-emerald-50 file:text-[#0e7c47] hover:file:bg-emerald-100 cursor-pointer">
+                    </div>
+
+                    <div class="text-center text-[10px] font-bold text-slate-400 uppercase tracking-widest">— ATAU —</div>
+
+                    <div>
+                        <span class="text-[11px] font-bold text-slate-600 block mb-1">🔗 Tempel Link / URL Gambar:</span>
+                        <input type="text" name="thumbnail" placeholder="https://images.unsplash.com/..." class="w-full px-3 py-2 rounded-xl border border-slate-300 bg-white text-xs outline-none">
+                    </div>
                 </div>
 
                 <div class="pt-3 border-t border-slate-100 flex justify-end gap-2">
@@ -155,7 +167,7 @@
 
     <!-- EDIT ARTICLE MODAL -->
     <div x-show="editModalOpen" x-cloak class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
-        <div @click.away="editModalOpen = false" class="bg-white rounded-3xl p-6 sm:p-8 max-w-lg w-full shadow-2xl space-y-5">
+        <div @click.away="editModalOpen = false" class="bg-white rounded-3xl p-6 sm:p-8 max-w-lg w-full shadow-2xl space-y-5 max-h-[90vh] overflow-y-auto">
             <div class="flex items-center justify-between border-b border-slate-100 pb-3">
                 <h3 class="font-black text-slate-900 text-base flex items-center gap-2">
                     <i class="fa-solid fa-pen-to-square text-amber-500"></i>
@@ -166,7 +178,7 @@
                 </button>
             </div>
 
-            <form :action="'{{ url('admin/articles') }}/' + editArt.id" method="POST" class="space-y-4">
+            <form :action="'{{ url('admin/articles') }}/' + editArt.id" method="POST" enctype="multipart/form-data" class="space-y-4">
                 @csrf
                 @method('PUT')
 
@@ -185,9 +197,21 @@
                     <input type="text" name="excerpt_id" x-model="editArt.excerpt_id" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs focus:ring-2 focus:ring-[#0e7c47] outline-none">
                 </div>
 
-                <div>
-                    <label class="block text-xs font-extrabold text-slate-700 uppercase tracking-wider mb-1">URL Gambar Thumbnail</label>
-                    <input type="text" name="thumbnail" x-model="editArt.thumbnail" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs focus:ring-2 focus:ring-[#0e7c47] outline-none">
+                <!-- FILE UPLOAD OR URL -->
+                <div style="background-color: #f8fafc; border: 1px solid #e2e8f0;" class="p-4 rounded-2xl space-y-3">
+                    <label class="block text-xs font-extrabold text-slate-900 uppercase tracking-wider">Ubah Thumbnail Artikel</label>
+                    
+                    <div>
+                        <span class="text-[11px] font-bold text-slate-600 block mb-1">📷 Upload Gambar Baru dari Komputer:</span>
+                        <input type="file" name="thumbnail_file" accept="image/*" class="w-full text-xs text-slate-500 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-extrabold file:bg-emerald-50 file:text-[#0e7c47] hover:file:bg-emerald-100 cursor-pointer">
+                    </div>
+
+                    <div class="text-center text-[10px] font-bold text-slate-400 uppercase tracking-widest">— ATAU —</div>
+
+                    <div>
+                        <span class="text-[11px] font-bold text-slate-600 block mb-1">🔗 Tempel Link / URL Gambar:</span>
+                        <input type="text" name="thumbnail" x-model="editArt.thumbnail" class="w-full px-3 py-2 rounded-xl border border-slate-300 bg-white text-xs outline-none">
+                    </div>
                 </div>
 
                 <div class="pt-3 border-t border-slate-100 flex justify-end gap-2">

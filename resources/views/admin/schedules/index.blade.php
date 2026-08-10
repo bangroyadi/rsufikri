@@ -3,7 +3,25 @@
 @section('title', 'Manajemen Jadwal Dokter')
 
 @section('content')
-<div x-data="{ addModalOpen: false, editModalOpen: false, editSched: {}, search: '', filterDay: '', filterPoli: '' }" class="space-y-6">
+<div x-data="{ 
+    addModalOpen: false, 
+    editModalOpen: false, 
+    editSched: {}, 
+    search: '{{ request()->get('doctor_id') ? ($doctors->firstWhere('id', request()->get('doctor_id'))?->name ?? '') : '' }}', 
+    filterDay: '', 
+    filterPoli: '',
+    selectedDoctorId: '',
+    docPoliMap: {
+        @foreach($doctors as $d)
+        {{ $d->id }}: {{ $d->polyclinic_id ?? 0 }},
+        @endforeach
+    },
+    syncPoli(docId, targetObj = null) {
+        if (targetObj) {
+            targetObj.polyclinic_id = this.docPoliMap[docId] || targetObj.polyclinic_id;
+        }
+    }
+}" class="space-y-6">
     
     @if(session('success'))
     <div style="background-color: #f0fdf4; border: 1px solid #bbf7d0; color: #0e7c47;" class="p-4 rounded-2xl font-bold text-sm flex items-center gap-2">
@@ -12,17 +30,24 @@
     </div>
     @endif
 
-    <!-- PAGE HEADER WITH TOP ADD BUTTON -->
+    <!-- PAGE HEADER WITH TOP ADD BUTTON & DOCTOR MANAGEMENT LINK -->
     <div style="background-color: #ffffff; border: 1px solid #e2e8f0;" class="p-6 rounded-3xl shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
             <h2 class="text-xl font-black text-slate-900">Kelola Slot Jadwal Praktik</h2>
-            <p class="text-xs text-slate-500 mt-0.5">Pengaturan jam & hari praktik dokter spesialis Harian.</p>
+            <p class="text-xs text-slate-500 mt-0.5">Pengaturan jam & hari praktik dokter spesialis Harian (Tersinkronisasi otomatis).</p>
         </div>
 
-        <button @click="addModalOpen = true" style="background-color: #0e7c47; color: #ffffff;" class="px-5 py-2.5 rounded-xl font-extrabold text-xs shadow-md hover:bg-[#096237] hover:shadow-lg transition-all flex items-center justify-center gap-2 shrink-0 cursor-pointer">
-            <i class="fa-solid fa-plus text-sm"></i>
-            <span>+ Tambah Slot Jadwal Baru</span>
-        </button>
+        <div class="flex items-center gap-2">
+            <a href="{{ route('admin.doctors.index') }}" style="background-color: #f0fdf4; border: 1px solid #bbf7d0; color: #0e7c47;" class="px-4 py-2.5 rounded-xl font-extrabold text-xs shadow-xs hover:bg-emerald-100 transition-all flex items-center justify-center gap-2">
+                <i class="fa-solid fa-user-doctor text-sm"></i>
+                <span>Master Dokter Spesialis</span>
+            </a>
+
+            <button @click="addModalOpen = true" style="background-color: #0e7c47; color: #ffffff;" class="px-5 py-2.5 rounded-xl font-extrabold text-xs shadow-md hover:bg-[#096237] hover:shadow-lg transition-all flex items-center justify-center gap-2 shrink-0 cursor-pointer">
+                <i class="fa-solid fa-plus text-sm"></i>
+                <span>+ Tambah Slot Jadwal Baru</span>
+            </button>
+        </div>
     </div>
 
     <!-- TABLE & SEARCH FILTER CONTAINER -->
@@ -66,8 +91,8 @@
                 <thead style="background-color: #f1f5f9; border-bottom: 1px solid #e2e8f0; color: #475569;" class="uppercase tracking-wider font-extrabold">
                     <tr>
                         <th class="p-4">Dokter</th>
-                        <th class="p-4">Poliklinik</th>
-                        <th class="p-4">Hari</th>
+                        <th class="p-4">Poliklinik (Sinkron)</th>
+                        <th class="p-4">Hari Praktik</th>
                         <th class="p-4">Jam Praktik</th>
                         <th class="p-4 text-center">Aksi</th>
                     </tr>
@@ -83,8 +108,9 @@
                             {{ $docName }}
                         </td>
                         <td class="p-4">
-                            <span style="background-color: #f0fdf4; border: 1px solid #bbf7d0; color: #0e7c47;" class="px-3 py-1 rounded-lg font-bold">
-                                {{ $poliName }}
+                            <span style="background-color: #f0fdf4; border: 1px solid #bbf7d0; color: #0e7c47;" class="px-3 py-1 rounded-lg font-bold inline-flex items-center gap-1.5">
+                                <i class="fa-solid fa-link text-[10px]"></i>
+                                <span>{{ $poliName }}</span>
                             </span>
                         </td>
                         <td class="p-4 font-extrabold text-[#0e7c47]">
@@ -131,21 +157,24 @@
                 @csrf
 
                 <div>
-                    <label class="block text-xs font-extrabold text-slate-700 uppercase tracking-wider mb-1">Pilih Dokter</label>
-                    <select name="doctor_id" required class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs focus:ring-2 focus:ring-[#0e7c47] outline-none bg-white">
+                    <label class="block text-xs font-extrabold text-slate-700 uppercase tracking-wider mb-1">Pilih Dokter Spesialis</label>
+                    <select name="doctor_id" x-model="selectedDoctorId" @change="syncPoli(selectedDoctorId)" required class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs focus:ring-2 focus:ring-[#0e7c47] outline-none bg-white font-bold">
+                        <option value="">-- Pilih Dokter --</option>
                         @foreach($doctors as $doc)
-                        <option value="{{ $doc->id }}">{{ $doc->name }}</option>
+                        @php $pName = is_array($doc->polyclinic?->name) ? ($doc->polyclinic?->name['id'] ?? '') : ($doc->polyclinic?->name ?? '-'); @endphp
+                        <option value="{{ $doc->id }}">{{ $doc->name }} ({{ $pName }})</option>
                         @endforeach
                     </select>
                 </div>
 
                 <div>
-                    <label class="block text-xs font-extrabold text-slate-700 uppercase tracking-wider mb-1">Poliklinik</label>
-                    <select name="polyclinic_id" required class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs focus:ring-2 focus:ring-[#0e7c47] outline-none bg-white">
+                    <label class="block text-xs font-extrabold text-slate-700 uppercase tracking-wider mb-1">Poliklinik (Otomatis Tersinkron)</label>
+                    <select name="polyclinic_id" required class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs focus:ring-2 focus:ring-[#0e7c47] outline-none bg-slate-50 font-bold">
                         @foreach($polyclinics as $poli)
                         <option value="{{ $poli->id }}">{{ is_array($poli->name) ? ($poli->name['id'] ?? '') : $poli->name }}</option>
                         @endforeach
                     </select>
+                    <span class="text-[10px] text-slate-500 mt-1 block">✨ Poliklinik otomatis menyesuaikan dengan data Poliklinik utama Dokter yang dipilih.</span>
                 </div>
 
                 <div>
@@ -171,7 +200,7 @@
                         Batal
                     </button>
                     <button type="submit" style="background-color: #0e7c47; color: #ffffff;" class="px-5 py-2 rounded-xl text-xs font-extrabold shadow">
-                        Simpan Jadwal
+                        Simpan & Sinkronkan
                     </button>
                 </div>
             </form>
@@ -197,16 +226,17 @@
 
                 <div>
                     <label class="block text-xs font-extrabold text-slate-700 uppercase tracking-wider mb-1">Pilih Dokter</label>
-                    <select name="doctor_id" x-model="editSched.doctor_id" required class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs focus:ring-2 focus:ring-[#0e7c47] outline-none bg-white">
+                    <select name="doctor_id" x-model="editSched.doctor_id" @change="syncPoli(editSched.doctor_id, editSched)" required class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs focus:ring-2 focus:ring-[#0e7c47] outline-none bg-white font-bold">
                         @foreach($doctors as $doc)
-                        <option value="{{ $doc->id }}">{{ $doc->name }}</option>
+                        @php $pName = is_array($doc->polyclinic?->name) ? ($doc->polyclinic?->name['id'] ?? '') : ($doc->polyclinic?->name ?? '-'); @endphp
+                        <option value="{{ $doc->id }}">{{ $doc->name }} ({{ $pName }})</option>
                         @endforeach
                     </select>
                 </div>
 
                 <div>
                     <label class="block text-xs font-extrabold text-slate-700 uppercase tracking-wider mb-1">Poliklinik</label>
-                    <select name="polyclinic_id" x-model="editSched.polyclinic_id" required class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs focus:ring-2 focus:ring-[#0e7c47] outline-none bg-white">
+                    <select name="polyclinic_id" x-model="editSched.polyclinic_id" required class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs focus:ring-2 focus:ring-[#0e7c47] outline-none bg-slate-50 font-bold">
                         @foreach($polyclinics as $poli)
                         <option value="{{ $poli->id }}">{{ is_array($poli->name) ? ($poli->name['id'] ?? '') : $poli->name }}</option>
                         @endforeach

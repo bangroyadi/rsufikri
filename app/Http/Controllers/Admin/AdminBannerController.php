@@ -19,15 +19,26 @@ class AdminBannerController extends Controller
         $validated = $request->validate([
             'title_id' => 'required|string|max:255',
             'subtitle_id' => 'nullable|string',
-            'image' => 'required|string|max:500',
+            'image' => 'nullable|string|max:500',
+            'image_file' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:4096',
             'button_text_id' => 'nullable|string|max:100',
             'button_link' => 'nullable|string|max:255',
         ]);
 
+        $imageUrl = $validated['image'] ?? null;
+        if ($request->hasFile('image_file')) {
+            $path = $request->file('image_file')->store('banners', 'public');
+            $imageUrl = asset('storage/' . $path);
+        }
+
+        if (empty($imageUrl)) {
+            return back()->withErrors(['image' => 'Pilih file gambar untuk diupload atau masukkan nama file / URL gambar.']);
+        }
+
         Banner::create([
             'title' => ['id' => $validated['title_id'], 'en' => $validated['title_id']],
             'subtitle' => ['id' => $validated['subtitle_id'] ?? '', 'en' => $validated['subtitle_id'] ?? ''],
-            'image' => $validated['image'],
+            'image' => $imageUrl,
             'button_text' => ['id' => $validated['button_text_id'] ?? 'Daftar Online', 'en' => $validated['button_text_id'] ?? 'Online Registration'],
             'button_link' => $validated['button_link'] ?? '#kontak',
             'order' => Banner::count() + 1,
@@ -44,15 +55,24 @@ class AdminBannerController extends Controller
         $validated = $request->validate([
             'title_id' => 'required|string|max:255',
             'subtitle_id' => 'nullable|string',
-            'image' => 'required|string|max:500',
+            'image' => 'nullable|string|max:500',
+            'image_file' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:4096',
             'button_text_id' => 'nullable|string|max:100',
             'button_link' => 'nullable|string|max:255',
         ]);
 
+        $imageUrl = $banner->image;
+        if ($request->hasFile('image_file')) {
+            $path = $request->file('image_file')->store('banners', 'public');
+            $imageUrl = asset('storage/' . $path);
+        } elseif ($request->filled('image')) {
+            $imageUrl = $validated['image'];
+        }
+
         $banner->update([
             'title' => ['id' => $validated['title_id'], 'en' => $validated['title_id']],
             'subtitle' => ['id' => $validated['subtitle_id'] ?? '', 'en' => $validated['subtitle_id'] ?? ''],
-            'image' => $validated['image'],
+            'image' => $imageUrl,
             'button_text' => ['id' => $validated['button_text_id'] ?? 'Daftar Online', 'en' => $validated['button_text_id'] ?? 'Online Registration'],
             'button_link' => $validated['button_link'] ?? '#kontak',
         ]);

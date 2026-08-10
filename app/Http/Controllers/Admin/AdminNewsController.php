@@ -23,7 +23,14 @@ class AdminNewsController extends Controller
             'category_id' => 'nullable|string|max:100',
             'excerpt_id' => 'nullable|string',
             'thumbnail' => 'nullable|string|max:500',
+            'thumbnail_file' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:4096',
         ]);
+
+        $thumbUrl = $validated['thumbnail'] ?? null;
+        if ($request->hasFile('thumbnail_file')) {
+            $path = $request->file('thumbnail_file')->store('news', 'public');
+            $thumbUrl = asset('storage/' . $path);
+        }
 
         News::create([
             'title' => ['id' => $validated['title_id'], 'en' => $validated['title_id']],
@@ -31,7 +38,7 @@ class AdminNewsController extends Controller
             'excerpt' => ['id' => $validated['excerpt_id'] ?? '', 'en' => $validated['excerpt_id'] ?? ''],
             'content' => ['id' => $validated['excerpt_id'] ?? '', 'en' => $validated['excerpt_id'] ?? ''],
             'category' => ['id' => $validated['category_id'] ?? 'Kegiatan RS', 'en' => $validated['category_id'] ?? 'Hospital Event'],
-            'thumbnail' => $validated['thumbnail'] ?? null,
+            'thumbnail' => $thumbUrl,
             'author_id' => Auth::id() ?? 1,
             'is_published' => true,
             'published_at' => now(),
@@ -49,7 +56,16 @@ class AdminNewsController extends Controller
             'category_id' => 'nullable|string|max:100',
             'excerpt_id' => 'nullable|string',
             'thumbnail' => 'nullable|string|max:500',
+            'thumbnail_file' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:4096',
         ]);
+
+        $thumbUrl = $news->thumbnail;
+        if ($request->hasFile('thumbnail_file')) {
+            $path = $request->file('thumbnail_file')->store('news', 'public');
+            $thumbUrl = asset('storage/' . $path);
+        } elseif ($request->filled('thumbnail')) {
+            $thumbUrl = $validated['thumbnail'];
+        }
 
         $news->update([
             'title' => ['id' => $validated['title_id'], 'en' => $validated['title_id']],
@@ -57,7 +73,7 @@ class AdminNewsController extends Controller
             'excerpt' => ['id' => $validated['excerpt_id'] ?? '', 'en' => $validated['excerpt_id'] ?? ''],
             'content' => ['id' => $validated['excerpt_id'] ?? '', 'en' => $validated['excerpt_id'] ?? ''],
             'category' => ['id' => $validated['category_id'] ?? 'Kegiatan RS', 'en' => $validated['category_id'] ?? 'Hospital Event'],
-            'thumbnail' => $validated['thumbnail'] ?? null,
+            'thumbnail' => $thumbUrl,
         ]);
 
         return back()->with('success', 'Data berita berhasil diperbarui!');
