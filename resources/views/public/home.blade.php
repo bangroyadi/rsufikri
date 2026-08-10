@@ -2,21 +2,26 @@
 
 @section('content')
 
-<!-- HERO BANNER SECTION (FULL-WIDTH IMAGE SLIDER - MATCHING REFERENCE DESIGN) -->
+<!-- HERO BANNER SECTION (FULL-WIDTH IMAGE SLIDER) -->
 <section class="relative w-full overflow-hidden bg-slate-900"
          x-data="{
              activeSlide: 0,
              totalSlides: {{ $banners->count() > 0 ? $banners->count() : 1 }},
              touchStartX: 0,
-             touchEndX: 0,
+             mouseStartX: 0,
+             isDragging: false,
              timer: null,
              startAutoSlide() {
-                 this.timer = setInterval(() => {
-                     this.nextSlide();
-                 }, 5000);
+                 this.stopAutoSlide();
+                 this.timer = setInterval(() => { this.nextSlide(); }, 5000);
              },
              stopAutoSlide() {
-                 if (this.timer) clearInterval(this.timer);
+                 if (this.timer) { clearInterval(this.timer); this.timer = null; }
+             },
+             goTo(index) {
+                 this.activeSlide = index;
+                 this.stopAutoSlide();
+                 this.startAutoSlide();
              },
              nextSlide() {
                  this.activeSlide = (this.activeSlide + 1) % this.totalSlides;
@@ -25,79 +30,175 @@
                  this.activeSlide = (this.activeSlide - 1 + this.totalSlides) % this.totalSlides;
              },
              handleTouchStart(e) {
-                 this.touchStartX = e.changedTouches[0].screenX;
+                 this.touchStartX = e.changedTouches[0].clientX;
              },
              handleTouchEnd(e) {
-                 this.touchEndX = e.changedTouches[0].screenX;
-                 if (this.touchStartX - this.touchEndX > 40) {
-                     this.nextSlide();
-                 } else if (this.touchEndX - this.touchStartX > 40) {
-                     this.prevSlide();
-                 }
+                 const diff = this.touchStartX - e.changedTouches[0].clientX;
+                 if (diff > 40) { this.nextSlide(); this.stopAutoSlide(); this.startAutoSlide(); }
+                 else if (diff < -40) { this.prevSlide(); this.stopAutoSlide(); this.startAutoSlide(); }
+             },
+             handleMouseDown(e) {
+                 e.preventDefault();
+                 this.isDragging = true;
+                 this.mouseStartX = e.clientX;
              }
          }"
-         x-init="startAutoSlide()"
-         @mouseenter="stopAutoSlide()"
-         @mouseleave="startAutoSlide()"
-         @touchstart="handleTouchStart($event)"
-         @touchend="handleTouchEnd($event)">
+         x-init="
+             startAutoSlide();
+             window.addEventListener('mouseup', (e) => {
+                 if (!isDragging) return;
+                 isDragging = false;
+                 const diff = mouseStartX - e.clientX;
+                 if (diff > 50) { nextSlide(); stopAutoSlide(); startAutoSlide(); }
+                 else if (diff < -50) { prevSlide(); stopAutoSlide(); startAutoSlide(); }
+             });
+         "
+         @touchstart.passive="handleTouchStart($event)"
+         @touchend.passive="handleTouchEnd($event)"
+         @mousedown="handleMouseDown($event)"
+         style="user-select: none; -webkit-user-select: none;"
+         :style="isDragging ? 'cursor: grabbing;' : 'cursor: grab;'">
 
-    <!-- BANNERS FULL IMAGE TRACK -->
-    <div class="relative w-full overflow-hidden">
+    <!-- SLIDE IMAGES — container with stable height -->
+    <div style="position: relative; width: 100%; overflow: hidden;"
+         x-ref="slideContainer">
+        {{-- Spacer slide (first image sets the container height) --}}
+        @if($banners->count() > 0)
+        <img src="{{ $banners->first()->image }}"
+             alt=""
+             aria-hidden="true"
+             draggable="false"
+             loading="eager"
+             style="width: 100%; height: auto; display: block; visibility: hidden; pointer-events: none;">
+        @endif
+
+        {{-- All slides absolutely positioned so they never affect container height --}}
         @foreach($banners as $index => $banner)
         <div x-show="activeSlide === {{ $index }}"
-             x-transition:enter="transition ease-out duration-700"
-             x-transition:enter-start="opacity-0 scale-99"
-             x-transition:enter-end="opacity-100 scale-100"
-             x-transition:leave="transition ease-in duration-400 absolute inset-0"
-             x-transition:leave-start="opacity-100 scale-100"
-             x-transition:leave-end="opacity-0 scale-99"
-             class="w-full">
-            
+             style="position: absolute; inset: 0; width: 100%; height: 100%;"
+             x-transition:enter-start="opacity-0"
+             x-transition:enter-end="opacity-100"
+             x-transition:leave-start="opacity-100"
+             x-transition:leave-end="opacity-0"
+             x-transition:enter="ease-out duration-[500ms]"
+             x-transition:leave="ease-in duration-[300ms]">
             @if(!empty($banner->button_link))
-            <a href="{{ $banner->button_link }}" class="block w-full">
-                <img src="{{ $banner->image }}" 
-                     alt="Banner RSU Fikri Medika" 
-                     class="w-full h-auto object-cover block min-h-[180px] sm:min-h-[320px] md:min-h-[400px] lg:min-h-[480px]"
-                     loading="{{ $index === 0 ? 'eager' : 'lazy' }}">
+            <a href="{{ $banner->button_link }}" draggable="false" style="display: block; width: 100%; height: 100%;">
+                <img src="{{ $banner->image }}"
+                     alt="Banner RSU Fikri Medika"
+                     draggable="false"
+                     loading="{{ $index === 0 ? 'eager' : 'lazy' }}"
+                     style="width: 100%; height: 100%; display: block; object-fit: cover; pointer-events: none;">
             </a>
             @else
-            <img src="{{ $banner->image }}" 
-                 alt="Banner RSU Fikri Medika" 
-                 class="w-full h-auto object-cover block min-h-[180px] sm:min-h-[320px] md:min-h-[400px] lg:min-h-[480px]"
-                 loading="{{ $index === 0 ? 'eager' : 'lazy' }}">
+            <img src="{{ $banner->image }}"
+                 alt="Banner RSU Fikri Medika"
+                 draggable="false"
+                 loading="{{ $index === 0 ? 'eager' : 'lazy' }}"
+                 style="width: 100%; height: 100%; display: block; object-fit: cover; pointer-events: none;">
             @endif
-
         </div>
         @endforeach
     </div>
 
+
     @if($banners->count() > 1)
-    <!-- PREV BUTTON (ORANGE CIRCULAR CHEVRON LIKE REFERENCE) -->
-    <button @click="prevSlide()" 
+
+    <!-- PREV ARROW -->
+    <button @click="prevSlide(); stopAutoSlide(); startAutoSlide();"
             type="button"
             aria-label="Banner Sebelumnya"
-            class="absolute left-3 sm:left-6 top-1/2 -translate-y-1/2 z-20 w-8 h-8 sm:w-11 sm:h-11 rounded-full bg-[#f97316] hover:bg-[#ea580c] text-white shadow-xl flex items-center justify-center transition-all hover:scale-110 focus:outline-none cursor-pointer">
-        <i class="fa-solid fa-chevron-left text-xs sm:text-base"></i>
+            style="
+                position: absolute;
+                left: 16px;
+                top: 50%;
+                transform: translateY(-50%);
+                z-index: 20;
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                background: #f97316;
+                color: #fff;
+                border: none;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 14px;
+                box-shadow: 0 4px 14px rgba(0,0,0,0.25);
+                transition: background 0.2s, transform 0.2s;
+            "
+            onmouseover="this.style.background='#ea580c'; this.style.transform='translateY(-50%) scale(1.1)'"
+            onmouseout="this.style.background='#f97316'; this.style.transform='translateY(-50%) scale(1)'">
+        <i class="fa-solid fa-chevron-left"></i>
     </button>
 
-    <!-- NEXT BUTTON (ORANGE CIRCULAR CHEVRON LIKE REFERENCE) -->
-    <button @click="nextSlide()" 
+    <!-- NEXT ARROW -->
+    <button @click="nextSlide(); stopAutoSlide(); startAutoSlide();"
             type="button"
             aria-label="Banner Berikutnya"
-            class="absolute right-3 sm:right-6 top-1/2 -translate-y-1/2 z-20 w-8 h-8 sm:w-11 sm:h-11 rounded-full bg-[#f97316] hover:bg-[#ea580c] text-white shadow-xl flex items-center justify-center transition-all hover:scale-110 focus:outline-none cursor-pointer">
-        <i class="fa-solid fa-chevron-right text-xs sm:text-base"></i>
+            style="
+                position: absolute;
+                right: 16px;
+                top: 50%;
+                transform: translateY(-50%);
+                z-index: 20;
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                background: #f97316;
+                color: #fff;
+                border: none;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 14px;
+                box-shadow: 0 4px 14px rgba(0,0,0,0.25);
+                transition: background 0.2s, transform 0.2s;
+            "
+            onmouseover="this.style.background='#ea580c'; this.style.transform='translateY(-50%) scale(1.1)'"
+            onmouseout="this.style.background='#f97316'; this.style.transform='translateY(-50%) scale(1)'">
+        <i class="fa-solid fa-chevron-right"></i>
     </button>
 
-    <!-- INDICATOR DOTS (BOTTOM CENTERED LIKE REFERENCE) -->
-    <div class="absolute bottom-3 sm:bottom-5 left-1/2 -translate-x-1/2 flex items-center gap-2 z-20 bg-slate-950/40 backdrop-blur-xs px-3.5 py-1.5 rounded-full border border-white/20">
+    <!-- DOT NAVIGATION -->
+    <div style="
+            position: absolute;
+            bottom: 18px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 20;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(0,0,0,0.35);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            padding: 7px 14px;
+            border-radius: 99px;
+        ">
         @foreach($banners as $index => $banner)
-        <button @click="activeSlide = {{ $index }}" 
-                :class="activeSlide === {{ $index }} ? 'w-6 bg-[#f97316]' : 'w-2 bg-white/60 hover:bg-white'"
-                class="h-2 rounded-full transition-all duration-300 focus:outline-none cursor-pointer"
-                title="Slide {{ $index + 1 }}"></button>
+        <button @click="goTo({{ $index }})"
+                type="button"
+                title="Slide {{ $index + 1 }}"
+                :style="activeSlide === {{ $index }}
+                    ? 'width:28px; background:#f97316;'
+                    : 'width:8px; background:rgba(255,255,255,0.5);'"
+                style="
+                    height: 8px;
+                    border-radius: 99px;
+                    border: none;
+                    cursor: pointer;
+                    outline: none;
+                    padding: 0;
+                    display: block;
+                    transition: width 0.3s ease, background-color 0.3s ease;
+                ">
+        </button>
         @endforeach
     </div>
+
     @endif
 
 </section>
