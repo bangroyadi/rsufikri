@@ -1,24 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<!-- BREADCRUMB & HERO BANNER -->
-<section class="bg-gradient-to-r from-[#0e7c47] to-[#096237] text-white py-12 px-4 shadow-inner">
-    <div class="max-w-7xl mx-auto">
-        <div class="flex items-center gap-2 text-xs sm:text-sm text-yellow-300 mb-3 font-semibold">
-            <a href="{{ route('home') }}" class="hover:underline flex items-center gap-1">
-                <i class="fa-solid fa-house text-xs"></i> {{ __('Beranda') }}
-            </a>
-            <i class="fa-solid fa-chevron-right text-[10px] text-gray-300"></i>
-            <span class="text-gray-200">{{ $category }}</span>
-            <i class="fa-solid fa-chevron-right text-[10px] text-gray-300"></i>
-            <span class="text-white font-bold">{{ $title }}</span>
-        </div>
-        <h1 class="text-2xl sm:text-4xl font-extrabold tracking-tight">{{ $title }}</h1>
-        <p class="mt-2 text-sm sm:text-base text-emerald-100 max-w-2xl">
-            {{ __('Pelayanan kesehatan profesional, modern, dan terpercaya dengan sentuhan nilai-nilai Islami di RSU Fikri Medika Karawang.') }}
-        </p>
-    </div>
-</section>
+
 
 <!-- MAIN CONTENT CONTAINER -->
 <section class="py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">

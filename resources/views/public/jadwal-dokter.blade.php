@@ -45,7 +45,7 @@
 }">
 
     <!-- SEARCH & FILTER BAR -->
-    <div class="bg-white p-6 rounded-3xl border border-emerald-100 shadow-lg -mt-10 relative z-30 mb-10 grid grid-cols-1 sm:grid-cols-3 gap-4">
+    <div class="bg-white p-6 rounded-3xl border border-emerald-100 shadow-lg relative z-30 mb-10 grid grid-cols-1 sm:grid-cols-3 gap-4">
         
         <!-- SEARCH BY NAME -->
         <div>
