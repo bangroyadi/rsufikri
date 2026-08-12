@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Models\Article;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Auth;
 
 class AdminArticleController extends Controller
 {
@@ -20,10 +19,10 @@ class AdminArticleController extends Controller
     {
         $validated = $request->validate([
             'title_id' => 'required|string|max:255',
-            'category_id' => 'nullable|string|max:100',
-            'excerpt_id' => 'nullable|string',
+            'category_id' => 'nullable|string|max:255',
+            'excerpt_id' => 'nullable|string|max:500',
             'thumbnail' => 'nullable|string|max:500',
-            'thumbnail_file' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:4096',
+            'thumbnail_file' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:10240',
         ]);
 
         $thumbUrl = $validated['thumbnail'] ?? null;
@@ -35,16 +34,15 @@ class AdminArticleController extends Controller
         Article::create([
             'title' => ['id' => $validated['title_id'], 'en' => $validated['title_id']],
             'slug' => Str::slug($validated['title_id']),
+            'category' => ['id' => $validated['category_id'] ?? 'Artikel', 'en' => $validated['category_id'] ?? 'Article'],
             'excerpt' => ['id' => $validated['excerpt_id'] ?? '', 'en' => $validated['excerpt_id'] ?? ''],
             'content' => ['id' => $validated['excerpt_id'] ?? '', 'en' => $validated['excerpt_id'] ?? ''],
-            'category' => ['id' => $validated['category_id'] ?? 'Edukasi Kesehatan', 'en' => $validated['category_id'] ?? 'Health Education'],
             'thumbnail' => $thumbUrl,
-            'author_id' => Auth::id() ?? 1,
             'is_published' => true,
             'published_at' => now(),
         ]);
 
-        return back()->with('success', 'Artikel Kesehatan berhasil diterbitkan!');
+        return back()->with('success', 'Artikel kesehatan berhasil diterbitkan!');
     }
 
     public function update(Request $request, $id)
@@ -53,10 +51,10 @@ class AdminArticleController extends Controller
 
         $validated = $request->validate([
             'title_id' => 'required|string|max:255',
-            'category_id' => 'nullable|string|max:100',
-            'excerpt_id' => 'nullable|string',
+            'category_id' => 'nullable|string|max:255',
+            'excerpt_id' => 'nullable|string|max:500',
             'thumbnail' => 'nullable|string|max:500',
-            'thumbnail_file' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:4096',
+            'thumbnail_file' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:10240',
         ]);
 
         $thumbUrl = $article->thumbnail;
@@ -69,14 +67,12 @@ class AdminArticleController extends Controller
 
         $article->update([
             'title' => ['id' => $validated['title_id'], 'en' => $validated['title_id']],
-            'slug' => Str::slug($validated['title_id']),
+            'category' => ['id' => $validated['category_id'] ?? 'Artikel', 'en' => $validated['category_id'] ?? 'Article'],
             'excerpt' => ['id' => $validated['excerpt_id'] ?? '', 'en' => $validated['excerpt_id'] ?? ''],
-            'content' => ['id' => $validated['excerpt_id'] ?? '', 'en' => $validated['excerpt_id'] ?? ''],
-            'category' => ['id' => $validated['category_id'] ?? 'Edukasi Kesehatan', 'en' => $validated['category_id'] ?? 'Health Education'],
             'thumbnail' => $thumbUrl,
         ]);
 
-        return back()->with('success', 'Data artikel berhasil diperbarui!');
+        return back()->with('success', 'Artikel berhasil diperbarui!');
     }
 
     public function destroy($id)

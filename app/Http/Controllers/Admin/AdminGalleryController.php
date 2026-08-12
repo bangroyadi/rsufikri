@@ -10,7 +10,7 @@ class AdminGalleryController extends Controller
 {
     public function index()
     {
-        $galleries = Gallery::latest()->get();
+        $galleries = Gallery::orderBy('created_at', 'desc')->get();
         return view('admin.galleries.index', compact('galleries'));
     }
 
@@ -18,9 +18,9 @@ class AdminGalleryController extends Controller
     {
         $validated = $request->validate([
             'title_id' => 'required|string|max:255',
-            'category_id' => 'nullable|string|max:100',
+            'category_id' => 'nullable|string|max:255',
             'image' => 'nullable|string|max:500',
-            'image_file' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:4096',
+            'image_file' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:10240',
         ]);
 
         $imageUrl = $validated['image'] ?? null;
@@ -29,14 +29,9 @@ class AdminGalleryController extends Controller
             $imageUrl = asset('storage/' . $path);
         }
 
-        if (empty($imageUrl)) {
-            return back()->withErrors(['image' => 'Pilih file gambar untuk diupload atau masukkan URL gambar.']);
-        }
-
         Gallery::create([
             'title' => ['id' => $validated['title_id'], 'en' => $validated['title_id']],
-            'description' => ['id' => $validated['title_id'], 'en' => $validated['title_id']],
-            'category' => ['id' => $validated['category_id'] ?? 'Fasilitas', 'en' => $validated['category_id'] ?? 'Facilities'],
+            'category' => ['id' => $validated['category_id'] ?? 'Foto', 'en' => $validated['category_id'] ?? 'Photo'],
             'image' => $imageUrl,
             'is_active' => true,
         ]);
@@ -50,9 +45,9 @@ class AdminGalleryController extends Controller
 
         $validated = $request->validate([
             'title_id' => 'required|string|max:255',
-            'category_id' => 'nullable|string|max:100',
+            'category_id' => 'nullable|string|max:255',
             'image' => 'nullable|string|max:500',
-            'image_file' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:4096',
+            'image_file' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:10240',
         ]);
 
         $imageUrl = $gallery->image;
@@ -65,18 +60,17 @@ class AdminGalleryController extends Controller
 
         $gallery->update([
             'title' => ['id' => $validated['title_id'], 'en' => $validated['title_id']],
-            'description' => ['id' => $validated['title_id'], 'en' => $validated['title_id']],
-            'category' => ['id' => $validated['category_id'] ?? 'Fasilitas', 'en' => $validated['category_id'] ?? 'Facilities'],
+            'category' => ['id' => $validated['category_id'] ?? 'Foto', 'en' => $validated['category_id'] ?? 'Photo'],
             'image' => $imageUrl,
         ]);
 
-        return back()->with('success', 'Data galeri foto berhasil diperbarui!');
+        return back()->with('success', 'Foto galeri berhasil diperbarui!');
     }
 
     public function destroy($id)
     {
         $gallery = Gallery::findOrFail($id);
         $gallery->delete();
-        return back()->with('success', 'Foto galeri berhasil dihapus!');
+        return back()->with('success', 'Foto berhasil dihapus!');
     }
 }

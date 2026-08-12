@@ -18,11 +18,10 @@ class AdminBannerController extends Controller
     {
         $validated = $request->validate([
             'title_id' => 'required|string|max:255',
-            'subtitle_id' => 'nullable|string',
-            'image' => 'nullable|string|max:500',
-            'image_file' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:4096',
-            'button_text_id' => 'nullable|string|max:100',
+            'button_text_id' => 'nullable|string|max:255',
             'button_link' => 'nullable|string|max:255',
+            'image' => 'nullable|string|max:500',
+            'image_file' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:10240',
         ]);
 
         $imageUrl = $validated['image'] ?? null;
@@ -31,17 +30,15 @@ class AdminBannerController extends Controller
             $imageUrl = asset('storage/' . $path);
         }
 
-        if (empty($imageUrl)) {
-            return back()->withErrors(['image' => 'Pilih file gambar untuk diupload atau masukkan nama file / URL gambar.']);
-        }
+        $maxOrder = Banner::max('order') ?? 0;
 
         Banner::create([
             'title' => ['id' => $validated['title_id'], 'en' => $validated['title_id']],
-            'subtitle' => ['id' => $validated['subtitle_id'] ?? '', 'en' => $validated['subtitle_id'] ?? ''],
+            'subtitle' => ['id' => '', 'en' => ''],
+            'button_text' => ['id' => $validated['button_text_id'] ?? 'Daftar Online', 'en' => $validated['button_text_id'] ?? 'Register Online'],
+            'button_link' => $validated['button_link'] ?? '#',
             'image' => $imageUrl,
-            'button_text' => ['id' => $validated['button_text_id'] ?? 'Daftar Online', 'en' => $validated['button_text_id'] ?? 'Online Registration'],
-            'button_link' => $validated['button_link'] ?? '#kontak',
-            'order' => Banner::count() + 1,
+            'order' => $maxOrder + 1,
             'is_active' => true,
         ]);
 
@@ -54,11 +51,10 @@ class AdminBannerController extends Controller
 
         $validated = $request->validate([
             'title_id' => 'required|string|max:255',
-            'subtitle_id' => 'nullable|string',
-            'image' => 'nullable|string|max:500',
-            'image_file' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:4096',
-            'button_text_id' => 'nullable|string|max:100',
+            'button_text_id' => 'nullable|string|max:255',
             'button_link' => 'nullable|string|max:255',
+            'image' => 'nullable|string|max:500',
+            'image_file' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:10240',
         ]);
 
         $imageUrl = $banner->image;
@@ -71,13 +67,12 @@ class AdminBannerController extends Controller
 
         $banner->update([
             'title' => ['id' => $validated['title_id'], 'en' => $validated['title_id']],
-            'subtitle' => ['id' => $validated['subtitle_id'] ?? '', 'en' => $validated['subtitle_id'] ?? ''],
+            'button_text' => ['id' => $validated['button_text_id'] ?? 'Daftar Online', 'en' => $validated['button_text_id'] ?? 'Register Online'],
+            'button_link' => $validated['button_link'] ?? '#',
             'image' => $imageUrl,
-            'button_text' => ['id' => $validated['button_text_id'] ?? 'Daftar Online', 'en' => $validated['button_text_id'] ?? 'Online Registration'],
-            'button_link' => $validated['button_link'] ?? '#kontak',
         ]);
 
-        return back()->with('success', 'Data banner berhasil diperbarui!');
+        return back()->with('success', 'Banner homepage berhasil diperbarui!');
     }
 
     public function destroy($id)

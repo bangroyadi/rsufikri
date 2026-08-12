@@ -66,6 +66,15 @@ class HomeController extends Controller
         $profile = HospitalProfile::first();
         $services = Service::where('is_active', true)->get();
 
+        if ($slug === 'igd') {
+            return view('public.layanan.igd', compact('title', 'category', 'slug', 'profile', 'services'));
+        }
+
+        if ($slug === 'rawat-jalan') {
+            $polyclinics = \App\Models\Polyclinic::where('is_active', true)->with('doctors')->get();
+            return view('public.layanan.rawat-jalan', compact('title', 'category', 'slug', 'profile', 'services', 'polyclinics'));
+        }
+
         return view('public.page', compact('title', 'category', 'slug', 'profile', 'services'));
     }
 
@@ -126,14 +135,18 @@ class HomeController extends Controller
         return view('public.page', compact('title', 'category', 'slug', 'profile'));
     }
 
-    public function buatJanjiPage()
+    public function buatJanjiPage(Request $request)
     {
         $title = 'Daftar / Buat Janji Temu Dokter';
         $category = 'Pendaftaran';
         $slug = 'buat-janji';
         $profile = HospitalProfile::first();
-        $doctors = Doctor::with(['polyclinic'])->where('is_active', true)->get();
-        return view('public.page', compact('title', 'category', 'slug', 'profile', 'doctors'));
+        $doctors = Doctor::with(['polyclinic', 'schedules'])->where('is_active', true)->get();
+        $polyclinics = Polyclinic::where('is_active', true)->get();
+        $selectedDoctorId = $request->query('dokter_id') ?? $request->query('dokter');
+        $selectedPoliId = $request->query('poli_id') ?? $request->query('poli');
+
+        return view('public.buat-janji', compact('title', 'category', 'slug', 'profile', 'doctors', 'polyclinics', 'selectedDoctorId', 'selectedPoliId'));
     }
 }
 

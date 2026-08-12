@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Models\News;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Auth;
 
 class AdminNewsController extends Controller
 {
@@ -20,10 +19,10 @@ class AdminNewsController extends Controller
     {
         $validated = $request->validate([
             'title_id' => 'required|string|max:255',
-            'category_id' => 'nullable|string|max:100',
-            'excerpt_id' => 'nullable|string',
+            'category_id' => 'nullable|string|max:255',
+            'excerpt_id' => 'nullable|string|max:500',
             'thumbnail' => 'nullable|string|max:500',
-            'thumbnail_file' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:4096',
+            'thumbnail_file' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:10240',
         ]);
 
         $thumbUrl = $validated['thumbnail'] ?? null;
@@ -35,16 +34,15 @@ class AdminNewsController extends Controller
         News::create([
             'title' => ['id' => $validated['title_id'], 'en' => $validated['title_id']],
             'slug' => Str::slug($validated['title_id']),
+            'category' => ['id' => $validated['category_id'] ?? 'Berita', 'en' => $validated['category_id'] ?? 'News'],
             'excerpt' => ['id' => $validated['excerpt_id'] ?? '', 'en' => $validated['excerpt_id'] ?? ''],
             'content' => ['id' => $validated['excerpt_id'] ?? '', 'en' => $validated['excerpt_id'] ?? ''],
-            'category' => ['id' => $validated['category_id'] ?? 'Kegiatan RS', 'en' => $validated['category_id'] ?? 'Hospital Event'],
             'thumbnail' => $thumbUrl,
-            'author_id' => Auth::id() ?? 1,
             'is_published' => true,
             'published_at' => now(),
         ]);
 
-        return back()->with('success', 'Berita RS berhasil diterbitkan!');
+        return back()->with('success', 'Berita berhasil diterbitkan!');
     }
 
     public function update(Request $request, $id)
@@ -53,10 +51,10 @@ class AdminNewsController extends Controller
 
         $validated = $request->validate([
             'title_id' => 'required|string|max:255',
-            'category_id' => 'nullable|string|max:100',
-            'excerpt_id' => 'nullable|string',
+            'category_id' => 'nullable|string|max:255',
+            'excerpt_id' => 'nullable|string|max:500',
             'thumbnail' => 'nullable|string|max:500',
-            'thumbnail_file' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:4096',
+            'thumbnail_file' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:10240',
         ]);
 
         $thumbUrl = $news->thumbnail;
@@ -69,14 +67,12 @@ class AdminNewsController extends Controller
 
         $news->update([
             'title' => ['id' => $validated['title_id'], 'en' => $validated['title_id']],
-            'slug' => Str::slug($validated['title_id']),
+            'category' => ['id' => $validated['category_id'] ?? 'Berita', 'en' => $validated['category_id'] ?? 'News'],
             'excerpt' => ['id' => $validated['excerpt_id'] ?? '', 'en' => $validated['excerpt_id'] ?? ''],
-            'content' => ['id' => $validated['excerpt_id'] ?? '', 'en' => $validated['excerpt_id'] ?? ''],
-            'category' => ['id' => $validated['category_id'] ?? 'Kegiatan RS', 'en' => $validated['category_id'] ?? 'Hospital Event'],
             'thumbnail' => $thumbUrl,
         ]);
 
-        return back()->with('success', 'Data berita berhasil diperbarui!');
+        return back()->with('success', 'Berita berhasil diperbarui!');
     }
 
     public function destroy($id)

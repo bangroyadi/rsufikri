@@ -25,7 +25,7 @@ class AdminDoctorController extends Controller
             'polyclinic_id' => 'required|exists:polyclinics,id',
             'specialty_id' => 'required|string|max:255',
             'photo' => 'nullable|string|max:500',
-            'photo_file' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:4096',
+            'photo_file' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:10240',
         ]);
 
         $photoUrl = $validated['photo'] ?? null;
@@ -56,7 +56,7 @@ class AdminDoctorController extends Controller
             'polyclinic_id' => 'required|exists:polyclinics,id',
             'specialty_id' => 'required|string|max:255',
             'photo' => 'nullable|string|max:500',
-            'photo_file' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:4096',
+            'photo_file' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:10240',
         ]);
 
         $photoUrl = $doctor->photo;
@@ -81,7 +81,7 @@ class AdminDoctorController extends Controller
             'polyclinic_id' => $validated['polyclinic_id']
         ]);
 
-        return back()->with('success', 'Data dokter & sinkronisasi jadwal berhasil diperbarui!');
+        return back()->with('success', 'Data dokter & foto berhasil diperbarui!');
     }
 
     public function destroy($id)
