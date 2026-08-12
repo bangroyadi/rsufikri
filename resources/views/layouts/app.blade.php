@@ -488,7 +488,24 @@
                         <template x-if="msg.sender === 'ai'">
                             <div class="flex items-start gap-2.5 max-w-[92%]">
                                 <img src="{{ asset('avatar-fikri.png') }}" class="w-8 h-8 rounded-full border border-emerald-200 shrink-0 mt-0.5 object-cover bg-white">
-                                <div class="bg-[#e8f4f8] p-3.5 rounded-2xl rounded-tl-xs text-xs sm:text-sm leading-relaxed border border-sky-200 shadow-xs space-y-2 font-semibold text-slate-900" style="color: #0f172a !important;" x-html="msg.text">
+                                <div class="space-y-2">
+                                    <div class="bg-[#e8f4f8] p-3.5 rounded-2xl rounded-tl-xs text-xs sm:text-sm leading-relaxed border border-sky-200 shadow-xs space-y-2 font-semibold text-slate-900" style="color: #0f172a !important;" x-html="msg.text">
+                                    </div>
+                                    <!-- DYNAMIC SUGGESTIONS FOR FALLBACK -->
+                                    <template x-if="msg.suggestions && msg.suggestions.length > 0">
+                                        <div class="flex flex-wrap gap-1.5 pt-1">
+                                            <template x-for="(sug, sIdx) in msg.suggestions" :key="sIdx">
+                                                <span>
+                                                    <template x-if="sug.url">
+                                                        <a :href="sug.url" class="px-2.5 py-1 rounded-full bg-emerald-100 hover:bg-emerald-200 text-[#0e7c47] font-bold text-[11px] border border-emerald-300 transition-colors inline-block mb-1" x-text="sug.label"></a>
+                                                    </template>
+                                                    <template x-if="sug.query">
+                                                        <button type="button" @click="sendQuickQuery(sug.query)" class="px-2.5 py-1 rounded-full bg-white hover:bg-emerald-50 text-[#0e7c47] font-bold text-[11px] border border-emerald-200 transition-colors inline-block mb-1 cursor-pointer" x-text="sug.label"></button>
+                                                    </template>
+                                                </span>
+                                            </template>
+                                        </div>
+                                    </template>
                                 </div>
                             </div>
                         </template>
@@ -517,13 +534,13 @@
 
             <!-- QUICK SUGGESTION PILLS -->
             <div class="px-3 py-2 bg-white border-t border-gray-100 flex items-center gap-1.5 overflow-x-auto text-[11px] font-semibold text-slate-700 no-scrollbar">
-                <button @click="sendQuickQuery('kalau sakit perut gimana ?')" class="px-2.5 py-1 rounded-full bg-emerald-50 text-[#0e7c47] hover:bg-emerald-100 transition-colors whitespace-nowrap border border-emerald-200 shrink-0">
-                    🤢 Sakit perut gimana?
+                <button @click="sendQuickQuery('Persyaratan BPJS Kesehatan')" class="px-2.5 py-1 rounded-full bg-emerald-50 text-[#0e7c47] hover:bg-emerald-100 transition-colors whitespace-nowrap border border-emerald-200 shrink-0">
+                    📋 Syarat BPJS
                 </button>
-                <button @click="sendQuickQuery('Cek jadwal dokter hari ini')" class="px-2.5 py-1 rounded-full bg-emerald-50 text-[#0e7c47] hover:bg-emerald-100 transition-colors whitespace-nowrap border border-emerald-200 shrink-0">
+                <button @click="sendQuickQuery('Jadwal Dokter Spesialis')" class="px-2.5 py-1 rounded-full bg-emerald-50 text-[#0e7c47] hover:bg-emerald-100 transition-colors whitespace-nowrap border border-emerald-200 shrink-0">
                     📅 Jadwal Dokter
                 </button>
-                <button @click="sendQuickQuery('Nomor IGD 24 Jam')" class="px-2.5 py-1 rounded-full bg-red-50 text-red-600 hover:bg-red-100 transition-colors whitespace-nowrap border border-red-200 shrink-0">
+                <button @click="sendQuickQuery('Nomor Telepon IGD 24 Jam')" class="px-2.5 py-1 rounded-full bg-red-50 text-red-600 hover:bg-red-100 transition-colors whitespace-nowrap border border-red-200 shrink-0">
                     🚨 Emergency IGD
                 </button>
             </div>
@@ -545,7 +562,7 @@
         </div>
     </div>
 
-    <!-- SCRIPT FOR KAKA FIKRI AI CHAT LOGIC -->
+    <!-- SCRIPT FOR FIKRI CHAT AI ENGINE (LOKAL & SMART KNOWLEDGE BASE) -->
     <script>
     function fikriChatWidget() {
         return {
@@ -555,13 +572,13 @@
             messages: [
                 {
                     sender: 'ai',
-                    text: 'Halo, ada yang bisa Kaka Fikri bantu? Jika Anda memiliki pertanyaan terkait kesehatan atau medis, jangan ragu untuk bertanya. Kaka Fikri akan dengan senang hati membantu Anda.'
+                    text: 'Halo 👋 Saya <strong>Tanya Fikri</strong>, asisten virtual RSU Fikri Medika. Ada yang bisa saya bantu?'
                 }
             ],
+
             toggleChat() {
                 this.open = !this.open;
                 if (this.open) {
-                    this.scrollToBottom();
                 }
             },
             sendQuickQuery(queryText) {

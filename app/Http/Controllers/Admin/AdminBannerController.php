@@ -27,7 +27,7 @@ class AdminBannerController extends Controller
         $imageUrl = $validated['image'] ?? null;
         if ($request->hasFile('image_file')) {
             $path = $request->file('image_file')->store('banners', 'public');
-            $imageUrl = asset('storage/' . $path);
+            $imageUrl = 'storage/' . $path;
         }
 
         $maxOrder = Banner::max('order') ?? 0;
@@ -60,7 +60,7 @@ class AdminBannerController extends Controller
         $imageUrl = $banner->image;
         if ($request->hasFile('image_file')) {
             $path = $request->file('image_file')->store('banners', 'public');
-            $imageUrl = asset('storage/' . $path);
+            $imageUrl = 'storage/' . $path;
         } elseif ($request->filled('image')) {
             $imageUrl = $validated['image'];
         }

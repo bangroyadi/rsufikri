@@ -2,21 +2,26 @@
 
 @section('content')
 
-<!-- HERO SECTION (DYNAMIC SWIPEABLE BANNER SLIDER - COMPACT) -->
-<section class="relative bg-gradient-to-br from-[#0e7c47] via-[#096237] to-[#0a5c34] text-white py-6 lg:py-10 overflow-hidden shadow-xl"
+<!-- HERO BANNER SECTION (FULL-WIDTH IMAGE SLIDER) -->
+<section class="relative w-full overflow-hidden bg-slate-900"
          x-data="{
              activeSlide: 0,
              totalSlides: {{ $banners->count() > 0 ? $banners->count() : 1 }},
              touchStartX: 0,
-             touchEndX: 0,
+             mouseStartX: 0,
+             isDragging: false,
              timer: null,
              startAutoSlide() {
-                 this.timer = setInterval(() => {
-                     this.nextSlide();
-                 }, 6000);
+                 this.stopAutoSlide();
+                 this.timer = setInterval(() => { this.nextSlide(); }, 5000);
              },
              stopAutoSlide() {
-                 if (this.timer) clearInterval(this.timer);
+                 if (this.timer) { clearInterval(this.timer); this.timer = null; }
+             },
+             goTo(index) {
+                 this.activeSlide = index;
+                 this.stopAutoSlide();
+                 this.startAutoSlide();
              },
              nextSlide() {
                  this.activeSlide = (this.activeSlide + 1) % this.totalSlides;
@@ -25,140 +30,177 @@
                  this.activeSlide = (this.activeSlide - 1 + this.totalSlides) % this.totalSlides;
              },
              handleTouchStart(e) {
-                 this.touchStartX = e.changedTouches[0].screenX;
+                 this.touchStartX = e.changedTouches[0].clientX;
              },
              handleTouchEnd(e) {
-                 this.touchEndX = e.changedTouches[0].screenX;
-                 if (this.touchStartX - this.touchEndX > 40) {
-                     this.nextSlide();
-                 } else if (this.touchEndX - this.touchStartX > 40) {
-                     this.prevSlide();
-                 }
+                 const diff = this.touchStartX - e.changedTouches[0].clientX;
+                 if (diff > 40) { this.nextSlide(); this.stopAutoSlide(); this.startAutoSlide(); }
+                 else if (diff < -40) { this.prevSlide(); this.stopAutoSlide(); this.startAutoSlide(); }
+             },
+             handleMouseDown(e) {
+                 e.preventDefault();
+                 this.isDragging = true;
+                 this.mouseStartX = e.clientX;
              }
          }"
-         x-init="startAutoSlide()"
-         @mouseenter="stopAutoSlide()"
-         @mouseleave="startAutoSlide()"
-         @touchstart="handleTouchStart($event)"
-         @touchend="handleTouchEnd($event)">
-    
-    <!-- DYNAMIC LIGHTING & GLOW ORBS -->
-    <div class="absolute inset-0 opacity-15 bg-[radial-gradient(#ffffff_1.5px,transparent_1.5px)] [background-size:24px_24px] pointer-events-none"></div>
-    <div class="absolute -right-16 -top-16 w-80 h-80 bg-yellow-400/20 rounded-full blur-3xl pointer-events-none animate-pulse"></div>
-    <div class="absolute left-1/4 -bottom-20 w-64 h-64 bg-emerald-400/15 rounded-full blur-3xl pointer-events-none"></div>
+         x-init="
+             startAutoSlide();
+             window.addEventListener('mouseup', (e) => {
+                 if (!isDragging) return;
+                 isDragging = false;
+                 const diff = mouseStartX - e.clientX;
+                 if (diff > 50) { nextSlide(); stopAutoSlide(); startAutoSlide(); }
+                 else if (diff < -50) { prevSlide(); stopAutoSlide(); startAutoSlide(); }
+             });
+         "
+         @touchstart.passive="handleTouchStart($event)"
+         @touchend.passive="handleTouchEnd($event)"
+         @mousedown="handleMouseDown($event)"
+         style="user-select: none; -webkit-user-select: none;"
+         :style="isDragging ? 'cursor: grabbing;' : 'cursor: grab;'">
 
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        
-        <!-- BANNERS LOOP CONTAINER -->
-        <div class="relative overflow-hidden min-h-[320px] sm:min-h-[340px] flex items-center">
-            
-            @foreach($banners as $index => $banner)
-            <div x-show="activeSlide === {{ $index }}"
-                 x-transition:enter="transition ease-out duration-700"
-                 x-transition:enter-start="opacity-0 translate-x-6 scale-98"
-                 x-transition:enter-end="opacity-100 translate-x-0 scale-100"
-                 x-transition:leave="transition ease-in duration-500 absolute inset-0"
-                 x-transition:leave-start="opacity-100 translate-x-0 scale-100"
-                 x-transition:leave-end="opacity-0 -translate-x-6 scale-98"
-                 class="w-full grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-10 items-center">
-                
-                <!-- LEFT HERO TEXT & CHECK BULLETS -->
-                <div class="lg:col-span-7 space-y-4 text-left">
-                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/20 border border-white/30 text-yellow-300 text-[11px] font-black uppercase tracking-wider backdrop-blur-md shadow-xs">
-                        <i class="fa-solid fa-hospital-user text-[10px]"></i>
-                        <span>RSU FIKRI MEDIKA KARAWANG</span>
-                    </div>
-                    
-                    <h1 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight leading-snug text-white drop-shadow-sm">
-                        {{ $banner->tr('title') }}
-                    </h1>
-                    
-                    <p class="text-xs sm:text-sm text-emerald-50 max-w-xl leading-relaxed font-medium">
-                        {{ $banner->tr('subtitle') }}
-                    </p>
-                    
-                    <div class="pt-1">
-                        <a href="{{ $banner->button_link ?? '#kontak' }}" class="inline-flex items-center justify-center px-6 py-2.5 rounded-full font-extrabold bg-white text-[#0e7c47] hover:bg-yellow-300 hover:text-slate-950 shadow-lg transition-all text-xs transform hover:scale-105">
-                            <span>{{ $banner->tr('button_text') }}</span>
-                        </a>
-                    </div>
+    <!-- SLIDE IMAGES — container with stable height -->
+    <div style="position: relative; width: 100%; overflow: hidden;"
+         x-ref="slideContainer">
+        {{-- Spacer slide (first image sets the container height) --}}
+        @if($banners->count() > 0)
+        <img src="{{ $banners->first()->image }}"
+             alt=""
+             aria-hidden="true"
+             draggable="false"
+             loading="eager"
+             style="width: 100%; height: auto; display: block; visibility: hidden; pointer-events: none;">
+        @endif
 
-                    <!-- CHECKMARK BULLETS -->
-                    <div class="pt-3 space-y-1.5 text-[11px] sm:text-xs font-bold text-white border-t border-white/20 max-w-md">
-                        <div class="flex items-center gap-2">
-                            <div class="w-4.5 h-4.5 rounded-full bg-white/25 flex items-center justify-center text-yellow-300 text-[10px] shrink-0">
-                                <i class="fa-solid fa-check"></i>
-                            </div>
-                            <span>Pelayanan Hemodialisa & USG 4 Dimensi</span>
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <div class="w-4.5 h-4.5 rounded-full bg-white/25 flex items-center justify-center text-yellow-300 text-[10px] shrink-0">
-                                <i class="fa-solid fa-check"></i>
-                            </div>
-                            <span>Tersedia Pendaftaran Online 24 Jam Siap</span>
-                        </div>
-                    </div>
-
-                </div>
-
-                <!-- RIGHT HERO VISUAL IMAGE & FLOATING CARDS (FRAMELESS SEAMLESS CUTOUT) -->
-                <div class="lg:col-span-5 relative flex justify-center lg:justify-end">
-                    <div class="relative w-full max-w-xs sm:max-w-sm flex justify-center">
-                        
-                        <!-- FRAMELESS BANNER IMAGE -->
-                        <div class="relative z-10 flex justify-center">
-                            <img src="{{ Str::startsWith($banner->image, 'http') ? $banner->image : asset($banner->image) }}" 
-                                 alt="{{ $banner->tr('title') }}" 
-                                 class="w-auto max-h-64 sm:max-h-72 object-contain drop-shadow-2xl filter hover:brightness-105 transition-all">
-                        </div>
-
-                        <!-- FLOATING GLASS BADGE TOP-LEFT -->
-                        <div class="absolute top-2 -left-4 z-20 bg-white/25 backdrop-blur-md border border-white/30 p-2.5 px-3 rounded-xl text-white shadow-xl flex items-center gap-2.5 hidden sm:flex transform -rotate-2 hover:rotate-0 transition-transform">
-                            <div class="w-8 h-8 rounded-lg bg-yellow-400 text-slate-950 flex items-center justify-center text-sm shrink-0 shadow-xs">
-                                <i class="fa-solid fa-vial-circle-check"></i>
-                            </div>
-                            <div>
-                                <div class="text-[9px] text-yellow-300 font-bold uppercase tracking-wider">Layanan Utama</div>
-                                <div class="text-[11px] font-black text-white">Hemodialisa & IGD 24 Jam</div>
-                            </div>
-                        </div>
-
-                    </div>
-                </div>
-
-            </div>
-            @endforeach
-
+        {{-- All slides absolutely positioned so they never affect container height --}}
+        @foreach($banners as $index => $banner)
+        <div x-show="activeSlide === {{ $index }}"
+             style="position: absolute; inset: 0; width: 100%; height: 100%;"
+             x-transition:enter-start="opacity-0"
+             x-transition:enter-end="opacity-100"
+             x-transition:leave-start="opacity-100"
+             x-transition:leave-end="opacity-0"
+             x-transition:enter="ease-out duration-[500ms]"
+             x-transition:leave="ease-in duration-[300ms]">
+            @if(!empty($banner->button_link))
+            <a href="{{ $banner->button_link }}" draggable="false" style="display: block; width: 100%; height: 100%;">
+                <img src="{{ $banner->image }}"
+                     alt="Banner RSU Fikri Medika"
+                     draggable="false"
+                     loading="{{ $index === 0 ? 'eager' : 'lazy' }}"
+                     style="width: 100%; height: 100%; display: block; object-fit: cover; pointer-events: none;">
+            </a>
+            @else
+            <img src="{{ $banner->image }}"
+                 alt="Banner RSU Fikri Medika"
+                 draggable="false"
+                 loading="{{ $index === 0 ? 'eager' : 'lazy' }}"
+                 style="width: 100%; height: 100%; display: block; object-fit: cover; pointer-events: none;">
+            @endif
         </div>
-
-        <!-- CAROUSEL CONTROLS & INDICATOR DOTS (CENTERED) -->
-        <div class="pt-4 flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-6 border-t border-white/10 mt-4">
-            
-            <!-- SWIPE INDICATOR DOTS -->
-            <div class="flex items-center gap-1.5">
-                @foreach($banners as $index => $banner)
-                <button @click="activeSlide = {{ $index }}" 
-                        :class="activeSlide === {{ $index }} ? 'w-7 bg-yellow-400' : 'w-2 bg-white/30 hover:bg-white/60'"
-                        class="h-2 rounded-full transition-all duration-300 focus:outline-none"
-                        title="Slide {{ $index + 1 }}"></button>
-                @endforeach
-            </div>
-
-            <!-- PREV / NEXT SWIPE ARROW BUTTONS -->
-            <div class="flex items-center gap-2">
-                <button @click="prevSlide()" 
-                        class="w-8.5 h-8.5 rounded-full bg-white/15 hover:bg-white/30 border border-white/25 text-white flex items-center justify-center transition-all focus:outline-none backdrop-blur-md shadow-sm transform hover:scale-105 active:scale-95">
-                    <i class="fa-solid fa-chevron-left text-xs"></i>
-                </button>
-                <button @click="nextSlide()" 
-                        class="w-8.5 h-8.5 rounded-full bg-white/15 hover:bg-white/30 border border-white/25 text-white flex items-center justify-center transition-all focus:outline-none backdrop-blur-md shadow-sm transform hover:scale-105 active:scale-95">
-                    <i class="fa-solid fa-chevron-right text-xs"></i>
-                </button>
-            </div>
-
-        </div>
-
+        @endforeach
     </div>
+
+
+    @if($banners->count() > 1)
+
+    <!-- PREV ARROW -->
+    <button @click="prevSlide(); stopAutoSlide(); startAutoSlide();"
+            type="button"
+            aria-label="Banner Sebelumnya"
+            style="
+                position: absolute;
+                left: 16px;
+                top: 50%;
+                transform: translateY(-50%);
+                z-index: 20;
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                background: #f97316;
+                color: #fff;
+                border: none;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 14px;
+                box-shadow: 0 4px 14px rgba(0,0,0,0.25);
+                transition: background 0.2s, transform 0.2s;
+            "
+            onmouseover="this.style.background='#ea580c'; this.style.transform='translateY(-50%) scale(1.1)'"
+            onmouseout="this.style.background='#f97316'; this.style.transform='translateY(-50%) scale(1)'">
+        <i class="fa-solid fa-chevron-left"></i>
+    </button>
+
+    <!-- NEXT ARROW -->
+    <button @click="nextSlide(); stopAutoSlide(); startAutoSlide();"
+            type="button"
+            aria-label="Banner Berikutnya"
+            style="
+                position: absolute;
+                right: 16px;
+                top: 50%;
+                transform: translateY(-50%);
+                z-index: 20;
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                background: #f97316;
+                color: #fff;
+                border: none;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 14px;
+                box-shadow: 0 4px 14px rgba(0,0,0,0.25);
+                transition: background 0.2s, transform 0.2s;
+            "
+            onmouseover="this.style.background='#ea580c'; this.style.transform='translateY(-50%) scale(1.1)'"
+            onmouseout="this.style.background='#f97316'; this.style.transform='translateY(-50%) scale(1)'">
+        <i class="fa-solid fa-chevron-right"></i>
+    </button>
+
+    <!-- DOT NAVIGATION -->
+    <div style="
+            position: absolute;
+            bottom: 18px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 20;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(0,0,0,0.35);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            padding: 7px 14px;
+            border-radius: 99px;
+        ">
+        @foreach($banners as $index => $banner)
+        <button @click="goTo({{ $index }})"
+                type="button"
+                title="Slide {{ $index + 1 }}"
+                :style="activeSlide === {{ $index }}
+                    ? 'width:28px; background:#f97316;'
+                    : 'width:8px; background:rgba(255,255,255,0.5);'"
+                style="
+                    height: 8px;
+                    border-radius: 99px;
+                    border: none;
+                    cursor: pointer;
+                    outline: none;
+                    padding: 0;
+                    display: block;
+                    transition: width 0.3s ease, background-color 0.3s ease;
+                ">
+        </button>
+        @endforeach
+    </div>
+
+    @endif
+
 </section>
 
 <!-- SECTION: TENTANG KAMI / SEJARAH SINGKAT (MATCHING REFERENCE DESIGN) -->
