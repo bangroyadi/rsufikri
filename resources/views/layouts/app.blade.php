@@ -99,7 +99,7 @@
                             <i class="fa-solid fa-chevron-down text-[10px] transition-transform duration-200" :class="dropdownOpen ? 'rotate-180 text-[#0e7c47]' : ''"></i>
                         </button>
 
-                        <!-- DROPDOWN MENU CONTAINER -->
+                        <!-- DROPDOWN MENU CONTAINER (MATCHING REFERENCE DESIGN) -->
                         <div x-show="dropdownOpen" 
                              x-transition:enter="transition ease-out duration-150"
                              x-transition:enter-start="opacity-0 translate-y-1 scale-95"
@@ -107,20 +107,96 @@
                              x-transition:leave="transition ease-in duration-100"
                              x-transition:leave-start="opacity-100 translate-y-0 scale-100"
                              x-transition:leave-end="opacity-0 translate-y-1 scale-95"
-                             class="absolute top-full left-0 w-60 bg-[#0e7c47] rounded-xl shadow-2xl py-2 z-50 text-white text-xs font-semibold border border-[#096237]"
+                             class="absolute top-full left-0 w-64 bg-white rounded-xl shadow-2xl py-1 z-50 text-gray-700 text-xs font-semibold border border-gray-100 divide-y divide-gray-100"
                              style="display: none;">
-                            @php
-                                $navServices = \App\Models\Service::where('is_active', true)->orderBy('order', 'asc')->get();
-                            @endphp
-                            @foreach($navServices as $nServ)
-                                @php 
-                                    $nName = $nServ->tr('name');
-                                    $nSlug = $nServ->slug ?: \Illuminate\Support\Str::slug($nName);
-                                @endphp
-                                <a href="{{ url('/layanan/' . $nSlug) }}" class="block px-4 py-2 hover:bg-[#096237] hover:text-yellow-300 transition-colors {{ request()->is('layanan/' . $nSlug) ? 'text-yellow-300 font-bold bg-[#096237]' : '' }}">
-                                    {{ $nName }}
+                            
+                             <style>
+                                .unggulan-menu-item, .penunjang-menu-item {
+                                    position: relative;
+                                }
+                                .unggulan-sub-menu, .penunjang-sub-menu {
+                                    display: none !important;
+                                    position: absolute;
+                                    top: 0;
+                                    left: 100%;
+                                    width: 260px;
+                                    background: #ffffff;
+                                    border-radius: 12px;
+                                    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.15), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+                                    padding: 4px 0;
+                                    z-index: 9999;
+                                    border: 1px solid #f3f4f6;
+                                }
+                                .unggulan-menu-item:hover .unggulan-sub-menu,
+                                .penunjang-menu-item:hover .penunjang-sub-menu {
+                                    display: block !important;
+                                }
+                            </style>
+
+                            <!-- LAYANAN UNGGULAN SUB-DROPDOWN (POPS OUT TO THE RIGHT SIDE) -->
+                            <div class="unggulan-menu-item">
+                                <a href="{{ url('/layanan/unggulan') }}" class="flex items-center justify-between px-4 py-3 hover:bg-orange-50 hover:text-[#f97316] transition-colors text-gray-700 font-semibold border-b border-gray-100 {{ request()->is('layanan/unggulan*') || request()->is('layanan/trauma-center*') || request()->is('layanan/spesialis-mata*') || request()->is('layanan/kemilau-cinta*') || request()->is('layanan/layanan-antar-jemput*') ? 'text-[#f97316] font-bold bg-orange-50' : '' }}">
+                                    <span>Layanan Unggulan</span>
+                                    <i class="fa-solid fa-chevron-right text-[10px] text-[#f97316]"></i>
                                 </a>
-                            @endforeach
+
+                                <!-- SUB-MENU POPUP (RIGHT SIDE) -->
+                                <div class="unggulan-sub-menu">
+                                    <a href="{{ url('/layanan/trauma-center') }}" class="block px-4 py-3 hover:bg-orange-50 hover:text-[#f97316] transition-colors border-b border-gray-100 {{ request()->is('layanan/trauma-center*') ? 'text-[#f97316] font-bold bg-orange-50' : '' }}">
+                                        Trauma Center
+                                    </a>
+                                    <a href="{{ url('/layanan/spesialis-mata') }}" class="block px-4 py-3 hover:bg-orange-50 hover:text-[#f97316] transition-colors border-b border-gray-100 {{ request()->is('layanan/spesialis-mata*') ? 'text-[#f97316] font-bold bg-orange-50' : '' }}">
+                                        Spesialis Mata
+                                    </a>
+                                    <a href="{{ url('/layanan/kemilau-cinta') }}" class="block px-4 py-3 hover:bg-orange-50 hover:text-[#f97316] transition-colors border-b border-gray-100 {{ request()->is('layanan/kemilau-cinta*') ? 'text-[#f97316] font-bold bg-orange-50' : '' }}">
+                                        Kemilau Cinta (Ibu & Anak)
+                                    </a>
+                                    <a href="{{ url('/layanan/layanan-antar-jemput') }}" class="block px-4 py-3 hover:bg-orange-50 hover:text-[#f97316] transition-colors {{ request()->is('layanan/layanan-antar-jemput*') ? 'text-[#f97316] font-bold bg-orange-50' : '' }}">
+                                        Antar Jemput Pasien
+                                    </a>
+                                </div>
+                            </div>
+
+                            <a href="{{ url('/layanan/rawat-inap') }}" class="block px-4 py-3 hover:bg-orange-50 hover:text-[#f97316] transition-colors border-b border-gray-100 {{ request()->is('layanan/rawat-inap*') ? 'text-[#f97316] font-bold bg-orange-50' : '' }}">
+                                Rawat Inap
+                            </a>
+
+                            <a href="{{ url('/layanan/rawat-jalan') }}" class="block px-4 py-3 hover:bg-orange-50 hover:text-[#f97316] transition-colors border-b border-gray-100 {{ request()->is('layanan/rawat-jalan*') ? 'text-[#f97316] font-bold bg-orange-50' : '' }}">
+                                Klinik Rawat Jalan
+                            </a>
+
+                            <a href="{{ url('/layanan/igd') }}" class="block px-4 py-3 hover:bg-orange-50 hover:text-[#f97316] transition-colors border-b border-gray-100 {{ request()->is('layanan/igd*') ? 'text-[#f97316] font-bold bg-orange-50' : '' }}">
+                                IGD 24 Jam
+                            </a>
+
+                            <a href="{{ url('/layanan/rehabilitasi-medik') }}" class="block px-4 py-3 hover:bg-orange-50 hover:text-[#f97316] transition-colors border-b border-gray-100 {{ request()->is('layanan/rehabilitasi-medik*') ? 'text-[#f97316] font-bold bg-orange-50' : '' }}">
+                                Instalasi Rehabilitasi Medik
+                            </a>
+
+                            <a href="{{ url('/layanan/farmasi-24-jam') }}" class="block px-4 py-3 hover:bg-orange-50 hover:text-[#f97316] transition-colors border-b border-gray-100 {{ request()->is('layanan/farmasi-24-jam*') ? 'text-[#f97316] font-bold bg-orange-50' : '' }}">
+                                Farmasi 24 Jam
+                            </a>
+
+                            <!-- PENUNJANG MEDIS SUB-DROPDOWN (POPS OUT TO THE RIGHT SIDE) -->
+                            <div class="penunjang-menu-item">
+                                <a href="{{ url('/layanan/penunjang-medis') }}" class="flex items-center justify-between px-4 py-3 hover:bg-orange-50 hover:text-[#f97316] transition-colors text-gray-700 font-semibold {{ request()->is('layanan/penunjang*') || request()->is('layanan/radiologi*') || request()->is('layanan/laboratorium*') ? 'text-[#f97316] font-bold bg-orange-50' : '' }}">
+                                    <span>Penunjang Medis</span>
+                                    <i class="fa-solid fa-chevron-right text-[10px] text-[#f97316]"></i>
+                                </a>
+
+                                <!-- SUB-MENU POPUP (RIGHT SIDE) -->
+                                <div class="penunjang-sub-menu">
+                                    <a href="{{ url('/layanan/radiologi-24-jam') }}" class="block px-4 py-3 hover:bg-orange-50 hover:text-[#f97316] transition-colors border-b border-gray-100 {{ request()->is('layanan/radiologi*') ? 'text-[#f97316] font-bold bg-orange-50' : '' }}">
+                                        Radiologi 24 Jam
+                                    </a>
+                                    <a href="{{ url('/layanan/laboratorium-klinik') }}" class="block px-4 py-3 hover:bg-orange-50 hover:text-[#f97316] transition-colors border-b border-gray-100 {{ request()->is('layanan/laboratorium-klinik*') ? 'text-[#f97316] font-bold bg-orange-50' : '' }}">
+                                        Laboratorium Klinik 24 Jam
+                                    </a>
+                                    <a href="{{ url('/layanan/laboratorium-patologi') }}" class="block px-4 py-3 hover:bg-orange-50 hover:text-[#f97316] transition-colors {{ request()->is('layanan/laboratorium-patologi*') ? 'text-[#f97316] font-bold bg-orange-50' : '' }}">
+                                        Laboratorium Patologi Anatomi
+                                    </a>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
@@ -243,16 +319,39 @@
                     <span>{{ __('Layanan') }}</span>
                     <i class="fa-solid fa-chevron-down text-xs transition-transform" :class="mobileLayananOpen ? 'rotate-180 text-[#0e7c47]' : 'text-gray-400'"></i>
                 </button>
-                <div x-show="mobileLayananOpen" class="pl-4 py-1.5 space-y-1 bg-[#0e7c47] text-white rounded-xl my-1.5 text-xs font-semibold max-h-60 overflow-y-auto">
-                    @foreach($navServices as $nServ)
-                        @php 
-                            $nName = $nServ->tr('name');
-                            $nSlug = $nServ->slug ?: \Illuminate\Support\Str::slug($nName);
-                        @endphp
-                        <a href="{{ url('/layanan/' . $nSlug) }}" @click="mobileMenuOpen = false" class="block py-1.5 px-2 hover:text-yellow-300">
-                            {{ $nName }}
-                        </a>
-                    @endforeach
+                <div x-show="mobileLayananOpen" class="pl-4 py-2 space-y-1 bg-white text-gray-700 rounded-xl my-1.5 text-xs font-medium border border-gray-100 shadow-sm max-h-80 overflow-y-auto divide-y divide-gray-100">
+                    
+                    <div x-data="{ mobileUnggulanOpen: false }" class="py-1 border-b border-gray-100">
+                        <button @click="mobileUnggulanOpen = !mobileUnggulanOpen" class="w-full flex items-center justify-between py-2 px-2 text-gray-700 font-semibold hover:text-[#f97316]">
+                            <span>Layanan Unggulan</span>
+                            <i class="fa-solid fa-chevron-down text-[10px] text-[#f97316] transition-transform" :class="mobileUnggulanOpen ? 'rotate-180' : ''"></i>
+                        </button>
+                        <div x-show="mobileUnggulanOpen" class="pl-4 py-1 space-y-1 bg-gray-50 rounded-lg my-1 text-xs">
+                            <a href="{{ url('/layanan/unggulan') }}" @click="mobileMenuOpen = false" class="block py-2 px-2 hover:text-[#f97316] font-semibold text-[#f97316]">Semua Layanan Unggulan</a>
+                            <a href="{{ url('/layanan/trauma-center') }}" @click="mobileMenuOpen = false" class="block py-2 px-2 hover:text-[#f97316]">Trauma Center</a>
+                            <a href="{{ url('/layanan/spesialis-mata') }}" @click="mobileMenuOpen = false" class="block py-2 px-2 hover:text-[#f97316]">Spesialis Mata</a>
+                            <a href="{{ url('/layanan/kemilau-cinta') }}" @click="mobileMenuOpen = false" class="block py-2 px-2 hover:text-[#f97316]">Kemilau Cinta (Ibu & Anak)</a>
+                            <a href="{{ url('/layanan/layanan-antar-jemput') }}" @click="mobileMenuOpen = false" class="block py-2 px-2 hover:text-[#f97316]">Antar Jemput Pasien</a>
+                        </div>
+                    </div>
+
+                    <a href="{{ url('/layanan/rawat-inap') }}" @click="mobileMenuOpen = false" class="block py-2.5 px-2 hover:text-[#f97316]">Rawat Inap</a>
+                    <a href="{{ url('/layanan/rawat-jalan') }}" @click="mobileMenuOpen = false" class="block py-2.5 px-2 hover:text-[#f97316]">Klinik Rawat Jalan</a>
+                    <a href="{{ url('/layanan/igd') }}" @click="mobileMenuOpen = false" class="block py-2.5 px-2 hover:text-[#f97316]">IGD 24 Jam</a>
+                    <a href="{{ url('/layanan/rehabilitasi-medik') }}" @click="mobileMenuOpen = false" class="block py-2.5 px-2 hover:text-[#f97316]">Instalasi Rehabilitasi Medik</a>
+                    <a href="{{ url('/layanan/farmasi-24-jam') }}" @click="mobileMenuOpen = false" class="block py-2.5 px-2 hover:text-[#f97316]">Farmasi 24 Jam</a>
+                    
+                    <div x-data="{ mobilePenunjangOpen: false }" class="py-1">
+                        <button @click="mobilePenunjangOpen = !mobilePenunjangOpen" class="w-full flex items-center justify-between py-2 px-2 text-gray-700 font-semibold hover:text-[#f97316]">
+                            <span>Penunjang Medis</span>
+                            <i class="fa-solid fa-chevron-down text-[10px] text-[#f97316] transition-transform" :class="mobilePenunjangOpen ? 'rotate-180' : ''"></i>
+                        </button>
+                        <div x-show="mobilePenunjangOpen" class="pl-4 py-1 space-y-1 bg-gray-50 rounded-lg my-1 text-xs">
+                            <a href="{{ url('/layanan/radiologi-24-jam') }}" @click="mobileMenuOpen = false" class="block py-2 px-2 hover:text-[#f97316]">Radiologi 24 Jam</a>
+                            <a href="{{ url('/layanan/laboratorium-klinik') }}" @click="mobileMenuOpen = false" class="block py-2 px-2 hover:text-[#f97316]">Laboratorium Klinik 24 Jam</a>
+                            <a href="{{ url('/layanan/laboratorium-patologi') }}" @click="mobileMenuOpen = false" class="block py-2 px-2 hover:text-[#f97316]">Laboratorium Patologi Anatomi</a>
+                        </div>
+                    </div>
                 </div>
             </div>
 

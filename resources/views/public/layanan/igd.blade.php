@@ -5,152 +5,39 @@
 <!-- MAIN CONTENT SECTION (WIDE CONTAINER STANDAR APLIKASI WEB MODERN) -->
 <section class="py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-10">
 
-    <!-- HERO SHOWCASE BANNER (BACKGROUND GAMBAR & MAPS BUTTON) -->
-    <div class="relative rounded-3xl p-6 sm:p-8 lg:p-10 text-white shadow-2xl overflow-hidden bg-cover bg-center" 
-         style="background-image: url('{{ asset('gedung2_web.jpg') }}');">
-        <!-- PREMIUM DARK GRADIENT OVERLAY FOR MAXIMUM TEXT READABILITY -->
-        <div class="absolute inset-0 bg-slate-950/70"></div>
-        <div class="absolute inset-0 bg-gradient-to-r from-[#042d19] via-[#084829]/90 to-[#021f11]/85"></div>
 
-        <div class="space-y-5 max-w-3xl relative z-10">
-            <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/15 text-yellow-300 text-xs font-black uppercase tracking-wider backdrop-blur-md shadow-xs">
-                <i class="fa-solid fa-truck-medical text-sm text-yellow-400 animate-pulse"></i>
-                <span>{{ __('Pelayanan Medis Darurat 24 Jam Nonstop') }}</span>
-            </div>
-            
-            <h1 class="text-2xl sm:text-4xl font-black text-white tracking-tight leading-snug drop-shadow-md">
-                {{ __('Instalasi Gawat Darurat (IGD 24 Jam)') }}
-            </h1>
-            
-            <p class="text-emerald-100 text-xs sm:text-sm leading-relaxed font-medium">
-                {{ __('Penanganan medis gawat darurat yang cepat, tepat, dan profesional oleh Dokter & Tim Medis siaga 24 jam nonstop di RSU Fikri Medika Karawang.') }}
-            </p>
 
-            <!-- MAPS BUTTON IN HERO BANNER -->
-            <div class="pt-1">
-                <a href="https://maps.google.com/?q=RSU+Fikri+Medika+Karawang" target="_blank" 
-                   class="inline-flex items-center gap-3 px-6 py-3.5 rounded-2xl bg-yellow-400 hover:bg-yellow-300 text-slate-950 font-black text-xs sm:text-sm shadow-xl transition-all border border-yellow-300 active:scale-98">
-                    <i class="fa-solid fa-location-dot text-base text-slate-950"></i>
-                    <span>{{ __('📍 Petunjuk Lokasi & Rute Google Maps') }}</span>
-                    <i class="fa-solid fa-arrow-up-right-from-square text-xs text-slate-800"></i>
-                </a>
-            </div>
-
-            <!-- 3 HIGHLIGHT BADGES -->
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
-                <div class="flex items-center gap-2.5 p-3 rounded-2xl bg-white/10 backdrop-blur-md">
-                    <div class="w-8 h-8 rounded-xl bg-yellow-400 text-slate-950 flex items-center justify-center text-sm font-black shrink-0 shadow-xs">
-                        <i class="fa-solid fa-clock"></i>
+    <!-- TOP SECTION (TENTANG IGD) -->
+    <div class="w-full">
+        <div class="bg-white p-6 sm:p-8 rounded-3xl shadow-sm space-y-6 flex flex-col justify-between border border-gray-100">
+            <div class="space-y-6">
+                <div class="flex items-center gap-3.5 pb-5 border-b border-gray-100">
+                    <div class="w-12 h-12 rounded-2xl bg-emerald-50 text-[#0e7c47] flex items-center justify-center text-xl font-extrabold">
+                        <i class="fa-solid fa-hospital-user"></i>
                     </div>
                     <div>
-                        <h4 class="font-extrabold text-white text-xs">Siaga 24 Jam</h4>
-                        <p class="text-[10px] text-emerald-100 font-medium">7 Hari Seminggu</p>
+                        <span class="inline-block px-3 py-1 rounded-full bg-emerald-100 text-[#0e7c47] text-xs font-bold mb-1">
+                            {{ __('Pelayanan Utama Emergency') }}
+                        </span>
+                        <h2 class="text-lg sm:text-xl font-bold text-gray-900">{{ __('Tentang Instalasi Gawat Darurat') }}</h2>
                     </div>
                 </div>
 
-                <div class="flex items-center gap-2.5 p-3 rounded-2xl bg-white/10 backdrop-blur-md">
-                    <div class="w-8 h-8 rounded-xl bg-yellow-400 text-slate-950 flex items-center justify-center text-sm font-black shrink-0 shadow-xs">
-                        <i class="fa-solid fa-user-doctor"></i>
-                    </div>
-                    <div>
-                        <h4 class="font-extrabold text-white text-xs">Dokter Siaga</h4>
-                        <p class="text-[10px] text-emerald-100 font-medium">Respon Medis Cepat</p>
-                    </div>
-                </div>
-
-                <div class="flex items-center gap-2.5 p-3 rounded-2xl bg-white/10 backdrop-blur-md">
-                    <div class="w-8 h-8 rounded-xl bg-yellow-400 text-slate-950 flex items-center justify-center text-sm font-black shrink-0 shadow-xs">
-                        <i class="fa-solid fa-ambulance"></i>
-                    </div>
-                    <div>
-                        <h4 class="font-extrabold text-white text-xs">Ambulans IGD</h4>
-                        <p class="text-[10px] text-emerald-100 font-medium">Evakuasi Pasien 24h</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- TOP SECTION (7 COLS TENTANG IGD + 5 COLS CALL CENTER) -->
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
-        
-        <!-- LEFT MAIN DETAILS (7 COLS) -->
-        <div class="lg:col-span-7">
-            <div class="bg-white p-6 sm:p-8 rounded-3xl shadow-sm space-y-6 h-full flex flex-col justify-between">
-                <div class="space-y-6">
-                    <div class="flex items-center gap-3.5 pb-5 border-b border-gray-100">
-                        <div class="w-12 h-12 rounded-2xl bg-emerald-50 text-[#0e7c47] flex items-center justify-center text-xl font-extrabold">
-                            <i class="fa-solid fa-hospital-user"></i>
-                        </div>
-                        <div>
-                            <span class="inline-block px-3 py-1 rounded-full bg-emerald-100 text-[#0e7c47] text-xs font-bold mb-1">
-                                {{ __('Pelayanan Utama Emergency') }}
-                            </span>
-                            <h2 class="text-lg sm:text-xl font-bold text-gray-900">{{ __('Tentang Instalasi Gawat Darurat') }}</h2>
-                        </div>
-                    </div>
-
-                    <div class="prose max-w-none text-gray-600 leading-relaxed text-xs sm:text-sm space-y-4 font-medium">
-                        <p>
-                            <strong>Instalasi Gawat Darurat (IGD 24 Jam) RSU Fikri Medika Karawang</strong> merupakan garda terdepan penanganan medis gawat darurat yang siap melayani pasien dengan respon cepat, tepat, dan mengedepankan prinsip keselamatan medis serta nilai-nilai kehangatan Islami.
-                        </p>
-                        <p>
-                            Ditunjang oleh tim dokter siaga 24 jam, perawat medis bersertifikasi khusus gawat darurat (BTCLS/ATCLS), serta ruang penanganan medis terintegrasi yang terhubung langsung ke unit penunjang 24 jam.
-                        </p>
-                    </div>
-                </div>
-
-                <div class="pt-4 border-t border-gray-100 flex items-center gap-2 text-xs font-bold text-[#0e7c47]">
-                    <i class="fa-solid fa-circle-check"></i>
-                    <span>Menerima Pasien BPJS Kesehatan & Asuransi Kasus Emergency 24h</span>
-                </div>
-            </div>
-        </div>
-
-        <!-- RIGHT SIDEBAR (5 COLS) -->
-        <div class="lg:col-span-5">
-            <div class="bg-gradient-to-br from-[#084829] via-[#0e7c47] to-[#042d19] p-6 sm:p-8 rounded-3xl text-white shadow-xl space-y-5 relative overflow-hidden h-full flex flex-col justify-between">
-                <div class="space-y-4">
-                    <div class="flex items-center gap-3 pb-3 border-b border-emerald-500/30">
-                        <div class="w-10 h-10 rounded-xl bg-yellow-400 text-slate-950 flex items-center justify-center text-xl font-bold">
-                            <i class="fa-solid fa-phone-volume"></i>
-                        </div>
-                        <div>
-                            <span class="text-[10px] text-yellow-300 font-bold uppercase tracking-wider">{{ __('Call Center IGD 24 Jam') }}</span>
-                            <h3 class="font-extrabold text-sm sm:text-base leading-tight text-white">{{ __('RSU Fikri Medika') }}</h3>
-                        </div>
-                    </div>
-
-                    <p class="text-xs text-emerald-100 leading-relaxed font-medium">
-                        {{ __('Segera hubungi tim penanganan darurat kami untuk bantuan pertolongan pertama dan penjemputan ambulans 24 jam.') }}
+                <div class="prose max-w-none text-gray-600 leading-relaxed text-xs sm:text-sm space-y-4 font-medium">
+                    <p>
+                        <strong>Instalasi Gawat Darurat (IGD 24 Jam) RSU Fikri Medika Karawang</strong> merupakan garda terdepan penanganan medis gawat darurat yang siap melayani pasien dengan respon cepat, tepat, dan mengedepankan prinsip keselamatan medis serta nilai-nilai kehangatan Islami.
                     </p>
-
-                    <div class="p-3.5 rounded-2xl bg-white/10 text-xs font-bold text-yellow-300 flex items-center justify-between backdrop-blur-md">
-                        <div class="flex items-center gap-2">
-                            <i class="fa-solid fa-phone text-red-400 animate-pulse"></i>
-                            <span>(0267) 861-5555</span>
-                        </div>
-                        <span class="text-[10px] px-2 py-0.5 rounded-full bg-emerald-600 text-white font-bold">IGD 24 Jam</span>
-                    </div>
-                </div>
-
-                <!-- COMBINED EMERGENCY BUTTONS IN SIDEBAR -->
-                <div class="space-y-2.5 pt-2">
-                    <a href="tel:02678615555" 
-                       class="w-full py-3.5 px-4 rounded-xl bg-[#e31e24] hover:bg-red-700 text-white font-black text-xs transition-colors shadow flex items-center justify-center gap-2">
-                        <i class="fa-solid fa-phone-volume text-sm animate-bounce"></i>
-                        <span>{{ __('Telepon IGD Direct (0267) 861-5555') }}</span>
-                    </a>
-
-                    <a href="https://wa.me/6281234567890" target="_blank" 
-                       class="w-full py-3 px-4 rounded-xl bg-yellow-400 hover:bg-yellow-300 text-slate-950 font-black text-xs transition-colors shadow flex items-center justify-center gap-2">
-                        <i class="fa-brands fa-whatsapp text-base"></i>
-                        <span>{{ __('WhatsApp Ambulans 24 Jam') }}</span>
-                    </a>
+                    <p>
+                        Ditunjang oleh tim dokter siaga 24 jam, perawat medis bersertifikasi khusus gawat darurat (BTCLS/ATCLS), serta ruang penanganan medis terintegrasi yang terhubung langsung ke unit penunjang 24 jam.
+                    </p>
                 </div>
             </div>
-        </div>
 
+            <div class="pt-4 border-t border-gray-100 flex items-center gap-2 text-xs font-bold text-[#0e7c47]">
+                <i class="fa-solid fa-circle-check"></i>
+                <span>Menerima Pasien BPJS Kesehatan & Asuransi Kasus Emergency 24h</span>
+            </div>
+        </div>
     </div>
 
     <!-- FULL-WIDTH SECTIONS BELOW (FULL CONTAINER SPAN FOR MAX SPACE & READABILITY) -->

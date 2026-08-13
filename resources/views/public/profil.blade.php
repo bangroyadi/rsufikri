@@ -77,88 +77,49 @@
             <p class="text-gray-600 text-sm">Pedoman resmi RSU Fikri Medika dalam melayani masyarakat.</p>
         </div>
 
-        <!-- HIGHLY ATTRACTIVE & HUMAN-CENTERED VISI SHOWCASE CARD -->
-        <div class="bg-gradient-to-br from-[#084829] via-[#0e7c47] to-[#042d19] rounded-3xl p-6 sm:p-8 lg:p-10 text-white shadow-2xl relative overflow-hidden border-2 border-emerald-400/30">
+        <!-- ELEGANT CLEAR WHITE VISI SHOWCASE CARD (NO PHOTO, CLEAR THEME, RS HIGHLIGHT) -->
+        <div class="bg-white rounded-3xl p-8 sm:p-10 lg:p-12 text-slate-900 shadow-xl relative overflow-hidden border border-gray-100">
             
-            <!-- BACKGROUND GLOW & ACCENTS -->
-            <div class="absolute -right-20 -top-20 w-96 h-96 bg-yellow-400/15 rounded-full blur-3xl pointer-events-none"></div>
-            <div class="absolute left-10 -bottom-20 w-80 h-80 bg-emerald-400/10 rounded-full blur-2xl pointer-events-none"></div>
-
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center relative z-10">
-                
-                <!-- LEFT COLUMN: VISI TEXT & CORE PILLARS -->
-                <div class="lg:col-span-7 space-y-6">
-                    
-                    <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/15 text-yellow-300 text-xs font-black uppercase tracking-wider border border-yellow-300/40 backdrop-blur-md shadow-xs">
-                        <i class="fa-solid fa-compass text-sm text-yellow-400 animate-pulse"></i>
-                        <span>Visi Utama RSU Fikri Medika</span>
-                    </div>
-
-                    <h3 class="text-2xl sm:text-3xl lg:text-4xl font-black leading-snug text-white drop-shadow-md">
-                        "Menjadikan rumah sakit swasta yang menyediakan layanan <span class="text-yellow-300 underline decoration-yellow-400/60 decoration-wavy decoration-2">berkualitas</span>, <span class="text-yellow-300 underline decoration-yellow-400/60 decoration-wavy decoration-2">unggul</span>, dan <span class="text-yellow-300 underline decoration-yellow-400/60 decoration-wavy decoration-2">terpercaya</span> di Karawang."
-                    </h3>
-
-                    <!-- 3 INTERACTIVE FEATURE BADGES -->
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
-                        <div class="flex items-center gap-2.5 p-3 rounded-2xl bg-white/10 border border-white/15 backdrop-blur-md">
-                            <div class="w-8 h-8 rounded-xl bg-yellow-400 text-slate-950 flex items-center justify-center text-sm font-black shrink-0 shadow-sm">
-                                <i class="fa-solid fa-star"></i>
-                            </div>
-                            <div>
-                                <h4 class="font-extrabold text-white text-xs">Berkualitas</h4>
-                                <p class="text-[10px] text-emerald-100 font-medium">Standar Mutu Medis</p>
-                            </div>
-                        </div>
-
-                        <div class="flex items-center gap-2.5 p-3 rounded-2xl bg-white/10 border border-white/15 backdrop-blur-md">
-                            <div class="w-8 h-8 rounded-xl bg-yellow-400 text-slate-950 flex items-center justify-center text-sm font-black shrink-0 shadow-sm">
-                                <i class="fa-solid fa-award"></i>
-                            </div>
-                            <div>
-                                <h4 class="font-extrabold text-white text-xs">Unggul</h4>
-                                <p class="text-[10px] text-emerald-100 font-medium">Fasilitas Modern</p>
-                            </div>
-                        </div>
-
-                        <div class="flex items-center gap-2.5 p-3 rounded-2xl bg-white/10 border border-white/15 backdrop-blur-md">
-                            <div class="w-8 h-8 rounded-xl bg-yellow-400 text-slate-950 flex items-center justify-center text-sm font-black shrink-0 shadow-sm">
-                                <i class="fa-solid fa-hand-holding-heart"></i>
-                            </div>
-                            <div>
-                                <h4 class="font-extrabold text-white text-xs">Terpercaya</h4>
-                                <p class="text-[10px] text-emerald-100 font-medium">Karakter Islami</p>
-                            </div>
-                        </div>
-                    </div>
-
+            <div class="max-w-4xl mx-auto space-y-8 text-center">
+                <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-50 text-[#0e7c47] text-xs font-black uppercase tracking-wider border border-emerald-200 shadow-xs">
+                    <i class="fa-solid fa-compass text-sm text-[#0e7c47]"></i>
+                    <span>Visi Utama RSU Fikri Medika</span>
                 </div>
 
-                <!-- RIGHT COLUMN: HUMAN ELEMENT DOCTOR PORTRAIT CARD -->
-                <div class="lg:col-span-5 relative flex justify-center">
-                    <div class="relative w-full max-w-sm rounded-3xl overflow-hidden border-4 border-white/20 shadow-2xl group">
-                        
-                        <!-- DOCTOR PHOTO -->
-                        <img src="{{ asset('visi-doctor.png') }}" 
-                             alt="Tim Medis RSU Fikri Medika" 
-                             class="w-full h-72 sm:h-80 object-cover object-top transform group-hover:scale-105 transition-transform duration-500">
+                <h3 class="text-2xl sm:text-3xl lg:text-4xl font-black leading-relaxed text-slate-900 max-w-3xl mx-auto">
+                    "Menjadikan rumah sakit swasta yang menyediakan layanan <span class="text-[#0e7c47] underline decoration-[#0e7c47]/30 decoration-wavy decoration-2">berkualitas</span>, <span class="text-[#0e7c47] underline decoration-[#0e7c47]/30 decoration-wavy decoration-2">unggul</span>, dan <span class="text-[#0e7c47] underline decoration-[#0e7c47]/30 decoration-wavy decoration-2">terpercaya</span> di Karawang."
+                </h3>
 
-                        <!-- GRADIENT OVERLAY ON PHOTO -->
-                        <div class="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/20 to-transparent"></div>
-
-                        <!-- FLOATING CAPTION ON PHOTO -->
-                        <div class="absolute bottom-4 left-4 right-4 p-3.5 rounded-2xl bg-white/15 backdrop-blur-md border border-white/20 text-white space-y-1">
-                            <div class="flex items-center justify-between">
-                                <span class="text-xs font-black text-yellow-300 uppercase tracking-wider flex items-center gap-1.5">
-                                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
-                                    <span>Tim Medis Siap Melayani</span>
-                                </span>
-                                <span class="text-[10px] font-bold px-2 py-0.5 rounded-md bg-yellow-400 text-slate-950">24/7 Siaga</span>
-                            </div>
-                            <p class="text-[11px] text-emerald-100 font-medium leading-snug">
-                                Melayani dengan kehangatan profesionalisme & nilai-nilai kedokteran Islami.
-                            </p>
+                <!-- 3 CORE RS HIGHLIGHT PILLARS -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 pt-4 text-left">
+                    <div class="p-6 rounded-2xl bg-slate-50 border border-gray-100 hover:border-emerald-200 transition-all hover:shadow-md group">
+                        <div class="w-12 h-12 rounded-2xl bg-[#0e7c47] text-white flex items-center justify-center text-xl font-bold mb-4 shadow-sm group-hover:scale-110 transition-transform">
+                            <i class="fa-solid fa-star text-yellow-300"></i>
                         </div>
+                        <h4 class="font-extrabold text-slate-900 text-base mb-1">Berkualitas</h4>
+                        <p class="text-xs text-gray-500 font-medium leading-relaxed">
+                            Standar mutu pelayanan medis tinggi, ditunjang oleh dokter spesialis & perawat berpengalaman.
+                        </p>
+                    </div>
 
+                    <div class="p-6 rounded-2xl bg-slate-50 border border-gray-100 hover:border-emerald-200 transition-all hover:shadow-md group">
+                        <div class="w-12 h-12 rounded-2xl bg-[#0e7c47] text-white flex items-center justify-center text-xl font-bold mb-4 shadow-sm group-hover:scale-110 transition-transform">
+                            <i class="fa-solid fa-award text-yellow-300"></i>
+                        </div>
+                        <h4 class="font-extrabold text-slate-900 text-base mb-1">Unggul</h4>
+                        <p class="text-xs text-gray-500 font-medium leading-relaxed">
+                            Fasilitas medis modern, IGD 24 jam, kamar perawatan nyaman, dan unit penunjang terpadu.
+                        </p>
+                    </div>
+
+                    <div class="p-6 rounded-2xl bg-slate-50 border border-gray-100 hover:border-emerald-200 transition-all hover:shadow-md group">
+                        <div class="w-12 h-12 rounded-2xl bg-[#0e7c47] text-white flex items-center justify-center text-xl font-bold mb-4 shadow-sm group-hover:scale-110 transition-transform">
+                            <i class="fa-solid fa-hand-holding-heart text-yellow-300"></i>
+                        </div>
+                        <h4 class="font-extrabold text-slate-900 text-base mb-1">Terpercaya</h4>
+                        <p class="text-xs text-gray-500 font-medium leading-relaxed">
+                            Pelayanan yang berpusat pada keselamatan pasien dengan mengedepankan nilai-nilai kedokteran Islami.
+                        </p>
                     </div>
                 </div>
 
@@ -214,74 +175,6 @@
         </div>
     </div>
 
-    <!-- PELAYANAN UNGGULAN SPOTLIGHT -->
-    <div class="space-y-8 pt-4">
-        <div class="text-center max-w-xl mx-auto space-y-2">
-            <span class="px-3 py-1 rounded-full bg-emerald-100 text-[#0e7c47] text-xs font-bold">Fasilitas Utama</span>
-            <h3 class="text-2xl sm:text-3xl font-extrabold text-gray-900">Pelayanan Unggulan RSU Fikri Medika</h3>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm space-y-3 hover:border-emerald-200 transition-all">
-                <div class="w-12 h-12 rounded-2xl bg-emerald-50 text-[#0e7c47] flex items-center justify-center text-xl">
-                    <i class="fa-solid fa-vial-circle-check"></i>
-                </div>
-                <h4 class="font-bold text-gray-900 text-base">Pelayanan Hemodialisa</h4>
-                <p class="text-xs text-gray-600 leading-relaxed">
-                    Rumah sakit kami telah dilengkapi pelayanan Hemodialisa (cuci darah) dengan fasilitas lengkap dan ruangan yang nyaman.
-                </p>
-            </div>
-
-            <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm space-y-3 hover:border-emerald-200 transition-all">
-                <div class="w-12 h-12 rounded-2xl bg-emerald-50 text-[#0e7c47] flex items-center justify-center text-xl">
-                    <i class="fa-solid fa-person-walking-rehab"></i>
-                </div>
-                <h4 class="font-bold text-gray-900 text-base">Fisioteraphi & Rehab Medik</h4>
-                <p class="text-xs text-gray-600 leading-relaxed">
-                    Terapi fisik profesional untuk membantu pemulihan dan mengatasi masalah pada bagian tubuh yang nyeri atau terganggu.
-                </p>
-            </div>
-
-            <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm space-y-3 hover:border-emerald-200 transition-all">
-                <div class="w-12 h-12 rounded-2xl bg-emerald-50 text-[#0e7c47] flex items-center justify-center text-xl">
-                    <i class="fa-solid fa-notes-medical"></i>
-                </div>
-                <h4 class="font-bold text-gray-900 text-base">Medical Check Up (MCU)</h4>
-                <p class="text-xs text-gray-600 leading-relaxed">
-                    Paket pendaftaran Medical Check Up perorangan maupun MCU Eksternal perusahaan langsung di lokasi industri.
-                </p>
-            </div>
-        </div>
-    </div>
-
-    <!-- CTA BANNER (ELEGANT HOSPITAL GREEN THEME) -->
-    <div class="bg-gradient-to-r from-[#0a5c34] via-[#0e7c47] to-[#084b2a] rounded-3xl p-8 text-white shadow-xl flex flex-col md:flex-row items-center justify-between gap-6 border-2 border-emerald-500/20 relative overflow-hidden">
-        <!-- BACKGROUND DECORATIVE GLOW -->
-        <div class="absolute -right-16 -bottom-16 w-64 h-64 bg-yellow-400/10 rounded-full blur-2xl pointer-events-none"></div>
-
-        <div class="space-y-2 text-center md:text-left relative z-10">
-            <span class="px-3.5 py-1 rounded-full bg-white/15 text-yellow-300 text-xs font-black uppercase tracking-wider border border-yellow-300/30 backdrop-blur-md">
-                Layanan Terpercaya
-            </span>
-            <h3 class="text-xl sm:text-2xl font-black tracking-tight drop-shadow-xs">
-                Konsultasikan Kesehatan Anda Bersama Dokter Kami
-            </h3>
-            <p class="text-xs sm:text-sm text-emerald-100 max-w-xl font-medium">
-                Dapatkan pelayanan medis terbaik dari dokter spesialis RSU Fikri Medika Karawang.
-            </p>
-        </div>
-
-        <div class="flex flex-col sm:flex-row gap-3 shrink-0 relative z-10">
-            <a href="{{ url('/jadwal-dokter') }}" class="px-5 py-3 rounded-xl bg-white text-[#0e7c47] font-extrabold text-xs sm:text-sm hover:bg-emerald-50 transition-colors shadow flex items-center justify-center gap-2">
-                <i class="fa-solid fa-calendar-days text-[#0e7c47]"></i>
-                <span>Jadwal Dokter</span>
-            </a>
-            <a href="{{ url('/buat-janji') }}" class="px-5 py-3 rounded-xl bg-yellow-400 text-slate-950 font-black text-xs sm:text-sm hover:bg-yellow-300 transition-colors shadow flex items-center justify-center gap-2">
-                <i class="fa-solid fa-heart-pulse text-red-600"></i>
-                <span>Buat Janji Online</span>
-            </a>
-        </div>
-    </div>
 
 </section>
 @endsection

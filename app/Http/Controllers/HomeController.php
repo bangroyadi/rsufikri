@@ -58,11 +58,18 @@ class HomeController extends Controller
     public function layananPage($slug)
     {
         $layananTitles = [
-            'igd' => 'Instalasi Gawat Darurat (IGD 24 Jam)',
-            'rawat-jalan' => 'Instalasi Rawat Jalan',
+            'unggulan' => 'Layanan Unggulan RSU Fikri Medika',
             'rawat-inap' => 'Instalasi Rawat Inap',
-            'penunjang-medik' => 'Penunjang Medik',
-            'unggulan' => 'Layanan Unggulan',
+            'rawat-jalan' => 'Klinik Rawat Jalan',
+            'igd' => 'Instalasi Gawat Darurat (IGD 24 Jam)',
+            'igd-24-jam' => 'Instalasi Gawat Darurat (IGD 24 Jam)',
+            'rehabilitasi-medik' => 'Instalasi Rehabilitasi Medik',
+            'farmasi-24-jam' => 'Pelayanan Farmasi 24 Jam',
+            'penunjang-medis' => 'Layanan Penunjang Medis',
+            'penunjang-medik' => 'Layanan Penunjang Medis',
+            'radiologi-24-jam' => 'Radiologi 24 Jam',
+            'laboratorium-klinik' => 'Laboratorium Klinik 24 Jam',
+            'laboratorium-patologi' => 'Laboratorium Patologi Anatomi',
         ];
 
         $service = Service::where('slug', $slug)->first();
@@ -82,6 +89,10 @@ class HomeController extends Controller
         $category = 'Layanan';
         $profile = HospitalProfile::first();
         $services = Service::where('is_active', true)->orderBy('order', 'asc')->get();
+
+        if ($slug === 'unggulan') {
+            return view('public.layanan.unggulan', compact('title', 'category', 'slug', 'profile', 'services'));
+        }
 
         if ($slug === 'igd' || $slug === 'igd-24-jam') {
             return view('public.layanan.igd', compact('title', 'category', 'slug', 'profile', 'services', 'service'));
