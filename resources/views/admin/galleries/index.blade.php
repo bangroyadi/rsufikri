@@ -37,7 +37,7 @@
             @endphp
             <div class="rounded-2xl border border-slate-200 overflow-hidden shadow-xs flex flex-col justify-between group bg-white">
                 <div class="h-44 overflow-hidden relative bg-slate-100">
-                    <img src="{{ $gal->image }}" alt="{{ $gTitle }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                    <img src="{{ \Illuminate\Support\Str::startsWith($gal->image, ['http://', 'https://']) ? $gal->image : asset($gal->image) }}" alt="{{ $gTitle }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
                     <span style="background-color: rgba(15, 23, 42, 0.85); color: #fde047;" class="absolute top-2.5 left-2.5 px-3 py-1 rounded-full text-[10px] font-extrabold tracking-wider backdrop-blur-xs">
                         {{ $gCat }}
                     </span>

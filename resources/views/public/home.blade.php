@@ -104,10 +104,22 @@
 
     @if($banners->count() > 1)
 
-    <!-- PREV ARROW -->
+    <style>
+        .banner-nav-arrow {
+            display: none !important;
+        }
+        @media (min-width: 640px) {
+            .banner-nav-arrow {
+                display: flex !important;
+            }
+        }
+    </style>
+
+    <!-- PREV ARROW (HIDDEN ON MOBILE, SHOWN ON TABLET, LAPTOP & PC) -->
     <button @click="prevSlide(); stopAutoSlide(); startAutoSlide();"
             type="button"
             aria-label="Banner Sebelumnya"
+            class="banner-nav-arrow"
             style="
                 position: absolute;
                 left: 16px;
@@ -121,7 +133,6 @@
                 color: #fff;
                 border: none;
                 cursor: pointer;
-                display: flex;
                 align-items: center;
                 justify-content: center;
                 font-size: 14px;
@@ -133,10 +144,11 @@
         <i class="fa-solid fa-chevron-left"></i>
     </button>
 
-    <!-- NEXT ARROW -->
+    <!-- NEXT ARROW (HIDDEN ON MOBILE, SHOWN ON TABLET, LAPTOP & PC) -->
     <button @click="nextSlide(); stopAutoSlide(); startAutoSlide();"
             type="button"
             aria-label="Banner Berikutnya"
+            class="banner-nav-arrow"
             style="
                 position: absolute;
                 right: 16px;
@@ -150,7 +162,6 @@
                 color: #fff;
                 border: none;
                 cursor: pointer;
-                display: flex;
                 align-items: center;
                 justify-content: center;
                 font-size: 14px;
@@ -273,14 +284,18 @@
         <!-- SERVICES GRID -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
             @foreach($featuredServices as $service)
-            <div class="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl border border-gray-100 transition-all duration-300 flex flex-col group card-hover">
+            <div class="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl border border-gray-100 transition-shadow duration-300 flex flex-col group">
                 <div class="relative h-48 overflow-hidden bg-gray-100">
-                    <img src="{{ $service->image ?? 'https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&w=600&q=80' }}" 
+                    @php
+                        $featImg = !empty($service->image) ? (\Illuminate\Support\Str::startsWith($service->image, ['http://', 'https://']) ? $service->image : asset($service->image)) : 'https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&w=600&q=80';
+                    @endphp
+                    <img src="{{ $featImg }}" 
                          alt="{{ $service->tr('name') }}" 
                          class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                         loading="lazy">
+                         loading="lazy"
+                         decoding="async">
                     <div class="absolute top-4 left-4">
-                        <span class="px-3 py-1 rounded-full bg-[#0e7c47]/90 backdrop-blur-md text-yellow-300 text-xs font-bold shadow-md">
+                        <span class="px-3 py-1 rounded-full bg-[#0e7c47] text-yellow-300 text-xs font-bold shadow-md">
                             {{ __('Fasilitas Utama') }}
                         </span>
                     </div>
@@ -298,7 +313,7 @@
                         <span class="text-xs font-semibold text-emerald-700 flex items-center gap-1">
                             <i class="fa-solid fa-circle-check text-emerald-500"></i> {{ __('Buka 24 Jam') }}
                         </span>
-                        <a href="#kontak" class="text-xs font-bold text-[#0e7c47] hover:text-amber-600 flex items-center gap-1">
+                        <a href="{{ url('/layanan/' . ($service->slug ?: \Illuminate\Support\Str::slug($service->tr('name')))) }}" class="text-xs font-bold text-[#0e7c47] hover:text-amber-600 flex items-center gap-1">
                             <span>{{ __('Detail') }}</span> <i class="fa-solid fa-arrow-right text-[10px]"></i>
                         </a>
                     </div>
@@ -356,11 +371,11 @@ $youtubeVideos = [
         <!-- VIDEO CARDS GRID (3 COLUMNS GAP-8 MATCHING LAYANAN & BERITA) -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
             @foreach($youtubeVideos as $index => $video)
-            <div class="youtube-card bg-white p-2.5 rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden">
-                <div class="relative aspect-video w-full rounded-xl overflow-hidden bg-white">
+            <div class="youtube-card bg-white p-2.5 rounded-2xl shadow-sm hover:shadow-md transition-shadow duration-300 overflow-hidden">
+                <div class="relative aspect-video w-full rounded-xl overflow-hidden bg-slate-900">
                     <iframe class="w-full h-full border-0 outline-none rounded-xl block" 
                             style="border:0; outline:none;"
-                            src="https://www.youtube.com/embed/{{ $video['youtubeId'] }}?rel=0&modestbranding=1" 
+                            srcdoc="<style>*{padding:0;margin:0;overflow:hidden}html,body{height:100%}img,span{position:absolute;width:100%;top:0;bottom:0;margin:auto}img{object-fit:cover;height:100%}span{height:1.5em;text-align:center;font:48px/1.5 sans-serif;color:white;text-shadow:0 0 0.5em rgba(0,0,0,0.6)}</style><a href=https://www.youtube.com/embed/{{ $video['youtubeId'] }}?autoplay=1><img src=https://img.youtube.com/vi/{{ $video['youtubeId'] }}/hqdefault.jpg alt='{{ e($video['title']) }}'><span>&#x25BA;</span></a>"
                             title="Video YouTube RSU Fikri Medika: {{ $video['title'] }}" 
                             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
                             allowfullscreen

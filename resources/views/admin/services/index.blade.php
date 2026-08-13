@@ -12,6 +12,20 @@
     </div>
     @endif
 
+    @if($errors->any())
+    <div style="background-color: #fef2f2; border: 1px solid #fecaca; color: #dc2626;" class="p-4 rounded-2xl font-bold text-sm space-y-1">
+        <div class="flex items-center gap-2">
+            <i class="fa-solid fa-circle-exclamation text-base"></i>
+            <span>Gagal menyimpan data. Silakan periksa kembali input Anda:</span>
+        </div>
+        <ul class="list-disc list-inside text-xs font-semibold pl-6">
+            @foreach($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+    @endif
+
     <!-- PAGE HEADER WITH TOP ADD BUTTON -->
     <div style="background-color: #ffffff; border: 1px solid #e2e8f0;" class="p-6 rounded-3xl shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
@@ -57,7 +71,8 @@
                     @foreach($services as $serv)
                     @php
                         $sName = is_array($serv->name) ? ($serv->name['id'] ?? '') : $serv->name;
-                        $sDesc = is_array($serv->short_description) ? ($serv->short_description['id'] ?? '') : ($serv->short_description ?? '');
+                        $sShortDesc = is_array($serv->short_description) ? ($serv->short_description['id'] ?? '') : ($serv->short_description ?? '');
+                        $sDesc = is_array($serv->description) ? ($serv->description['id'] ?? '') : ($serv->description ?? '');
                     @endphp
                     <tr x-show="search === '' || '{{ addslashes(strtolower($sName)) }}'.includes(search.toLowerCase())" class="hover:bg-slate-50/80 transition-colors">
                         <td class="p-4 font-mono font-bold text-slate-400">
@@ -66,26 +81,52 @@
                         <td class="p-4 flex items-center gap-3">
                             <div style="background-color: #d1fae5; color: #0e7c47;" class="w-9 h-9 rounded-xl flex items-center justify-center font-bold text-sm shrink-0 overflow-hidden">
                                 @if(!empty($serv->image))
-                                <img src="{{ $serv->image }}" alt="{{ $sName }}" class="w-full h-full object-cover">
+                                @php
+                                    $servImg = \Illuminate\Support\Str::startsWith($serv->image, ['http://', 'https://']) ? $serv->image : asset($serv->image);
+                                @endphp
+                                <img src="{{ $servImg }}" alt="{{ $sName }}" class="w-full h-full object-cover">
                                 @else
                                 <i class="fa-solid fa-{{ $serv->icon ?? 'briefcase-medical' }}"></i>
                                 @endif
                             </div>
-                            <div class="font-bold text-slate-900 text-sm">
-                                {{ $sName }}
+                            <div>
+                                <div class="font-bold text-slate-900 text-sm">
+                                    {{ $sName }}
+                                </div>
+                                <div class="text-[10px] text-slate-400 font-mono">
+                                    /layanan/{{ $serv->slug }}
+                                </div>
                             </div>
                         </td>
                         <td class="p-4 max-w-xs truncate text-slate-500">
-                            {{ $sDesc }}
+                            {{ $sShortDesc }}
                         </td>
                         <td class="p-4">
+                            @if($serv->is_active)
                             <span style="background-color: #d1fae5; color: #065f46;" class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider">
                                 Aktif
                             </span>
+                            @else
+                            <span style="background-color: #fee2e2; color: #991b1b;" class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider">
+                                Non-aktif
+                            </span>
+                            @endif
                         </td>
                         <td class="p-4 text-center">
                             <div class="flex items-center justify-center gap-2">
-                                <button @click="editServ = { id: {{ $serv->id }}, name_id: '{{ addslashes($sName) }}', icon: '{{ addslashes($serv->icon ?? '') }}', short_description_id: '{{ addslashes($sDesc) }}', image: '{{ addslashes($serv->image ?? '') }}' }; editModalOpen = true" style="background-color: #fffbeb; color: #d97706; border: 1px solid #fde68a;" class="p-2 rounded-xl hover:bg-amber-100 transition-colors cursor-pointer" title="Edit Layanan">
+                                <a href="{{ url('/layanan/' . $serv->slug) }}" target="_blank" style="background-color: #f0fdf4; color: #0e7c47; border: 1px solid #bbf7d0;" class="p-2 rounded-xl hover:bg-emerald-100 transition-colors" title="Lihat di Frontend">
+                                    <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i>
+                                </a>
+                                <button @click="editServ = {{ json_encode([
+                                    'id' => $serv->id,
+                                    'name_id' => $sName,
+                                    'icon' => $serv->icon ?? '',
+                                    'short_description_id' => $sShortDesc,
+                                    'description_id' => $sDesc,
+                                    'image' => $serv->image ?? '',
+                                    'is_active' => (bool)$serv->is_active,
+                                    'is_featured' => (bool)$serv->is_featured,
+                                ]) }}; editModalOpen = true" style="background-color: #fffbeb; color: #d97706; border: 1px solid #fde68a;" class="p-2 rounded-xl hover:bg-amber-100 transition-colors cursor-pointer" title="Edit Layanan">
                                     <i class="fa-solid fa-pen-to-square text-xs"></i>
                                 </button>
                                 <form action="{{ route('admin.services.destroy', $serv->id) }}" method="POST" onsubmit="return confirm('Hapus layanan ini?')">
@@ -126,13 +167,30 @@
                 </div>
 
                 <div>
-                    <label class="block text-xs font-extrabold text-slate-700 uppercase tracking-wider mb-1">Icon Class</label>
-                    <input type="text" name="icon" placeholder="ambulance / bed / flask" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs focus:ring-2 focus:ring-[#0e7c47] outline-none">
+                    <label class="block text-xs font-extrabold text-slate-700 uppercase tracking-wider mb-1">Icon Class (FontAwesome)</label>
+                    <input type="text" name="icon" placeholder="ambulance / bed / flask / stethoscope" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs focus:ring-2 focus:ring-[#0e7c47] outline-none">
                 </div>
 
                 <div>
                     <label class="block text-xs font-extrabold text-slate-700 uppercase tracking-wider mb-1">Deskripsi Singkat</label>
                     <input type="text" name="short_description_id" placeholder="Penanganan medis darurat 24 jam..." class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs focus:ring-2 focus:ring-[#0e7c47] outline-none">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-extrabold text-slate-700 uppercase tracking-wider mb-1">Deskripsi Lengkap / Informasi Detail</label>
+                    <textarea name="description_id" rows="4" placeholder="Jelaskan fasilitas, keunggulan, dan prosedur medis layanan ini..." class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs focus:ring-2 focus:ring-[#0e7c47] outline-none"></textarea>
+                </div>
+
+                <div class="flex items-center gap-6 py-2">
+                    <label class="flex items-center gap-2 cursor-pointer text-xs font-bold text-slate-700">
+                        <input type="checkbox" name="is_active" value="1" checked class="rounded text-[#0e7c47] focus:ring-[#0e7c47] w-4 h-4">
+                        <span>Aktifkan Layanan</span>
+                    </label>
+
+                    <label class="flex items-center gap-2 cursor-pointer text-xs font-bold text-slate-700">
+                        <input type="checkbox" name="is_featured" value="1" checked class="rounded text-[#0e7c47] focus:ring-[#0e7c47] w-4 h-4">
+                        <span>Tampilkan di Beranda (Featured)</span>
+                    </label>
                 </div>
 
                 <!-- FILE UPLOAD OR URL -->
@@ -187,7 +245,7 @@
                 </div>
 
                 <div>
-                    <label class="block text-xs font-extrabold text-slate-700 uppercase tracking-wider mb-1">Icon Class</label>
+                    <label class="block text-xs font-extrabold text-slate-700 uppercase tracking-wider mb-1">Icon Class (FontAwesome)</label>
                     <input type="text" name="icon" x-model="editServ.icon" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs focus:ring-2 focus:ring-[#0e7c47] outline-none">
                 </div>
 
@@ -196,13 +254,30 @@
                     <input type="text" name="short_description_id" x-model="editServ.short_description_id" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs focus:ring-2 focus:ring-[#0e7c47] outline-none">
                 </div>
 
+                <div>
+                    <label class="block text-xs font-extrabold text-slate-700 uppercase tracking-wider mb-1">Deskripsi Lengkap / Informasi Detail</label>
+                    <textarea name="description_id" x-model="editServ.description_id" rows="4" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs focus:ring-2 focus:ring-[#0e7c47] outline-none"></textarea>
+                </div>
+
+                <div class="flex items-center gap-6 py-2">
+                    <label class="flex items-center gap-2 cursor-pointer text-xs font-bold text-slate-700">
+                        <input type="checkbox" name="is_active" value="1" :checked="editServ.is_active" class="rounded text-[#0e7c47] focus:ring-[#0e7c47] w-4 h-4">
+                        <span>Aktifkan Layanan</span>
+                    </label>
+
+                    <label class="flex items-center gap-2 cursor-pointer text-xs font-bold text-slate-700">
+                        <input type="checkbox" name="is_featured" value="1" :checked="editServ.is_featured" class="rounded text-[#0e7c47] focus:ring-[#0e7c47] w-4 h-4">
+                        <span>Tampilkan di Beranda (Featured)</span>
+                    </label>
+                </div>
+
                 <!-- FILE UPLOAD OR URL -->
                 <div style="background-color: #f8fafc; border: 1px solid #e2e8f0;" class="p-4 rounded-2xl space-y-3">
                     <label class="block text-xs font-extrabold text-slate-900 uppercase tracking-wider">Ubah Gambar Layanan</label>
                     
                     <div>
                         <span class="text-[11px] font-bold text-slate-600 block mb-1">📷 Upload Gambar Baru dari Komputer:</span>
-                        <input type="file" name="image_file" accept="image/*" class="w-full text-xs text-slate-500 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-extrabold file:bg-emerald-50 file:text-[#0e7c47] hover:file:bg-emerald-100 cursor-pointer">
+                        <input type="file" name="image_file" accept="image/*" @change="if ($event.target.files.length) editServ.image = ''" class="w-full text-xs text-slate-500 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-extrabold file:bg-emerald-50 file:text-[#0e7c47] hover:file:bg-emerald-100 cursor-pointer">
                     </div>
 
                     <div class="text-center text-[10px] font-bold text-slate-400 uppercase tracking-widest">— ATAU —</div>

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use App\Models\HospitalProfile;
 use App\Models\Banner;
 use App\Models\Service;
@@ -18,7 +19,10 @@ class HomeController extends Controller
     {
         $profile = HospitalProfile::first();
         $banners = Banner::where('is_active', true)->orderBy('order', 'asc')->get();
-        $featuredServices = Service::where('is_active', true)->orderBy('order', 'asc')->get();
+        $featuredServices = Service::where('is_active', true)->where('is_featured', true)->orderBy('order', 'asc')->get();
+        if ($featuredServices->isEmpty()) {
+            $featuredServices = Service::where('is_active', true)->orderBy('order', 'asc')->get();
+        }
         $polyclinics = Polyclinic::where('is_active', true)->get();
         
         $doctors = Doctor::with(['polyclinic', 'schedules'])
@@ -61,21 +65,34 @@ class HomeController extends Controller
             'unggulan' => 'Layanan Unggulan',
         ];
 
-        $title = $layananTitles[$slug] ?? ucwords(str_replace('-', ' ', $slug));
+        $service = Service::where('slug', $slug)->first();
+        if (!$service) {
+            // Try searching case-insensitive or without order
+            $service = Service::where('is_active', true)->get()->first(function($s) use ($slug) {
+                return $s->slug === $slug || Str::slug($s->tr('name')) === $slug;
+            });
+        }
+
+        if ($service) {
+            $title = $service->tr('name');
+        } else {
+            $title = $layananTitles[$slug] ?? ucwords(str_replace('-', ' ', $slug));
+        }
+
         $category = 'Layanan';
         $profile = HospitalProfile::first();
-        $services = Service::where('is_active', true)->get();
+        $services = Service::where('is_active', true)->orderBy('order', 'asc')->get();
 
-        if ($slug === 'igd') {
-            return view('public.layanan.igd', compact('title', 'category', 'slug', 'profile', 'services'));
+        if ($slug === 'igd' || $slug === 'igd-24-jam') {
+            return view('public.layanan.igd', compact('title', 'category', 'slug', 'profile', 'services', 'service'));
         }
 
         if ($slug === 'rawat-jalan') {
             $polyclinics = \App\Models\Polyclinic::where('is_active', true)->with('doctors')->get();
-            return view('public.layanan.rawat-jalan', compact('title', 'category', 'slug', 'profile', 'services', 'polyclinics'));
+            return view('public.layanan.rawat-jalan', compact('title', 'category', 'slug', 'profile', 'services', 'polyclinics', 'service'));
         }
 
-        return view('public.page', compact('title', 'category', 'slug', 'profile', 'services'));
+        return view('public.page', compact('title', 'category', 'slug', 'profile', 'services', 'service'));
     }
 
     public function informasiPage($slug)

@@ -12,7 +12,7 @@
             <div class="bg-white p-6 sm:p-8 rounded-2xl shadow-sm border border-gray-100">
                 <div class="flex items-center gap-3 pb-4 mb-6 border-b border-gray-100">
                     <div class="w-12 h-12 rounded-xl bg-[#0e7c47]/10 text-[#0e7c47] flex items-center justify-center text-xl font-bold">
-                        <i class="fa-solid {{ $category === 'Layanan' ? 'fa-user-nurse' : 'fa-circle-info' }}"></i>
+                        <i class="fa-solid {{ isset($service) && $service->icon ? 'fa-'.$service->icon : ($category === 'Layanan' ? 'fa-user-nurse' : 'fa-circle-info') }}"></i>
                     </div>
                     <div>
                         <span class="text-xs uppercase tracking-wider text-[#0e7c47] font-bold">{{ $category }} RSU Fikri Medika</span>
@@ -20,7 +20,27 @@
                     </div>
                 </div>
 
+                @if(isset($service) && !empty($service->image))
+                @php
+                    $detailImg = \Illuminate\Support\Str::startsWith($service->image, ['http://', 'https://']) ? $service->image : asset($service->image);
+                @endphp
+                <div class="mb-6 rounded-2xl overflow-hidden shadow-sm max-h-80 border border-gray-100">
+                    <img src="{{ $detailImg }}" alt="{{ $title }}" class="w-full h-full object-cover">
+                </div>
+                @endif
+
                 <div class="prose max-w-none text-gray-600 leading-relaxed space-y-4 text-sm sm:text-base">
+                    @if(isset($service) && !empty($service->tr('short_description')))
+                    <div class="p-4 rounded-xl bg-emerald-50 border border-emerald-100 font-medium text-emerald-900 text-sm sm:text-base leading-relaxed">
+                        {{ $service->tr('short_description') }}
+                    </div>
+                    @endif
+
+                    @if(isset($service) && !empty($service->tr('description')))
+                    <div>
+                        {!! nl2br(e($service->tr('description'))) !!}
+                    </div>
+                    @else
                     <p>
                         Selamat datang di halaman resmi <strong>{{ $title }}</strong> RSU Fikri Medika Karawang. 
                         Kami berkomitmen untuk memberikan pelayanan terbaik, tercepat, dan berstandar medis tinggi dengan mengedepankan empati dan prinsip-prinsip Islami.
@@ -28,6 +48,7 @@
                     <p>
                         Fasilitas dan layanan kami terus ditunjang oleh dokter spesialis berpengalaman, perawat profesional, serta peralatan medis canggih 24 jam untuk menjamin kenyamanan dan keselamatan pasien.
                     </p>
+                    @endif
                 </div>
 
                 <!-- CARDS GRID DUMMY SAMPLE DETAILS FOR THE SLUG -->
@@ -40,7 +61,7 @@
                         </div>
                     </div>
                     <div class="p-4 rounded-xl bg-emerald-50/50 border border-emerald-100 flex items-start gap-3">
-                        <i class="fa-solid fa-[#0e7c47] fa-headset text-[#0e7c47] text-lg mt-0.5"></i>
+                        <i class="fa-solid fa-headset text-[#0e7c47] text-lg mt-0.5"></i>
                         <div>
                             <h4 class="font-bold text-gray-900 text-sm">{{ __('Pendaftaran & Info') }}</h4>
                             <p class="text-xs text-gray-600 mt-0.5">(0267) 8454123 / WA: 0812-3456-7890</p>
@@ -73,21 +94,33 @@
 
                 @if($category === 'Layanan')
                 <div class="space-y-2 text-sm font-semibold">
-                    <a href="{{ url('/layanan/igd') }}" class="block px-4 py-2.5 rounded-xl transition-colors {{ $slug === 'igd' ? 'bg-[#0e7c47] text-white' : 'bg-gray-50 text-gray-700 hover:bg-emerald-50 hover:text-[#0e7c47]' }}">
-                        IGD (24 Jam)
-                    </a>
-                    <a href="{{ url('/layanan/rawat-jalan') }}" class="block px-4 py-2.5 rounded-xl transition-colors {{ $slug === 'rawat-jalan' ? 'bg-[#0e7c47] text-white' : 'bg-gray-50 text-gray-700 hover:bg-emerald-50 hover:text-[#0e7c47]' }}">
-                        Instalasi Rawat Jalan
-                    </a>
-                    <a href="{{ url('/layanan/rawat-inap') }}" class="block px-4 py-2.5 rounded-xl transition-colors {{ $slug === 'rawat-inap' ? 'bg-[#0e7c47] text-white' : 'bg-gray-50 text-gray-700 hover:bg-emerald-50 hover:text-[#0e7c47]' }}">
-                        Instalasi Rawat Inap
-                    </a>
-                    <a href="{{ url('/layanan/penunjang-medik') }}" class="block px-4 py-2.5 rounded-xl transition-colors {{ $slug === 'penunjang-medik' ? 'bg-[#0e7c47] text-white' : 'bg-gray-50 text-gray-700 hover:bg-emerald-50 hover:text-[#0e7c47]' }}">
-                        Penunjang Medik
-                    </a>
-                    <a href="{{ url('/layanan/unggulan') }}" class="block px-4 py-2.5 rounded-xl transition-colors {{ $slug === 'unggulan' ? 'bg-[#0e7c47] text-white' : 'bg-gray-50 text-gray-700 hover:bg-emerald-50 hover:text-[#0e7c47]' }}">
-                        Layanan Unggulan
-                    </a>
+                    @if(isset($services) && count($services) > 0)
+                        @foreach($services as $sItem)
+                        @php 
+                            $sItemName = $sItem->tr('name');
+                            $sItemSlug = $sItem->slug ?: \Illuminate\Support\Str::slug($sItemName);
+                        @endphp
+                        <a href="{{ url('/layanan/' . $sItemSlug) }}" class="block px-4 py-2.5 rounded-xl transition-colors {{ $slug === $sItemSlug ? 'bg-[#0e7c47] text-white' : 'bg-gray-50 text-gray-700 hover:bg-emerald-50 hover:text-[#0e7c47]' }}">
+                            {{ $sItemName }}
+                        </a>
+                        @endforeach
+                    @else
+                        <a href="{{ url('/layanan/igd') }}" class="block px-4 py-2.5 rounded-xl transition-colors {{ $slug === 'igd' ? 'bg-[#0e7c47] text-white' : 'bg-gray-50 text-gray-700 hover:bg-emerald-50 hover:text-[#0e7c47]' }}">
+                            IGD (24 Jam)
+                        </a>
+                        <a href="{{ url('/layanan/rawat-jalan') }}" class="block px-4 py-2.5 rounded-xl transition-colors {{ $slug === 'rawat-jalan' ? 'bg-[#0e7c47] text-white' : 'bg-gray-50 text-gray-700 hover:bg-emerald-50 hover:text-[#0e7c47]' }}">
+                            Instalasi Rawat Jalan
+                        </a>
+                        <a href="{{ url('/layanan/rawat-inap') }}" class="block px-4 py-2.5 rounded-xl transition-colors {{ $slug === 'rawat-inap' ? 'bg-[#0e7c47] text-white' : 'bg-gray-50 text-gray-700 hover:bg-emerald-50 hover:text-[#0e7c47]' }}">
+                            Instalasi Rawat Inap
+                        </a>
+                        <a href="{{ url('/layanan/penunjang-medik') }}" class="block px-4 py-2.5 rounded-xl transition-colors {{ $slug === 'penunjang-medik' ? 'bg-[#0e7c47] text-white' : 'bg-gray-50 text-gray-700 hover:bg-emerald-50 hover:text-[#0e7c47]' }}">
+                            Penunjang Medik
+                        </a>
+                        <a href="{{ url('/layanan/unggulan') }}" class="block px-4 py-2.5 rounded-xl transition-colors {{ $slug === 'unggulan' ? 'bg-[#0e7c47] text-white' : 'bg-gray-50 text-gray-700 hover:bg-emerald-50 hover:text-[#0e7c47]' }}">
+                            Layanan Unggulan
+                        </a>
+                    @endif
                 </div>
                 @else
                 <div class="space-y-2 text-sm font-semibold">

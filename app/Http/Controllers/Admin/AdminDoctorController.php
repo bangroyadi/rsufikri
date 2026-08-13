@@ -29,8 +29,8 @@ class AdminDoctorController extends Controller
         ]);
 
         $photoUrl = $validated['photo'] ?? null;
-        if ($request->hasFile('photo_file')) {
-            $path = $request->file('photo_file')->store('doctors', 'public');
+        if ($request->hasFile('photo_file') && $request->file('photo_file')->isValid()) {
+            $path = \App\Services\ImageOptimizer::optimizeAndStore($request->file('photo_file'), 'doctors', 1000, 82);
             $photoUrl = 'storage/' . $path;
         }
 
@@ -56,12 +56,12 @@ class AdminDoctorController extends Controller
             'polyclinic_id' => 'required|exists:polyclinics,id',
             'specialty_id' => 'required|string|max:255',
             'photo' => 'nullable|string|max:500',
-            'photo_file' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:10240',
+            'photo_file' => 'nullable|file|mimes:jpeg,png,jpg,gif,webp,svg,bmp|max:20480',
         ]);
 
         $photoUrl = $doctor->photo;
-        if ($request->hasFile('photo_file')) {
-            $path = $request->file('photo_file')->store('doctors', 'public');
+        if ($request->hasFile('photo_file') && $request->file('photo_file')->isValid()) {
+            $path = \App\Services\ImageOptimizer::optimizeAndStore($request->file('photo_file'), 'doctors', 1000, 82);
             $photoUrl = 'storage/' . $path;
         } elseif ($request->filled('photo')) {
             $photoUrl = $validated['photo'];

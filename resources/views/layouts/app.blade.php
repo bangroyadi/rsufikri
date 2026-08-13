@@ -109,11 +109,18 @@
                              x-transition:leave-end="opacity-0 translate-y-1 scale-95"
                              class="absolute top-full left-0 w-60 bg-[#0e7c47] rounded-xl shadow-2xl py-2 z-50 text-white text-xs font-semibold border border-[#096237]"
                              style="display: none;">
-                            <a href="{{ url('/layanan/igd') }}" class="block px-4 py-2 hover:bg-[#096237] hover:text-yellow-300 transition-colors {{ request()->is('layanan/igd') ? 'text-yellow-300 font-bold bg-[#096237]' : '' }}">{{ __('IGD') }}</a>
-                            <a href="{{ url('/layanan/rawat-jalan') }}" class="block px-4 py-2 hover:bg-[#096237] hover:text-yellow-300 transition-colors {{ request()->is('layanan/rawat-jalan') ? 'text-yellow-300 font-bold bg-[#096237]' : '' }}">{{ __('Instalasi Rawat Jalan') }}</a>
-                            <a href="{{ url('/layanan/rawat-inap') }}" class="block px-4 py-2 hover:bg-[#096237] hover:text-yellow-300 transition-colors {{ request()->is('layanan/rawat-inap') ? 'text-yellow-300 font-bold bg-[#096237]' : '' }}">{{ __('Instalasi Rawat Inap') }}</a>
-                            <a href="{{ url('/layanan/penunjang-medik') }}" class="block px-4 py-2 hover:bg-[#096237] hover:text-yellow-300 transition-colors {{ request()->is('layanan/penunjang-medik') ? 'text-yellow-300 font-bold bg-[#096237]' : '' }}">{{ __('Penunjang Medik') }}</a>
-                            <a href="{{ url('/layanan/unggulan') }}" class="block px-4 py-2 hover:bg-[#096237] hover:text-yellow-300 transition-colors {{ request()->is('layanan/unggulan') ? 'text-yellow-300 font-bold bg-[#096237]' : '' }}">{{ __('Layanan Unggulan') }}</a>
+                            @php
+                                $navServices = \App\Models\Service::where('is_active', true)->orderBy('order', 'asc')->get();
+                            @endphp
+                            @foreach($navServices as $nServ)
+                                @php 
+                                    $nName = $nServ->tr('name');
+                                    $nSlug = $nServ->slug ?: \Illuminate\Support\Str::slug($nName);
+                                @endphp
+                                <a href="{{ url('/layanan/' . $nSlug) }}" class="block px-4 py-2 hover:bg-[#096237] hover:text-yellow-300 transition-colors {{ request()->is('layanan/' . $nSlug) ? 'text-yellow-300 font-bold bg-[#096237]' : '' }}">
+                                    {{ $nName }}
+                                </a>
+                            @endforeach
                         </div>
                     </div>
 
@@ -236,12 +243,16 @@
                     <span>{{ __('Layanan') }}</span>
                     <i class="fa-solid fa-chevron-down text-xs transition-transform" :class="mobileLayananOpen ? 'rotate-180 text-[#0e7c47]' : 'text-gray-400'"></i>
                 </button>
-                <div x-show="mobileLayananOpen" class="pl-4 py-1.5 space-y-1 bg-[#0e7c47] text-white rounded-xl my-1.5 text-xs font-semibold">
-                    <a href="{{ url('/layanan/igd') }}" @click="mobileMenuOpen = false" class="block py-1.5 px-2 hover:text-yellow-300">{{ __('IGD') }}</a>
-                    <a href="{{ url('/layanan/rawat-jalan') }}" @click="mobileMenuOpen = false" class="block py-1.5 px-2 hover:text-yellow-300">{{ __('Instalasi Rawat Jalan') }}</a>
-                    <a href="{{ url('/layanan/rawat-inap') }}" @click="mobileMenuOpen = false" class="block py-1.5 px-2 hover:text-yellow-300">{{ __('Instalasi Rawat Inap') }}</a>
-                    <a href="{{ url('/layanan/penunjang-medik') }}" @click="mobileMenuOpen = false" class="block py-1.5 px-2 hover:text-yellow-300">{{ __('Penunjang Medik') }}</a>
-                    <a href="{{ url('/layanan/unggulan') }}" @click="mobileMenuOpen = false" class="block py-1.5 px-2 hover:text-yellow-300">{{ __('Layanan Unggulan') }}</a>
+                <div x-show="mobileLayananOpen" class="pl-4 py-1.5 space-y-1 bg-[#0e7c47] text-white rounded-xl my-1.5 text-xs font-semibold max-h-60 overflow-y-auto">
+                    @foreach($navServices as $nServ)
+                        @php 
+                            $nName = $nServ->tr('name');
+                            $nSlug = $nServ->slug ?: \Illuminate\Support\Str::slug($nName);
+                        @endphp
+                        <a href="{{ url('/layanan/' . $nSlug) }}" @click="mobileMenuOpen = false" class="block py-1.5 px-2 hover:text-yellow-300">
+                            {{ $nName }}
+                        </a>
+                    @endforeach
                 </div>
             </div>
 
