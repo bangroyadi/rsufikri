@@ -126,53 +126,7 @@
             </div>
         </div>
 
-        <!-- MISI CARDS (3 OFFICIAL POINTS) -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-all flex flex-col justify-between space-y-4">
-                <div class="space-y-3">
-                    <div class="w-12 h-12 rounded-xl bg-emerald-50 text-[#0e7c47] flex items-center justify-center text-xl font-extrabold">
-                        1
-                    </div>
-                    <h4 class="font-bold text-gray-900 text-base">Pelayanan Medis Terbaik</h4>
-                    <p class="text-xs sm:text-sm text-gray-600 leading-relaxed">
-                        Memberikan pelayanan kesehatan dan medis terbaik kepada masyarakat secara profesional dan berkelanjutan.
-                    </p>
-                </div>
-                <div class="pt-3 border-t border-gray-100 text-xs font-semibold text-[#0e7c47]">
-                    <i class="fa-solid fa-check-circle"></i> Mutu Medis Terjamin
-                </div>
-            </div>
 
-            <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-all flex flex-col justify-between space-y-4">
-                <div class="space-y-3">
-                    <div class="w-12 h-12 rounded-xl bg-emerald-50 text-[#0e7c47] flex items-center justify-center text-xl font-extrabold">
-                        2
-                    </div>
-                    <h4 class="font-bold text-gray-900 text-base">Kesejahteraan Stakeholder</h4>
-                    <p class="text-xs sm:text-sm text-gray-600 leading-relaxed">
-                        Mewujudkan kesejahteraan bagi seluruh stakeholder (pasien, dokter, karyawan, serta mitra kerja).
-                    </p>
-                </div>
-                <div class="pt-3 border-t border-gray-100 text-xs font-semibold text-[#0e7c47]">
-                    <i class="fa-solid fa-check-circle"></i> Hubungan Harmonis
-                </div>
-            </div>
-
-            <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-all flex flex-col justify-between space-y-4">
-                <div class="space-y-3">
-                    <div class="w-12 h-12 rounded-xl bg-emerald-50 text-[#0e7c47] flex items-center justify-center text-xl font-extrabold">
-                        3
-                    </div>
-                    <h4 class="font-bold text-gray-900 text-base">Kepedulian Sosial & Bangsa</h4>
-                    <p class="text-xs sm:text-sm text-gray-600 leading-relaxed">
-                        Peduli kepada lingkungan, masyarakat, dan bangsa melalui kontribusi nyata dalam bidang kesehatan.
-                    </p>
-                </div>
-                <div class="pt-3 border-t border-gray-100 text-xs font-semibold text-[#0e7c47]">
-                    <i class="fa-solid fa-check-circle"></i> Tanggung Jawab Sosial
-                </div>
-            </div>
-        </div>
     </div>
 
 

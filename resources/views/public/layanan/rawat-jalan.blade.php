@@ -5,157 +5,37 @@
 <!-- MAIN CONTENT SECTION (WIDE CONTAINER STANDAR APLIKASI WEB MODERN) -->
 <section class="py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-10" x-data="rawatJalanApp()">
 
-    <!-- HERO SHOWCASE BANNER -->
-    <div class="relative rounded-3xl p-6 sm:p-8 lg:p-10 text-white shadow-2xl overflow-hidden bg-cover bg-center" 
-         style="background-image: url('{{ asset('gedung1_web.jpg') }}');">
-        <!-- PREMIUM DARK GRADIENT OVERLAY FOR MAXIMUM TEXT READABILITY -->
-        <div class="absolute inset-0 bg-slate-950/70"></div>
-        <div class="absolute inset-0 bg-gradient-to-r from-[#042d19] via-[#084829]/90 to-[#021f11]/85"></div>
-
-        <div class="space-y-5 max-w-3xl relative z-10">
-            <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/15 text-yellow-300 text-xs font-black uppercase tracking-wider backdrop-blur-md shadow-xs">
-                <i class="fa-solid fa-user-doctor text-sm text-yellow-400"></i>
-                <span>{{ __('Pelayanan Poliklinik Spesialis Terpadu') }}</span>
-            </div>
-            
-            <h1 class="text-2xl sm:text-4xl font-black text-white tracking-tight leading-snug drop-shadow-md">
-                {{ __('Instalasi Rawat Jalan') }}
-            </h1>
-            
-            <p class="text-emerald-100 text-xs sm:text-sm leading-relaxed font-medium">
-                {{ __('Konsultasi kesehatan komprehensif, diagnosis akurat, dan penanganan medis oleh Tim Dokter Spesialis profesional RSU Fikri Medika Karawang.') }}
-            </p>
-
-            <!-- ACTION BUTTONS IN HERO BANNER -->
-            <div class="flex flex-wrap items-center gap-3 pt-1">
-                <a href="{{ url('/buat-janji') }}" 
-                   class="inline-flex items-center gap-2.5 px-6 py-3.5 rounded-2xl bg-yellow-400 hover:bg-yellow-300 text-slate-950 font-black text-xs sm:text-sm shadow-xl transition-all active:scale-98">
-                    <i class="fa-solid fa-calendar-plus text-base text-slate-950"></i>
-                    <span>{{ __('🗓️ Buat Janji Berobat Online') }}</span>
-                </a>
-
-                <a href="{{ url('/jadwal-dokter') }}" 
-                   class="inline-flex items-center gap-2 px-5 py-3.5 rounded-2xl bg-white/10 hover:bg-white/20 text-white font-bold text-xs sm:text-sm transition-all backdrop-blur-md">
-                    <i class="fa-solid fa-user-doctor text-amber-300"></i>
-                    <span>{{ __('Cek Jadwal Dokter Spesialis') }}</span>
-                </a>
-            </div>
-
-            <!-- 3 HIGHLIGHT BADGES -->
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
-                <div class="flex items-center gap-2.5 p-3 rounded-2xl bg-white/10 backdrop-blur-md">
-                    <div class="w-8 h-8 rounded-xl bg-yellow-400 text-slate-950 flex items-center justify-center text-sm font-black shrink-0 shadow-xs">
-                        <i class="fa-solid fa-notes-medical"></i>
+    <!-- TOP SECTION (TENTANG RAWAT JALAN) -->
+    <div class="w-full">
+        <div class="bg-white p-6 sm:p-8 rounded-3xl shadow-sm space-y-6 flex flex-col justify-between border border-gray-100">
+            <div class="space-y-6">
+                <div class="flex items-center gap-3.5 pb-5 border-b border-gray-100">
+                    <div class="w-12 h-12 rounded-2xl bg-emerald-50 text-[#0e7c47] flex items-center justify-center text-xl font-extrabold">
+                        <i class="fa-solid fa-hospital"></i>
                     </div>
                     <div>
-                        <h4 class="font-extrabold text-white text-xs">20+ Poliklinik</h4>
-                        <p class="text-[10px] text-emerald-100 font-medium">Spesialis Sub-Spesialis</p>
+                        <span class="inline-block px-3 py-1 rounded-full bg-emerald-100 text-[#0e7c47] text-xs font-bold mb-1">
+                            {{ __('Pelayanan Poliklinik') }}
+                        </span>
+                        <h2 class="text-lg sm:text-xl font-bold text-gray-900">{{ __('Tentang Instalasi Rawat Jalan') }}</h2>
                     </div>
                 </div>
 
-                <div class="flex items-center gap-2.5 p-3 rounded-2xl bg-white/10 backdrop-blur-md">
-                    <div class="w-8 h-8 rounded-xl bg-yellow-400 text-slate-950 flex items-center justify-center text-sm font-black shrink-0 shadow-xs">
-                        <i class="fa-solid fa-stethoscope"></i>
-                    </div>
-                    <div>
-                        <h4 class="font-extrabold text-white text-xs">Dokter Berpengalaman</h4>
-                        <p class="text-[10px] text-emerald-100 font-medium">Tim Medis Profesional</p>
-                    </div>
-                </div>
-
-                <div class="flex items-center gap-2.5 p-3 rounded-2xl bg-white/10 backdrop-blur-md">
-                    <div class="w-8 h-8 rounded-xl bg-yellow-400 text-slate-950 flex items-center justify-center text-sm font-black shrink-0 shadow-xs">
-                        <i class="fa-solid fa-hospital-user"></i>
-                    </div>
-                    <div>
-                        <h4 class="font-extrabold text-white text-xs">BPJS & Asuransi</h4>
-                        <p class="text-[10px] text-emerald-100 font-medium">Menerima Berbagai Klaim</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- TOP SECTION (7 COLS TENTANG RAWAT JALAN + 5 COLS SIDEBAR INFORMASI) -->
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
-        
-        <!-- LEFT MAIN DETAILS (7 COLS NO BORDER) -->
-        <div class="lg:col-span-7">
-            <div class="bg-white p-6 sm:p-8 rounded-3xl shadow-sm space-y-6 h-full flex flex-col justify-between hover:shadow-md transition-all">
-                <div class="space-y-6">
-                    <div class="flex items-center gap-3.5 pb-5 border-b border-gray-100">
-                        <div class="w-12 h-12 rounded-2xl bg-emerald-50 text-[#0e7c47] flex items-center justify-center text-xl font-extrabold">
-                            <i class="fa-solid fa-hospital"></i>
-                        </div>
-                        <div>
-                            <span class="inline-block px-3 py-1 rounded-full bg-emerald-100 text-[#0e7c47] text-xs font-bold mb-1">
-                                {{ __('Pelayanan Poliklinik') }}
-                            </span>
-                            <h2 class="text-lg sm:text-xl font-bold text-gray-900">{{ __('Tentang Instalasi Rawat Jalan') }}</h2>
-                        </div>
-                    </div>
-
-                    <div class="prose max-w-none text-gray-600 leading-relaxed text-xs sm:text-sm space-y-4 font-medium">
-                        <p>
-                            <strong>Instalasi Rawat Jalan RSU Fikri Medika Karawang</strong> menyediakan berbagai ragam konsultasi dan tindakan medis spesialis untuk menangani berbagai kondisi kesehatan pasien tanpa perlu menjalani rawat inap.
-                        </p>
-                        <p>
-                            Dilengkapi sarana pemeriksaan modern, sistem pendaftaran online terintegrasi, serta jajaran tim dokter spesialis yang siap memberikan solusi kesehatan secara komprehensif dan penuh keramahan Islami.
-                        </p>
-                    </div>
-                </div>
-
-                <div class="pt-4 border-t border-gray-100 flex items-center gap-2 text-xs font-bold text-[#0e7c47]">
-                    <i class="fa-solid fa-circle-check"></i>
-                    <span>Melayani Pasien Umum, BPJS Kesehatan, & Asuransi Swasta / Perusahaan</span>
-                </div>
-            </div>
-        </div>
-
-        <!-- RIGHT SIDEBAR (5 COLS NO BORDER) -->
-        <div class="lg:col-span-5">
-            <div class="bg-gradient-to-br from-[#084829] via-[#0e7c47] to-[#042d19] p-6 sm:p-8 rounded-3xl text-white shadow-xl space-y-5 relative overflow-hidden h-full flex flex-col justify-between">
-                <div class="space-y-4">
-                    <div class="flex items-center gap-3 pb-3 border-b border-emerald-500/30">
-                        <div class="w-10 h-10 rounded-xl bg-yellow-400 text-slate-950 flex items-center justify-center text-xl font-bold">
-                            <i class="fa-solid fa-calendar-check"></i>
-                        </div>
-                        <div>
-                            <span class="text-[10px] text-yellow-300 font-bold uppercase tracking-wider">{{ __('Informasi & Pendaftaran') }}</span>
-                            <h3 class="font-extrabold text-sm sm:text-base leading-tight text-white">{{ __('Poliklinik Rawat Jalan') }}</h3>
-                        </div>
-                    </div>
-
-                    <p class="text-xs text-emerald-100 leading-relaxed font-medium">
-                        {{ __('Daftar berobat tanpa antre panjang menggunakan sistem pendaftaran online atau informasi pendaftaran via Call Center RSU Fikri Medika.') }}
+                <div class="prose max-w-none text-gray-600 leading-relaxed text-xs sm:text-sm space-y-4 font-medium">
+                    <p>
+                        <strong>Instalasi Rawat Jalan RSU Fikri Medika Karawang</strong> menyediakan berbagai ragam konsultasi dan tindakan medis spesialis untuk menangani berbagai kondisi kesehatan pasien tanpa perlu menjalani rawat inap.
                     </p>
-
-                    <div class="p-3.5 rounded-2xl bg-white/10 text-xs font-bold text-yellow-300 flex items-center justify-between backdrop-blur-md">
-                        <div class="flex items-center gap-2">
-                            <i class="fa-solid fa-clock text-yellow-400"></i>
-                            <span>Jam Buka Poliklinik</span>
-                        </div>
-                        <span class="text-[10px] px-2.5 py-1 rounded-full bg-emerald-600 text-white font-bold">07.00 - 21.00 WIB</span>
-                    </div>
-                </div>
-
-                <!-- COMBINED REGISTRATION BUTTONS IN SIDEBAR -->
-                <div class="space-y-2.5 pt-2">
-                    <a href="{{ url('/buat-janji') }}" 
-                       class="w-full py-3.5 px-4 rounded-xl bg-yellow-400 hover:bg-yellow-300 text-slate-950 font-black text-xs transition-colors shadow flex items-center justify-center gap-2">
-                        <i class="fa-solid fa-calendar-plus text-sm text-slate-950"></i>
-                        <span>{{ __('Daftar Berobat Online Sekarang') }}</span>
-                    </a>
-
-                    <a href="https://api.whatsapp.com/send/?phone=6282280749999&text=Selamat+datang+di+Call+Center+RSU+Fikri+Medika%0ASilahkan+isi+format+berikut%3A%0ANama%3A%0ANo.+HP%3A%0AAlamat%3A%0AKeluhan%3A&type=phone_number&app_absent=0" target="_blank" 
-                       class="w-full py-3 px-4 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold text-xs transition-colors flex items-center justify-center gap-2">
-                        <i class="fa-brands fa-whatsapp text-base text-amber-300"></i>
-                        <span>{{ __('WhatsApp Call Center (0822-8074-9999)') }}</span>
-                    </a>
+                    <p>
+                        Dilengkapi sarana pemeriksaan modern, sistem pendaftaran online terintegrasi, serta jajaran tim dokter spesialis yang siap memberikan solusi kesehatan secara komprehensif dan penuh keramahan Islami.
+                    </p>
                 </div>
             </div>
-        </div>
 
+            <div class="pt-4 border-t border-gray-100 flex items-center gap-2 text-xs font-bold text-[#0e7c47]">
+                <i class="fa-solid fa-circle-check"></i>
+                <span>Melayani Pasien Umum, BPJS Kesehatan, & Asuransi Swasta / Perusahaan</span>
+            </div>
+        </div>
     </div>
 
     <!-- FULL-WIDTH SECTIONS BELOW -->
@@ -285,53 +165,6 @@
             </div>
         </div>
 
-        <!-- FULL WIDE SECTION 2: ALUR PELAYANAN PASIEN RAWAT JALAN (5-STEP TIMELINE NO BORDER) -->
-        <div class="bg-white p-6 sm:p-8 rounded-3xl shadow-sm space-y-6">
-            <div class="flex items-center gap-3 pb-4 border-b border-gray-100">
-                <div class="w-10 h-10 rounded-xl bg-emerald-50 text-[#0e7c47] flex items-center justify-center text-lg font-bold">
-                    <i class="fa-solid fa-route"></i>
-                </div>
-                <div>
-                    <h3 class="font-extrabold text-gray-900 text-lg">Alur Pelayanan Pasien Rawat Jalan</h3>
-                    <p class="text-xs text-gray-500 font-medium">Tahapan pendaftaran hingga penyelesaian pemeriksaan poliklinik</p>
-                </div>
-            </div>
-
-            <!-- 5-STEP TIMELINE GRID -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
-                
-                <div class="p-5 rounded-2xl bg-slate-50 space-y-2 relative">
-                    <span class="w-8 h-8 rounded-xl bg-[#0e7c47] text-white font-black text-xs flex items-center justify-center shadow-xs">01</span>
-                    <h4 class="font-bold text-gray-900 text-sm">Pendaftaran</h4>
-                    <p class="text-xs text-gray-600 leading-relaxed font-medium">Melalui WhatsApp, website, atau loket pendaftaran.</p>
-                </div>
-
-                <div class="p-5 rounded-2xl bg-slate-50 space-y-2 relative">
-                    <span class="w-8 h-8 rounded-xl bg-[#0e7c47] text-white font-black text-xs flex items-center justify-center shadow-xs">02</span>
-                    <h4 class="font-bold text-gray-900 text-sm">Skrining TTV</h4>
-                    <p class="text-xs text-gray-600 leading-relaxed font-medium">Pemeriksaan tekanan darah, berat badan, & suhu.</p>
-                </div>
-
-                <div class="p-5 rounded-2xl bg-slate-50 space-y-2 relative">
-                    <span class="w-8 h-8 rounded-xl bg-[#0e7c47] text-white font-black text-xs flex items-center justify-center shadow-xs">03</span>
-                    <h4 class="font-bold text-gray-900 text-sm">Konsultasi Dokter</h4>
-                    <p class="text-xs text-gray-600 leading-relaxed font-medium">Pemeriksaan fisik & diagnosa dokter spesialis.</p>
-                </div>
-
-                <div class="p-5 rounded-2xl bg-slate-50 space-y-2 relative">
-                    <span class="w-8 h-8 rounded-xl bg-[#0e7c47] text-white font-black text-xs flex items-center justify-center shadow-xs">04</span>
-                    <h4 class="font-bold text-gray-900 text-sm">Penunjang / Resep</h4>
-                    <p class="text-xs text-gray-600 leading-relaxed font-medium">Tindakan lab/radiologi atau pengambilan obat farmasi.</p>
-                </div>
-
-                <div class="p-5 rounded-2xl bg-slate-50 space-y-2 relative">
-                    <span class="w-8 h-8 rounded-xl bg-[#0e7c47] text-white font-black text-xs flex items-center justify-center shadow-xs">05</span>
-                    <h4 class="font-bold text-gray-900 text-sm">Selesai / Pulang</h4>
-                    <p class="text-xs text-gray-600 leading-relaxed font-medium">Penyelesaian administrasi & kepulangan pasien.</p>
-                </div>
-
-            </div>
-        </div>
 
         <!-- FULL WIDE SECTION 3: LAYANAN PENUNJANG RAWAT JALAN (CLICKABLE CARDS FOR GALLERY LIGHTBOX) -->
         <div class="space-y-5">

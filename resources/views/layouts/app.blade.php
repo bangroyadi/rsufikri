@@ -19,6 +19,61 @@
 </head>
 <body class="antialiased flex flex-col min-h-screen bg-[#f7faf8] pb-14 lg:pb-0" x-data="{ mobileMenuOpen: false, searchOpen: false, scrolled: false }">
 
+    <!-- MEDICAL ECG HEARTBEAT PRELOADER -->
+    <div id="medicare-preloader">
+        <div class="flex flex-col items-center justify-center p-6 text-center select-none">
+            <!-- ECG WAVEFORM SVG -->
+            <div class="relative flex items-center justify-center my-2">
+                <svg class="ecg-svg" viewBox="0 0 300 100" xmlns="http://www.w3.org/2000/svg">
+                    <!-- BACKGROUND FAINT GUIDE LINE -->
+                    <path class="ecg-bg-line" d="M 0 50 L 60 50 L 70 40 L 80 50 L 115 50 L 125 70 L 140 10 L 155 90 L 170 50 L 185 50 L 195 38 L 210 50 L 300 50" />
+                    <!-- ANIMATED PULSE LINE -->
+                    <path class="ecg-pulse-line" d="M 0 50 L 60 50 L 70 40 L 80 50 L 115 50 L 125 70 L 140 10 L 155 90 L 170 50 L 185 50 L 195 38 L 210 50 L 300 50" />
+                    <!-- GLOWING MEDICAL RED BEAT PIN -->
+                    <circle class="ecg-dot" cx="140" cy="10" r="4.5" />
+                </svg>
+            </div>
+
+            <!-- TEXT & MEDICAL BADGE -->
+            <div class="mt-2 space-y-1">
+                <div class="text-xs sm:text-sm font-extrabold text-[#0e7c47] uppercase tracking-widest flex items-center justify-center gap-1.5">
+                    <i class="fa-solid fa-heart-pulse text-red-500 animate-pulse text-xs"></i>
+                    <span>RSU FIKRI MEDIKA</span>
+                </div>
+                <p class="text-[11px] sm:text-xs text-slate-400 font-medium tracking-wide">
+                    {{ app()->getLocale() == 'en' ? 'Loading healthcare services...' : 'Memuat layanan kesehatan...' }}
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- PRELOADER DISMISS SCRIPT -->
+    <script>
+        (function() {
+            function hidePreloader() {
+                var preloader = document.getElementById('medicare-preloader');
+                if (preloader && !preloader.classList.contains('loaded')) {
+                    preloader.classList.add('loaded');
+                    setTimeout(function() {
+                        if (preloader && preloader.parentNode) {
+                            preloader.parentNode.removeChild(preloader);
+                        }
+                    }, 600);
+                }
+            }
+
+            if (document.readyState === 'complete') {
+                setTimeout(hidePreloader, 400);
+            } else {
+                window.addEventListener('load', function() {
+                    setTimeout(hidePreloader, 400);
+                });
+                // Fallback max 3.5s in case of slow network/trackers
+                setTimeout(hidePreloader, 3500);
+            }
+        })();
+    </script>
+
     <!-- TOP EMERGENCY & INFO BAR -->
     <div class="bg-[#0e7c47] text-white text-xs py-1 px-3 sm:px-6 lg:px-8 border-b border-[#096237]/60">
         <div class="max-w-6xl mx-auto flex flex-row justify-between items-center gap-2">
@@ -99,7 +154,7 @@
                             <i class="fa-solid fa-chevron-down text-[10px] transition-transform duration-200" :class="dropdownOpen ? 'rotate-180 text-[#0e7c47]' : ''"></i>
                         </button>
 
-                        <!-- DROPDOWN MENU CONTAINER (MATCHING REFERENCE DESIGN) -->
+                        <!-- DROPDOWN MENU CONTAINER -->
                         <div x-show="dropdownOpen" 
                              x-transition:enter="transition ease-out duration-150"
                              x-transition:enter-start="opacity-0 translate-y-1 scale-95"
@@ -133,66 +188,66 @@
                                 }
                             </style>
 
-                            <!-- LAYANAN UNGGULAN SUB-DROPDOWN (POPS OUT TO THE RIGHT SIDE) -->
+                            <!-- LAYANAN UNGGULAN SUB-DROPDOWN -->
                             <div class="unggulan-menu-item">
-                                <a href="{{ url('/layanan/unggulan') }}" class="flex items-center justify-between px-4 py-3 hover:bg-orange-50 hover:text-[#f97316] transition-colors text-gray-700 font-semibold border-b border-gray-100 {{ request()->is('layanan/unggulan*') || request()->is('layanan/trauma-center*') || request()->is('layanan/spesialis-mata*') || request()->is('layanan/kemilau-cinta*') || request()->is('layanan/layanan-antar-jemput*') ? 'text-[#f97316] font-bold bg-orange-50' : '' }}">
+                                <a href="{{ url('/layanan/unggulan') }}" class="flex items-center justify-between px-4 py-3 hover:bg-emerald-50 hover:text-[#0e7c47] transition-colors text-gray-700 font-semibold border-b border-gray-100 {{ request()->is('layanan/unggulan*') || request()->is('layanan/trauma-center*') || request()->is('layanan/spesialis-mata*') || request()->is('layanan/kemilau-cinta*') || request()->is('layanan/layanan-antar-jemput*') ? 'text-[#0e7c47] font-bold bg-emerald-50' : '' }}">
                                     <span>Layanan Unggulan</span>
-                                    <i class="fa-solid fa-chevron-right text-[10px] text-[#f97316]"></i>
+                                    <i class="fa-solid fa-chevron-right text-[10px] text-[#0e7c47]"></i>
                                 </a>
 
                                 <!-- SUB-MENU POPUP (RIGHT SIDE) -->
                                 <div class="unggulan-sub-menu">
-                                    <a href="{{ url('/layanan/trauma-center') }}" class="block px-4 py-3 hover:bg-orange-50 hover:text-[#f97316] transition-colors border-b border-gray-100 {{ request()->is('layanan/trauma-center*') ? 'text-[#f97316] font-bold bg-orange-50' : '' }}">
+                                    <a href="{{ url('/layanan/trauma-center') }}" class="block px-4 py-3 hover:bg-emerald-50 hover:text-[#0e7c47] transition-colors border-b border-gray-100 {{ request()->is('layanan/trauma-center*') ? 'text-[#0e7c47] font-bold bg-emerald-50' : '' }}">
                                         Trauma Center
                                     </a>
-                                    <a href="{{ url('/layanan/spesialis-mata') }}" class="block px-4 py-3 hover:bg-orange-50 hover:text-[#f97316] transition-colors border-b border-gray-100 {{ request()->is('layanan/spesialis-mata*') ? 'text-[#f97316] font-bold bg-orange-50' : '' }}">
+                                    <a href="{{ url('/layanan/spesialis-mata') }}" class="block px-4 py-3 hover:bg-emerald-50 hover:text-[#0e7c47] transition-colors border-b border-gray-100 {{ request()->is('layanan/spesialis-mata*') ? 'text-[#0e7c47] font-bold bg-emerald-50' : '' }}">
                                         Spesialis Mata
                                     </a>
-                                    <a href="{{ url('/layanan/kemilau-cinta') }}" class="block px-4 py-3 hover:bg-orange-50 hover:text-[#f97316] transition-colors border-b border-gray-100 {{ request()->is('layanan/kemilau-cinta*') ? 'text-[#f97316] font-bold bg-orange-50' : '' }}">
+                                    <a href="{{ url('/layanan/kemilau-cinta') }}" class="block px-4 py-3 hover:bg-emerald-50 hover:text-[#0e7c47] transition-colors border-b border-gray-100 {{ request()->is('layanan/kemilau-cinta*') ? 'text-[#0e7c47] font-bold bg-emerald-50' : '' }}">
                                         Kemilau Cinta (Ibu & Anak)
                                     </a>
-                                    <a href="{{ url('/layanan/layanan-antar-jemput') }}" class="block px-4 py-3 hover:bg-orange-50 hover:text-[#f97316] transition-colors {{ request()->is('layanan/layanan-antar-jemput*') ? 'text-[#f97316] font-bold bg-orange-50' : '' }}">
+                                    <a href="{{ url('/layanan/layanan-antar-jemput') }}" class="block px-4 py-3 hover:bg-emerald-50 hover:text-[#0e7c47] transition-colors {{ request()->is('layanan/layanan-antar-jemput*') ? 'text-[#0e7c47] font-bold bg-emerald-50' : '' }}">
                                         Antar Jemput Pasien
                                     </a>
                                 </div>
                             </div>
 
-                            <a href="{{ url('/layanan/rawat-inap') }}" class="block px-4 py-3 hover:bg-orange-50 hover:text-[#f97316] transition-colors border-b border-gray-100 {{ request()->is('layanan/rawat-inap*') ? 'text-[#f97316] font-bold bg-orange-50' : '' }}">
+                            <a href="{{ url('/layanan/rawat-inap') }}" class="block px-4 py-3 hover:bg-emerald-50 hover:text-[#0e7c47] transition-colors border-b border-gray-100 {{ request()->is('layanan/rawat-inap*') ? 'text-[#0e7c47] font-bold bg-emerald-50' : '' }}">
                                 Rawat Inap
                             </a>
 
-                            <a href="{{ url('/layanan/rawat-jalan') }}" class="block px-4 py-3 hover:bg-orange-50 hover:text-[#f97316] transition-colors border-b border-gray-100 {{ request()->is('layanan/rawat-jalan*') ? 'text-[#f97316] font-bold bg-orange-50' : '' }}">
+                            <a href="{{ url('/layanan/rawat-jalan') }}" class="block px-4 py-3 hover:bg-emerald-50 hover:text-[#0e7c47] transition-colors border-b border-gray-100 {{ request()->is('layanan/rawat-jalan*') ? 'text-[#0e7c47] font-bold bg-emerald-50' : '' }}">
                                 Klinik Rawat Jalan
                             </a>
 
-                            <a href="{{ url('/layanan/igd') }}" class="block px-4 py-3 hover:bg-orange-50 hover:text-[#f97316] transition-colors border-b border-gray-100 {{ request()->is('layanan/igd*') ? 'text-[#f97316] font-bold bg-orange-50' : '' }}">
+                            <a href="{{ url('/layanan/igd') }}" class="block px-4 py-3 hover:bg-emerald-50 hover:text-[#0e7c47] transition-colors border-b border-gray-100 {{ request()->is('layanan/igd*') ? 'text-[#0e7c47] font-bold bg-emerald-50' : '' }}">
                                 IGD 24 Jam
                             </a>
 
-                            <a href="{{ url('/layanan/rehabilitasi-medik') }}" class="block px-4 py-3 hover:bg-orange-50 hover:text-[#f97316] transition-colors border-b border-gray-100 {{ request()->is('layanan/rehabilitasi-medik*') ? 'text-[#f97316] font-bold bg-orange-50' : '' }}">
+                            <a href="{{ url('/layanan/rehabilitasi-medik') }}" class="block px-4 py-3 hover:bg-emerald-50 hover:text-[#0e7c47] transition-colors border-b border-gray-100 {{ request()->is('layanan/rehabilitasi-medik*') ? 'text-[#0e7c47] font-bold bg-emerald-50' : '' }}">
                                 Instalasi Rehabilitasi Medik
                             </a>
 
-                            <a href="{{ url('/layanan/farmasi-24-jam') }}" class="block px-4 py-3 hover:bg-orange-50 hover:text-[#f97316] transition-colors border-b border-gray-100 {{ request()->is('layanan/farmasi-24-jam*') ? 'text-[#f97316] font-bold bg-orange-50' : '' }}">
+                            <a href="{{ url('/layanan/farmasi-24-jam') }}" class="block px-4 py-3 hover:bg-emerald-50 hover:text-[#0e7c47] transition-colors border-b border-gray-100 {{ request()->is('layanan/farmasi-24-jam*') ? 'text-[#0e7c47] font-bold bg-emerald-50' : '' }}">
                                 Farmasi 24 Jam
                             </a>
 
-                            <!-- PENUNJANG MEDIS SUB-DROPDOWN (POPS OUT TO THE RIGHT SIDE) -->
+                            <!-- PENUNJANG MEDIS SUB-DROPDOWN -->
                             <div class="penunjang-menu-item">
-                                <a href="{{ url('/layanan/penunjang-medis') }}" class="flex items-center justify-between px-4 py-3 hover:bg-orange-50 hover:text-[#f97316] transition-colors text-gray-700 font-semibold {{ request()->is('layanan/penunjang*') || request()->is('layanan/radiologi*') || request()->is('layanan/laboratorium*') ? 'text-[#f97316] font-bold bg-orange-50' : '' }}">
+                                <a href="{{ url('/layanan/penunjang-medis') }}" class="flex items-center justify-between px-4 py-3 hover:bg-emerald-50 hover:text-[#0e7c47] transition-colors text-gray-700 font-semibold {{ request()->is('layanan/penunjang*') || request()->is('layanan/radiologi*') || request()->is('layanan/laboratorium*') ? 'text-[#0e7c47] font-bold bg-emerald-50' : '' }}">
                                     <span>Penunjang Medis</span>
-                                    <i class="fa-solid fa-chevron-right text-[10px] text-[#f97316]"></i>
+                                    <i class="fa-solid fa-chevron-right text-[10px] text-[#0e7c47]"></i>
                                 </a>
 
                                 <!-- SUB-MENU POPUP (RIGHT SIDE) -->
                                 <div class="penunjang-sub-menu">
-                                    <a href="{{ url('/layanan/radiologi-24-jam') }}" class="block px-4 py-3 hover:bg-orange-50 hover:text-[#f97316] transition-colors border-b border-gray-100 {{ request()->is('layanan/radiologi*') ? 'text-[#f97316] font-bold bg-orange-50' : '' }}">
+                                    <a href="{{ url('/layanan/radiologi-24-jam') }}" class="block px-4 py-3 hover:bg-emerald-50 hover:text-[#0e7c47] transition-colors border-b border-gray-100 {{ request()->is('layanan/radiologi*') ? 'text-[#0e7c47] font-bold bg-emerald-50' : '' }}">
                                         Radiologi 24 Jam
                                     </a>
-                                    <a href="{{ url('/layanan/laboratorium-klinik') }}" class="block px-4 py-3 hover:bg-orange-50 hover:text-[#f97316] transition-colors border-b border-gray-100 {{ request()->is('layanan/laboratorium-klinik*') ? 'text-[#f97316] font-bold bg-orange-50' : '' }}">
+                                    <a href="{{ url('/layanan/laboratorium-klinik') }}" class="block px-4 py-3 hover:bg-emerald-50 hover:text-[#0e7c47] transition-colors border-b border-gray-100 {{ request()->is('layanan/laboratorium-klinik*') ? 'text-[#0e7c47] font-bold bg-emerald-50' : '' }}">
                                         Laboratorium Klinik 24 Jam
                                     </a>
-                                    <a href="{{ url('/layanan/laboratorium-patologi') }}" class="block px-4 py-3 hover:bg-orange-50 hover:text-[#f97316] transition-colors {{ request()->is('layanan/laboratorium-patologi*') ? 'text-[#f97316] font-bold bg-orange-50' : '' }}">
+                                    <a href="{{ url('/layanan/laboratorium-patologi') }}" class="block px-4 py-3 hover:bg-emerald-50 hover:text-[#0e7c47] transition-colors {{ request()->is('layanan/laboratorium-patologi*') ? 'text-[#0e7c47] font-bold bg-emerald-50' : '' }}">
                                         Laboratorium Patologi Anatomi
                                     </a>
                                 </div>
@@ -209,7 +264,7 @@
                             <i class="fa-solid fa-chevron-down text-[10px] transition-transform duration-200" :class="dropdownOpen ? 'rotate-180 text-[#0e7c47]' : ''"></i>
                         </button>
 
-                        <!-- DROPDOWN MENU CONTAINER -->
+                        <!-- DROPDOWN MENU CONTAINER (MATCHING LAYANAN WHITE THEME WITH GREEN HOVER) -->
                         <div x-show="dropdownOpen" 
                              x-transition:enter="transition ease-out duration-150"
                              x-transition:enter-start="opacity-0 translate-y-1 scale-95"
@@ -217,13 +272,13 @@
                              x-transition:leave="transition ease-in duration-100"
                              x-transition:leave-start="opacity-100 translate-y-0 scale-100"
                              x-transition:leave-end="opacity-0 translate-y-1 scale-95"
-                             class="absolute top-full left-0 w-60 bg-[#0e7c47] rounded-xl shadow-2xl py-2 z-50 text-white text-xs font-semibold border border-[#096237]"
+                             class="absolute top-full left-0 w-64 bg-white rounded-xl shadow-2xl py-1 z-50 text-gray-700 text-xs font-semibold border border-gray-100 divide-y divide-gray-100"
                              style="display: none;">
-                            <a href="{{ url('/informasi/artikel-kesehatan') }}" class="block px-4 py-2 hover:bg-[#096237] hover:text-yellow-300 transition-colors {{ request()->is('informasi/artikel-kesehatan') ? 'text-yellow-300 font-bold bg-[#096237]' : '' }}">{{ __('Artikel Kesehatan') }}</a>
-                            <a href="{{ url('/informasi/event') }}" class="block px-4 py-2 hover:bg-[#096237] hover:text-yellow-300 transition-colors {{ request()->is('informasi/event') ? 'text-yellow-300 font-bold bg-[#096237]' : '' }}">{{ __('Event') }}</a>
-                            <a href="{{ url('/informasi/penawaran-khusus') }}" class="block px-4 py-2 hover:bg-[#096237] hover:text-yellow-300 transition-colors {{ request()->is('informasi/penawaran-khusus') ? 'text-yellow-300 font-bold bg-[#096237]' : '' }}">{{ __('Penawaran Khusus') }}</a>
-                            <a href="{{ url('/informasi/aduan-layanan') }}" class="block px-4 py-2 hover:bg-[#096237] hover:text-yellow-300 transition-colors {{ request()->is('informasi/aduan-layanan') ? 'text-yellow-300 font-bold bg-[#096237]' : '' }}">{{ __('Aduan Layanan') }}</a>
-                            <a href="{{ url('/informasi/ikm') }}" class="block px-4 py-2 hover:bg-[#096237] hover:text-yellow-300 transition-colors {{ request()->is('informasi/ikm') ? 'text-yellow-300 font-bold bg-[#096237]' : '' }}">{{ __('Indeks Kepuasan Masyarakat') }}</a>
+                            <a href="{{ url('/informasi/artikel-kesehatan') }}" class="block px-4 py-3 hover:bg-emerald-50 hover:text-[#0e7c47] transition-colors border-b border-gray-100 {{ request()->is('informasi/artikel-kesehatan') ? 'text-[#0e7c47] font-bold bg-emerald-50' : '' }}">{{ __('Artikel Kesehatan') }}</a>
+                            <a href="{{ url('/informasi/event') }}" class="block px-4 py-3 hover:bg-emerald-50 hover:text-[#0e7c47] transition-colors border-b border-gray-100 {{ request()->is('informasi/event') ? 'text-[#0e7c47] font-bold bg-emerald-50' : '' }}">{{ __('Event') }}</a>
+                            <a href="{{ url('/informasi/penawaran-khusus') }}" class="block px-4 py-3 hover:bg-emerald-50 hover:text-[#0e7c47] transition-colors border-b border-gray-100 {{ request()->is('informasi/penawaran-khusus') ? 'text-[#0e7c47] font-bold bg-emerald-50' : '' }}">{{ __('Penawaran Khusus') }}</a>
+                            <a href="{{ url('/informasi/aduan-layanan') }}" class="block px-4 py-3 hover:bg-emerald-50 hover:text-[#0e7c47] transition-colors border-b border-gray-100 {{ request()->is('informasi/aduan-layanan') ? 'text-[#0e7c47] font-bold bg-emerald-50' : '' }}">{{ __('Aduan Layanan') }}</a>
+                            <a href="{{ url('/informasi/ikm') }}" class="block px-4 py-3 hover:bg-emerald-50 hover:text-[#0e7c47] transition-colors {{ request()->is('informasi/ikm') ? 'text-[#0e7c47] font-bold bg-emerald-50' : '' }}">{{ __('Indeks Kepuasan Masyarakat') }}</a>
                         </div>
                     </div>
 
@@ -322,34 +377,34 @@
                 <div x-show="mobileLayananOpen" class="pl-4 py-2 space-y-1 bg-white text-gray-700 rounded-xl my-1.5 text-xs font-medium border border-gray-100 shadow-sm max-h-80 overflow-y-auto divide-y divide-gray-100">
                     
                     <div x-data="{ mobileUnggulanOpen: false }" class="py-1 border-b border-gray-100">
-                        <button @click="mobileUnggulanOpen = !mobileUnggulanOpen" class="w-full flex items-center justify-between py-2 px-2 text-gray-700 font-semibold hover:text-[#f97316]">
+                        <button @click="mobileUnggulanOpen = !mobileUnggulanOpen" class="w-full flex items-center justify-between py-2 px-2 text-gray-700 font-semibold hover:text-[#0e7c47]">
                             <span>Layanan Unggulan</span>
-                            <i class="fa-solid fa-chevron-down text-[10px] text-[#f97316] transition-transform" :class="mobileUnggulanOpen ? 'rotate-180' : ''"></i>
+                            <i class="fa-solid fa-chevron-down text-[10px] text-[#0e7c47] transition-transform" :class="mobileUnggulanOpen ? 'rotate-180' : ''"></i>
                         </button>
                         <div x-show="mobileUnggulanOpen" class="pl-4 py-1 space-y-1 bg-gray-50 rounded-lg my-1 text-xs">
-                            <a href="{{ url('/layanan/unggulan') }}" @click="mobileMenuOpen = false" class="block py-2 px-2 hover:text-[#f97316] font-semibold text-[#f97316]">Semua Layanan Unggulan</a>
-                            <a href="{{ url('/layanan/trauma-center') }}" @click="mobileMenuOpen = false" class="block py-2 px-2 hover:text-[#f97316]">Trauma Center</a>
-                            <a href="{{ url('/layanan/spesialis-mata') }}" @click="mobileMenuOpen = false" class="block py-2 px-2 hover:text-[#f97316]">Spesialis Mata</a>
-                            <a href="{{ url('/layanan/kemilau-cinta') }}" @click="mobileMenuOpen = false" class="block py-2 px-2 hover:text-[#f97316]">Kemilau Cinta (Ibu & Anak)</a>
-                            <a href="{{ url('/layanan/layanan-antar-jemput') }}" @click="mobileMenuOpen = false" class="block py-2 px-2 hover:text-[#f97316]">Antar Jemput Pasien</a>
+                            <a href="{{ url('/layanan/unggulan') }}" @click="mobileMenuOpen = false" class="block py-2 px-2 hover:text-[#0e7c47] font-semibold text-[#0e7c47]">Semua Layanan Unggulan</a>
+                            <a href="{{ url('/layanan/trauma-center') }}" @click="mobileMenuOpen = false" class="block py-2 px-2 hover:text-[#0e7c47]">Trauma Center</a>
+                            <a href="{{ url('/layanan/spesialis-mata') }}" @click="mobileMenuOpen = false" class="block py-2 px-2 hover:text-[#0e7c47]">Spesialis Mata</a>
+                            <a href="{{ url('/layanan/kemilau-cinta') }}" @click="mobileMenuOpen = false" class="block py-2 px-2 hover:text-[#0e7c47]">Kemilau Cinta (Ibu & Anak)</a>
+                            <a href="{{ url('/layanan/layanan-antar-jemput') }}" @click="mobileMenuOpen = false" class="block py-2 px-2 hover:text-[#0e7c47]">Antar Jemput Pasien</a>
                         </div>
                     </div>
 
-                    <a href="{{ url('/layanan/rawat-inap') }}" @click="mobileMenuOpen = false" class="block py-2.5 px-2 hover:text-[#f97316]">Rawat Inap</a>
-                    <a href="{{ url('/layanan/rawat-jalan') }}" @click="mobileMenuOpen = false" class="block py-2.5 px-2 hover:text-[#f97316]">Klinik Rawat Jalan</a>
-                    <a href="{{ url('/layanan/igd') }}" @click="mobileMenuOpen = false" class="block py-2.5 px-2 hover:text-[#f97316]">IGD 24 Jam</a>
-                    <a href="{{ url('/layanan/rehabilitasi-medik') }}" @click="mobileMenuOpen = false" class="block py-2.5 px-2 hover:text-[#f97316]">Instalasi Rehabilitasi Medik</a>
-                    <a href="{{ url('/layanan/farmasi-24-jam') }}" @click="mobileMenuOpen = false" class="block py-2.5 px-2 hover:text-[#f97316]">Farmasi 24 Jam</a>
+                    <a href="{{ url('/layanan/rawat-inap') }}" @click="mobileMenuOpen = false" class="block py-2.5 px-2 hover:text-[#0e7c47]">Rawat Inap</a>
+                    <a href="{{ url('/layanan/rawat-jalan') }}" @click="mobileMenuOpen = false" class="block py-2.5 px-2 hover:text-[#0e7c47]">Klinik Rawat Jalan</a>
+                    <a href="{{ url('/layanan/igd') }}" @click="mobileMenuOpen = false" class="block py-2.5 px-2 hover:text-[#0e7c47]">IGD 24 Jam</a>
+                    <a href="{{ url('/layanan/rehabilitasi-medik') }}" @click="mobileMenuOpen = false" class="block py-2.5 px-2 hover:text-[#0e7c47]">Instalasi Rehabilitasi Medik</a>
+                    <a href="{{ url('/layanan/farmasi-24-jam') }}" @click="mobileMenuOpen = false" class="block py-2.5 px-2 hover:text-[#0e7c47]">Farmasi 24 Jam</a>
                     
                     <div x-data="{ mobilePenunjangOpen: false }" class="py-1">
-                        <button @click="mobilePenunjangOpen = !mobilePenunjangOpen" class="w-full flex items-center justify-between py-2 px-2 text-gray-700 font-semibold hover:text-[#f97316]">
+                        <button @click="mobilePenunjangOpen = !mobilePenunjangOpen" class="w-full flex items-center justify-between py-2 px-2 text-gray-700 font-semibold hover:text-[#0e7c47]">
                             <span>Penunjang Medis</span>
-                            <i class="fa-solid fa-chevron-down text-[10px] text-[#f97316] transition-transform" :class="mobilePenunjangOpen ? 'rotate-180' : ''"></i>
+                            <i class="fa-solid fa-chevron-down text-[10px] text-[#0e7c47] transition-transform" :class="mobilePenunjangOpen ? 'rotate-180' : ''"></i>
                         </button>
                         <div x-show="mobilePenunjangOpen" class="pl-4 py-1 space-y-1 bg-gray-50 rounded-lg my-1 text-xs">
-                            <a href="{{ url('/layanan/radiologi-24-jam') }}" @click="mobileMenuOpen = false" class="block py-2 px-2 hover:text-[#f97316]">Radiologi 24 Jam</a>
-                            <a href="{{ url('/layanan/laboratorium-klinik') }}" @click="mobileMenuOpen = false" class="block py-2 px-2 hover:text-[#f97316]">Laboratorium Klinik 24 Jam</a>
-                            <a href="{{ url('/layanan/laboratorium-patologi') }}" @click="mobileMenuOpen = false" class="block py-2 px-2 hover:text-[#f97316]">Laboratorium Patologi Anatomi</a>
+                            <a href="{{ url('/layanan/radiologi-24-jam') }}" @click="mobileMenuOpen = false" class="block py-2 px-2 hover:text-[#0e7c47]">Radiologi 24 Jam</a>
+                            <a href="{{ url('/layanan/laboratorium-klinik') }}" @click="mobileMenuOpen = false" class="block py-2 px-2 hover:text-[#0e7c47]">Laboratorium Klinik 24 Jam</a>
+                            <a href="{{ url('/layanan/laboratorium-patologi') }}" @click="mobileMenuOpen = false" class="block py-2 px-2 hover:text-[#0e7c47]">Laboratorium Patologi Anatomi</a>
                         </div>
                     </div>
                 </div>
@@ -366,12 +421,12 @@
                     <span>{{ __('Informasi') }}</span>
                     <i class="fa-solid fa-chevron-down text-xs transition-transform" :class="mobileInformasiOpen ? 'rotate-180 text-[#0e7c47]' : 'text-gray-400'"></i>
                 </button>
-                <div x-show="mobileInformasiOpen" class="pl-4 py-1.5 space-y-1 bg-[#0e7c47] text-white rounded-xl my-1.5 text-xs font-semibold">
-                    <a href="{{ url('/informasi/artikel-kesehatan') }}" @click="mobileMenuOpen = false" class="block py-1.5 px-2 hover:text-yellow-300">{{ __('Artikel Kesehatan') }}</a>
-                    <a href="{{ url('/informasi/event') }}" @click="mobileMenuOpen = false" class="block py-1.5 px-2 hover:text-yellow-300">{{ __('Event') }}</a>
-                    <a href="{{ url('/informasi/penawaran-khusus') }}" @click="mobileMenuOpen = false" class="block py-1.5 px-2 hover:text-yellow-300">{{ __('Penawaran Khusus') }}</a>
-                    <a href="{{ url('/informasi/aduan-layanan') }}" @click="mobileMenuOpen = false" class="block py-1.5 px-2 hover:text-yellow-300">{{ __('Aduan Layanan') }}</a>
-                    <a href="{{ url('/informasi/ikm') }}" @click="mobileMenuOpen = false" class="block py-1.5 px-2 hover:text-yellow-300">{{ __('Indeks Kepuasan Masyarakat') }}</a>
+                <div x-show="mobileInformasiOpen" class="pl-4 py-2 space-y-1 bg-white text-gray-700 rounded-xl my-1.5 text-xs font-medium border border-gray-100 shadow-sm divide-y divide-gray-100">
+                    <a href="{{ url('/informasi/artikel-kesehatan') }}" @click="mobileMenuOpen = false" class="block py-2.5 px-2 hover:text-[#0e7c47]">{{ __('Artikel Kesehatan') }}</a>
+                    <a href="{{ url('/informasi/event') }}" @click="mobileMenuOpen = false" class="block py-2.5 px-2 hover:text-[#0e7c47]">{{ __('Event') }}</a>
+                    <a href="{{ url('/informasi/penawaran-khusus') }}" @click="mobileMenuOpen = false" class="block py-2.5 px-2 hover:text-[#0e7c47]">{{ __('Penawaran Khusus') }}</a>
+                    <a href="{{ url('/informasi/aduan-layanan') }}" @click="mobileMenuOpen = false" class="block py-2.5 px-2 hover:text-[#0e7c47]">{{ __('Aduan Layanan') }}</a>
+                    <a href="{{ url('/informasi/ikm') }}" @click="mobileMenuOpen = false" class="block py-2.5 px-2 hover:text-[#0e7c47]">{{ __('Indeks Kepuasan Masyarakat') }}</a>
                 </div>
             </div>
 
@@ -441,102 +496,196 @@
     </main>
 
     <!-- FOOTER -->
-    <footer class="bg-[#0e7c47] text-white pt-16 pb-8 border-t-4 border-yellow-400">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 pb-12 border-b border-[#096237]">
+    <footer class="bg-white border-t border-slate-200 mt-auto text-slate-700">
+        
+        <!-- GREEN TOP CONTACT & INFO BAR -->
+        <div class="bg-[#0e7c47] text-white py-7 px-4 sm:px-6 lg:px-8 border-b border-[#096237]">
+            <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6 md:gap-4">
                 
-                <!-- COL 1: BRAND PROFILE WITH LOGO -->
-                <div class="space-y-4">
-                    <div class="bg-white p-3 rounded-2xl inline-block shadow-md">
-                        <img src="{{ asset('logodasboard.png') }}" 
-                             alt="RSU Fikri Medika Logo" 
-                             class="h-12 w-auto object-contain">
+                <!-- CONTACT 1: PHONE -->
+                <div class="flex items-center gap-4 w-full md:w-auto">
+                    <div class="w-13 h-13 rounded-full border-2 border-white/80 flex items-center justify-center shrink-0 bg-white/10 text-white shadow-sm">
+                        <i class="fa-solid fa-phone-volume text-xl"></i>
                     </div>
-                    <p class="text-sm text-gray-200 leading-relaxed">
-                        {{ app()->getLocale() == 'en' ? 'RSU Fikri Medika provides comprehensive, rapid, and professional healthcare services with Islamic warmth and hospitality.' : 'Rumah Sakit Umum Fikri Medika hadir memberikan pelayanan kesehatan komprehensif, cepat, dan profesional dengan mengedepankan keramahan dan nilai-nilai Islami.' }}
-                    </p>
-                    <div class="flex items-center gap-3 pt-2">
-                        <a href="https://www.instagram.com/rsu.fikrimedika/" target="_blank" class="w-9 h-9 rounded-full bg-[#096237] hover:bg-yellow-400 hover:text-gray-900 flex items-center justify-center transition-colors">
-                            <i class="fa-brands fa-instagram text-sm"></i>
+                    <div>
+                        <a href="tel:02678454123" class="text-base sm:text-lg font-bold tracking-wide hover:text-yellow-300 transition-colors block text-white leading-tight">
+                            (0267) 8454123
                         </a>
-                        <a href="https://www.tiktok.com/@rsu.fikrimedika" target="_blank" class="w-9 h-9 rounded-full bg-[#096237] hover:bg-slate-900 hover:text-cyan-300 flex items-center justify-center transition-colors">
-                            <i class="fa-brands fa-tiktok text-sm"></i>
-                        </a>
-                        <a href="https://www.youtube.com/@rsufikrimedika" target="_blank" class="w-9 h-9 rounded-full bg-[#096237] hover:bg-red-600 hover:text-white flex items-center justify-center transition-colors">
-                            <i class="fa-brands fa-youtube text-sm"></i>
-                        </a>
-                        <a href="https://wa.me/6281234567890" target="_blank" class="w-9 h-9 rounded-full bg-[#096237] hover:bg-emerald-500 flex items-center justify-center transition-colors">
-                            <i class="fa-brands fa-whatsapp text-sm"></i>
-                        </a>
+                        <span class="text-xs text-emerald-100 font-normal">
+                            {{ app()->getLocale() == 'en' ? 'Have a question? call us now' : 'Ada pertanyaan? Hubungi kami sekarang' }}
+                        </span>
                     </div>
                 </div>
 
-                <!-- COL 2: NAV LINKS -->
-                <div>
-                    <h3 class="text-base font-bold text-yellow-300 uppercase tracking-wider mb-4 border-b border-[#096237] pb-2 inline-block">
-                        {{ __('Menu Utama') }}
-                    </h3>
-                    <ul class="space-y-2.5 text-sm text-gray-200">
-                        <li><a href="{{ route('home') }}" class="hover:text-yellow-300 transition-colors flex items-center gap-2"><i class="fa-solid fa-chevron-right text-[10px] text-yellow-400"></i> {{ __('Beranda') }}</a></li>
-                        <li><a href="#profil" class="hover:text-yellow-300 transition-colors flex items-center gap-2"><i class="fa-solid fa-chevron-right text-[10px] text-yellow-400"></i> {{ __('Profil') }}</a></li>
-                        <li><a href="#layanan" class="hover:text-yellow-300 transition-colors flex items-center gap-2"><i class="fa-solid fa-chevron-right text-[10px] text-yellow-400"></i> {{ __('Layanan Unggulan') }}</a></li>
-                        <li><a href="#jadwal-dokter" class="hover:text-yellow-300 transition-colors flex items-center gap-2"><i class="fa-solid fa-chevron-right text-[10px] text-yellow-400"></i> {{ __('Jadwal Dokter') }}</a></li>
-                        <li><a href="#berita" class="hover:text-yellow-300 transition-colors flex items-center gap-2"><i class="fa-solid fa-chevron-right text-[10px] text-yellow-400"></i> {{ __('Berita & Artikel') }}</a></li>
-                        <li><a href="{{ route('admin.login') }}" class="hover:text-yellow-300 transition-colors flex items-center gap-2"><i class="fa-solid fa-lock text-[10px] text-yellow-400"></i> {{ __('Portal Admin') }}</a></li>
-                    </ul>
+                <!-- CONTACT 2: EMAIL -->
+                <div class="flex items-center gap-4 w-full md:w-auto">
+                    <div class="w-13 h-13 rounded-full border-2 border-white/80 flex items-center justify-center shrink-0 bg-white/10 text-white shadow-sm">
+                        <i class="fa-regular fa-envelope text-xl"></i>
+                    </div>
+                    <div>
+                        <a href="mailto:info@rsufikrimedika.com" class="text-base sm:text-lg font-bold tracking-wide hover:text-yellow-300 transition-colors block text-white leading-tight">
+                            info@rsufikrimedika.com
+                        </a>
+                        <span class="text-xs text-emerald-100 font-normal">
+                            {{ app()->getLocale() == 'en' ? 'Need support? Drop us an email' : 'Butuh bantuan? Kirimkan pesan email' }}
+                        </span>
+                    </div>
                 </div>
 
-                <!-- COL 3: SERVICES SHORTCUT -->
-                <div>
-                    <h3 class="text-base font-bold text-yellow-300 uppercase tracking-wider mb-4 border-b border-[#096237] pb-2 inline-block">
-                        {{ __('Informasi Pasien') }}
-                    </h3>
-                    <ul class="space-y-2.5 text-sm text-gray-200">
-                        <li><a href="#kontak" class="hover:text-yellow-300 transition-colors flex items-center gap-2"><i class="fa-solid fa-chevron-right text-[10px] text-yellow-400"></i> {{ __('Pendaftaran') }}</a></li>
-                        <li><a href="#layanan" class="hover:text-yellow-300 transition-colors flex items-center gap-2"><i class="fa-solid fa-chevron-right text-[10px] text-yellow-400"></i> {{ __('Persyaratan Rawat Inap') }}</a></li>
-                        <li><a href="#layanan" class="hover:text-yellow-300 transition-colors flex items-center gap-2"><i class="fa-solid fa-chevron-right text-[10px] text-yellow-400"></i> {{ __('Informasi BPJS') }}</a></li>
-                        <li><a href="#layanan" class="hover:text-yellow-300 transition-colors flex items-center gap-2"><i class="fa-solid fa-chevron-right text-[10px] text-yellow-400"></i> {{ __('Tarif & Layanan') }}</a></li>
-                        <li><a href="#kontak" class="hover:text-yellow-300 transition-colors flex items-center gap-2"><i class="fa-solid fa-chevron-right text-[10px] text-yellow-400"></i> {{ __('Panggilan Darurat') }}</a></li>
-                    </ul>
-                </div>
-
-                <!-- COL 4: CONTACT & EMERGENCY -->
-                <div class="space-y-4">
-                    <h3 class="text-base font-bold text-yellow-300 uppercase tracking-wider mb-4 border-b border-[#096237] pb-2 inline-block">
-                        {{ __('Kontak & Lokasi') }}
-                    </h3>
-                    <div class="space-y-3 text-sm text-gray-200">
-                        <div class="flex items-start gap-3">
-                            <i class="fa-solid fa-location-dot text-yellow-400 mt-1"></i>
-                            <span>Jl. Raya Kosambi - Telagasari No. 9, Klari, Kabupaten Karawang, Jawa Barat 41371</span>
+                <!-- CONTACT 3: OPERATING HOURS -->
+                <div class="flex items-center gap-4 w-full md:w-auto">
+                    <div class="w-13 h-13 rounded-full border-2 border-white/80 flex items-center justify-center shrink-0 bg-white/10 text-white shadow-sm">
+                        <i class="fa-regular fa-clock text-xl"></i>
+                    </div>
+                    <div>
+                        <div class="text-base sm:text-lg font-bold tracking-wide text-white leading-tight">
+                            {{ app()->getLocale() == 'en' ? 'Mon – Sun 24 Hours' : 'Senin – Minggu 24 Jam' }}
                         </div>
-                        <div class="flex items-center gap-3">
-                            <i class="fa-solid fa-phone text-yellow-400"></i>
-                            <span>(0267) 8454123</span>
-                        </div>
-                        <div class="flex items-center gap-3">
-                            <i class="fa-brands fa-whatsapp text-emerald-300"></i>
-                            <span>0812-3456-7890</span>
-                        </div>
-                        <div class="flex items-center gap-3">
-                            <i class="fa-solid fa-envelope text-yellow-400"></i>
-                            <span>info@rsufikrimedika.com</span>
-                        </div>
+                        <span class="text-xs text-emerald-100 font-normal">
+                            {{ app()->getLocale() == 'en' ? 'We are open 24/7 nonstop' : 'Pelayanan IGD siaga setiap saat' }}
+                        </span>
                     </div>
                 </div>
 
             </div>
+        </div>
 
-            <!-- COPYRIGHT -->
-            <div class="pt-8 flex flex-col sm:flex-row justify-between items-center text-xs text-gray-300 gap-4">
-                <div>
-                    &copy; {{ date('Y') }} <strong>RSU Fikri Medika</strong>. {{ __('Hak Cipta Dilindungi') }}
+        <!-- MAIN WHITE FOOTER CONTENT -->
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12">
+                
+                <!-- LEFT HOSPITAL PROFILE (4 COLS) -->
+                <div class="lg:col-span-4 space-y-4">
+                    <a href="{{ route('home') }}" class="inline-block">
+                        <img src="{{ asset('logodasboard.png') }}" 
+                             alt="RSU Fikri Medika Logo" 
+                             class="h-12 sm:h-14 w-auto object-contain">
+                    </a>
+                    
+                    <div class="border-b-2 border-[#0e7c47] pb-1.5 w-fit pr-4">
+                        <h3 class="text-sm font-extrabold text-[#0e7c47] uppercase tracking-wider">
+                            RUMAH SAKIT UMUM FIKRI MEDIKA
+                        </h3>
+                    </div>
+
+                    <p class="text-xs sm:text-sm text-slate-500 uppercase tracking-wide leading-relaxed font-medium">
+                        Jl. Raya Kosambi - Telagasari No. 9, Klari, Kabupaten Karawang, Jawa Barat 41371
+                    </p>
+
+                    <div class="space-y-1 text-xs sm:text-sm text-slate-600 font-normal pt-1">
+                        <p>
+                            General information: <a href="tel:02678454123" class="font-bold text-[#0e7c47] hover:underline">(0267) 8454123</a>
+                        </p>
+                        <p>
+                            New Patients & BPJS: <a href="https://wa.me/6281234567890" target="_blank" class="font-bold text-[#0e7c47] hover:underline">0812-3456-7890</a>
+                        </p>
+                    </div>
+
+                    <!-- SOCIAL ICONS -->
+                    <div class="flex items-center gap-2 pt-2">
+                        <a href="https://www.instagram.com/rsu.fikrimedika/" target="_blank" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-[#0e7c47] text-slate-600 hover:text-white flex items-center justify-center transition-colors" title="Instagram">
+                            <i class="fa-brands fa-instagram text-xs"></i>
+                        </a>
+                        <a href="https://www.tiktok.com/@rsu.fikrimedika" target="_blank" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-900 text-slate-600 hover:text-white flex items-center justify-center transition-colors" title="TikTok">
+                            <i class="fa-brands fa-tiktok text-xs"></i>
+                        </a>
+                        <a href="https://www.youtube.com/@rsufikrimedika" target="_blank" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-red-600 text-slate-600 hover:text-white flex items-center justify-center transition-colors" title="YouTube">
+                            <i class="fa-brands fa-youtube text-xs"></i>
+                        </a>
+                        <a href="https://wa.me/6281234567890" target="_blank" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-emerald-600 text-slate-600 hover:text-white flex items-center justify-center transition-colors" title="WhatsApp">
+                            <i class="fa-brands fa-whatsapp text-xs"></i>
+                        </a>
+                    </div>
                 </div>
-                <div class="flex items-center gap-4">
-                    <span>{{ __('Terpercaya • Islami • Modern') }}</span>
+
+                <!-- RIGHT NAVIGATION COLUMNS (8 COLS) -->
+                <div class="lg:col-span-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
+                    
+                    <!-- COLUMN 1: CENTERS / LAYANAN -->
+                    <div>
+                        <h4 class="text-xs font-bold text-slate-900 uppercase tracking-wider mb-4 border-b border-slate-200 pb-2">
+                            {{ __('Layanan') }}
+                        </h4>
+                        <ul class="space-y-2.5 text-xs sm:text-[13px] text-slate-500">
+                            <li><a href="{{ url('/layanan/trauma-center') }}" class="hover:text-[#0e7c47] transition-colors block">Trauma Center</a></li>
+                            <li><a href="{{ url('/layanan/spesialis-mata') }}" class="hover:text-[#0e7c47] transition-colors block">Spesialis Mata</a></li>
+                            <li><a href="{{ url('/layanan/kemilau-cinta') }}" class="hover:text-[#0e7c47] transition-colors block">Kemilau Cinta</a></li>
+                            <li><a href="{{ url('/layanan/layanan-antar-jemput') }}" class="hover:text-[#0e7c47] transition-colors block">Antar Jemput</a></li>
+                            <li><a href="{{ url('/layanan/rawat-inap') }}" class="hover:text-[#0e7c47] transition-colors block">Rawat Inap</a></li>
+                            <li><a href="{{ url('/layanan/rawat-jalan') }}" class="hover:text-[#0e7c47] transition-colors block">Rawat Jalan</a></li>
+                            <li><a href="{{ url('/layanan/igd') }}" class="hover:text-[#0e7c47] transition-colors block">IGD 24 Jam</a></li>
+                            <li><a href="{{ url('/layanan/farmasi-24-jam') }}" class="hover:text-[#0e7c47] transition-colors block">Farmasi 24 Jam</a></li>
+                        </ul>
+                    </div>
+
+                    <!-- COLUMN 2: CLINICAL DEPARTMENTS SUBCOL 1 -->
+                    <div>
+                        <h4 class="text-xs font-bold text-slate-900 uppercase tracking-wider mb-4 border-b border-slate-200 pb-2">
+                            {{ __('Penunjang') }}
+                        </h4>
+                        <ul class="space-y-2.5 text-xs sm:text-[13px] text-slate-500">
+                            <li><a href="{{ url('/layanan/radiologi-24-jam') }}" class="hover:text-[#0e7c47] transition-colors block">Radiologi 24 Jam</a></li>
+                            <li><a href="{{ url('/layanan/laboratorium-klinik') }}" class="hover:text-[#0e7c47] transition-colors block">Laboratorium Klinik</a></li>
+                            <li><a href="{{ url('/layanan/laboratorium-patologi') }}" class="hover:text-[#0e7c47] transition-colors block">Patologi Anatomi</a></li>
+                            <li><a href="{{ url('/layanan/rehabilitasi-medik') }}" class="hover:text-[#0e7c47] transition-colors block">Rehabilitasi Medik</a></li>
+                            <li><a href="{{ url('/layanan/penunjang-medis') }}" class="hover:text-[#0e7c47] transition-colors block">Penunjang Medis</a></li>
+                        </ul>
+                    </div>
+
+                    <!-- COLUMN 3: CLINICAL DEPARTMENTS SUBCOL 2 / SPESIALIS -->
+                    <div>
+                        <h4 class="text-xs font-bold text-slate-900 uppercase tracking-wider mb-4 border-b border-slate-200 pb-2">
+                            {{ __('Poliklinik') }}
+                        </h4>
+                        <ul class="space-y-2.5 text-xs sm:text-[13px] text-slate-500">
+                            <li><a href="{{ url('/jadwal-dokter') }}" class="hover:text-[#0e7c47] transition-colors block">Penyakit Dalam</a></li>
+                            <li><a href="{{ url('/jadwal-dokter') }}" class="hover:text-[#0e7c47] transition-colors block">Kebidanan & Kandungan</a></li>
+                            <li><a href="{{ url('/jadwal-dokter') }}" class="hover:text-[#0e7c47] transition-colors block">Kesehatan Anak</a></li>
+                            <li><a href="{{ url('/jadwal-dokter') }}" class="hover:text-[#0e7c47] transition-colors block">Bedah Umum</a></li>
+                            <li><a href="{{ url('/jadwal-dokter') }}" class="hover:text-[#0e7c47] transition-colors block">Poli Gigi & Mulut</a></li>
+                        </ul>
+                    </div>
+
+                    <!-- COLUMN 4: DEPARTMENTS / INFORMASI -->
+                    <div>
+                        <h4 class="text-xs font-bold text-slate-900 uppercase tracking-wider mb-4 border-b border-slate-200 pb-2">
+                            {{ __('Informasi') }}
+                        </h4>
+                        <ul class="space-y-2.5 text-xs sm:text-[13px] text-slate-500">
+                            <li><a href="{{ url('/jadwal-dokter') }}" class="hover:text-[#0e7c47] transition-colors block">{{ __('Jadwal Dokter') }}</a></li>
+                            <li><a href="{{ url('/buat-janji') }}" class="hover:text-[#0e7c47] transition-colors block">{{ __('Buat Janji') }}</a></li>
+                            <li><a href="{{ url('/informasi/artikel-kesehatan') }}" class="hover:text-[#0e7c47] transition-colors block">{{ __('Artikel') }}</a></li>
+                            <li><a href="{{ url('/informasi/event') }}" class="hover:text-[#0e7c47] transition-colors block">{{ __('Event') }}</a></li>
+                            <li><a href="{{ url('/informasi/penawaran-khusus') }}" class="hover:text-[#0e7c47] transition-colors block">{{ __('Penawaran') }}</a></li>
+                            <li><a href="{{ url('/informasi/aduan-layanan') }}" class="hover:text-[#0e7c47] transition-colors block">{{ __('Aduan') }}</a></li>
+                            <li><a href="{{ url('/informasi/ikm') }}" class="hover:text-[#0e7c47] transition-colors block">{{ __('IKM') }}</a></li>
+                            <li><a href="{{ url('/karir') }}" class="hover:text-[#0e7c47] transition-colors block">{{ __('Karir') }}</a></li>
+                            <li><a href="{{ route('admin.login') }}" class="hover:text-[#0e7c47] transition-colors block text-slate-400">{{ __('Admin') }}</a></li>
+                        </ul>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+        <!-- COPYRIGHT & SCROLL TO TOP -->
+        <div class="border-t border-slate-100 bg-white py-5 px-4 sm:px-6 lg:px-8">
+            <div class="max-w-7xl mx-auto flex justify-between items-center text-xs text-slate-500">
+                <div>
+                    &copy; {{ date('Y') }} <strong>RSU Fikri Medika</strong>. {{ __('Hak Cipta Dilindungi.') }}
+                </div>
+                <div class="flex items-center gap-3">
+                    <button type="button" 
+                            onclick="window.scrollTo({top: 0, behavior: 'smooth'})" 
+                            class="w-8 h-8 rounded bg-[#0e7c47] hover:bg-[#096237] text-white flex items-center justify-center transition-colors shadow-xs cursor-pointer" 
+                            title="Kembali ke atas">
+                        <i class="fa-solid fa-chevron-up text-xs"></i>
+                    </button>
                 </div>
             </div>
         </div>
+    </footer>
     <!-- KAKA FIKRI AI CHAT WIDGET -->
     <div x-data="fikriChatWidget()" class="relative z-50">
         

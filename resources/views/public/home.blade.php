@@ -64,7 +64,10 @@
          x-ref="slideContainer">
         {{-- Spacer slide (first image sets the container height) --}}
         @if($banners->count() > 0)
-        <img src="{{ $banners->first()->image }}"
+        @php
+            $firstImg = Str::startsWith($banners->first()->image, ['http://', 'https://']) ? $banners->first()->image : asset($banners->first()->image);
+        @endphp
+        <img src="{{ $firstImg }}"
              alt=""
              aria-hidden="true"
              draggable="false"
@@ -74,6 +77,9 @@
 
         {{-- All slides absolutely positioned so they never affect container height --}}
         @foreach($banners as $index => $banner)
+        @php
+            $bannerImg = Str::startsWith($banner->image, ['http://', 'https://']) ? $banner->image : asset($banner->image);
+        @endphp
         <div x-show="activeSlide === {{ $index }}"
              style="position: absolute; inset: 0; width: 100%; height: 100%;"
              x-transition:enter-start="opacity-0"
@@ -84,14 +90,14 @@
              x-transition:leave="ease-in duration-[300ms]">
             @if(!empty($banner->button_link))
             <a href="{{ $banner->button_link }}" draggable="false" style="display: block; width: 100%; height: 100%;">
-                <img src="{{ $banner->image }}"
+                <img src="{{ $bannerImg }}"
                      alt="Banner RSU Fikri Medika"
                      draggable="false"
                      loading="{{ $index === 0 ? 'eager' : 'lazy' }}"
                      style="width: 100%; height: 100%; display: block; object-fit: cover; pointer-events: none;">
             </a>
             @else
-            <img src="{{ $banner->image }}"
+            <img src="{{ $bannerImg }}"
                  alt="Banner RSU Fikri Medika"
                  draggable="false"
                  loading="{{ $index === 0 ? 'eager' : 'lazy' }}"
@@ -390,57 +396,318 @@ $youtubeVideos = [
 
 
 
-<section id="berita" class="py-20 bg-[#f7faf8]">
+<!-- SECTION: HEALTH HUB (ARTICLE CAROUSEL MATCHING REFERENCE) -->
+<section id="health-hub" 
+         class="py-16 sm:py-20 bg-white relative overflow-hidden select-none"
+         x-data="{
+             activeCategory: 'All',
+             progressWidth: 25,
+             thumbLeftPercent: 0,
+             isThumbDragging: false,
+             thumbStartX: 0,
+             thumbStartScroll: 0,
+             isCardDragging: false,
+             cardStartX: 0,
+             cardStartScroll: 0,
+             lastX: 0,
+             lastTime: 0,
+             velocity: 0,
+             hasMoved: false,
+             animFrame: null,
+             
+             init() {
+                 this.$nextTick(() => { 
+                     this.updateProgress(); 
+                 });
+                 window.addEventListener('resize', () => { this.updateProgress(); });
+                 
+                 // Global mouse move & up listeners for thumb dragging
+                 window.addEventListener('mousemove', (e) => {
+                     if (this.isThumbDragging) {
+                         const el = this.$refs.carousel;
+                         const track = this.$refs.track;
+                         if (!el || !track) return;
+                         const deltaX = e.clientX - this.thumbStartX;
+                         const trackWidth = track.clientWidth;
+                         const thumbWidthPx = trackWidth * (this.progressWidth / 100);
+                         const availableTrack = trackWidth - thumbWidthPx;
+                         const maxScroll = el.scrollWidth - el.clientWidth;
+                         if (availableTrack > 0 && maxScroll > 0) {
+                             el.scrollLeft = this.thumbStartScroll + (deltaX / availableTrack) * maxScroll;
+                             this.updateProgress();
+                         }
+                     } else if (this.isCardDragging) {
+                         this.onCardMove(e.clientX);
+                     }
+                 });
+                 
+                 window.addEventListener('mouseup', () => {
+                     if (this.isThumbDragging) {
+                         this.isThumbDragging = false;
+                         this.updateProgress();
+                     }
+                     if (this.isCardDragging) {
+                         this.stopCardDrag();
+                     }
+                 });
+
+                 // Global touch move & end
+                 window.addEventListener('touchmove', (e) => {
+                     if (this.isThumbDragging && e.touches[0]) {
+                         const el = this.$refs.carousel;
+                         const track = this.$refs.track;
+                         if (!el || !track) return;
+                         const deltaX = e.touches[0].clientX - this.thumbStartX;
+                         const trackWidth = track.clientWidth;
+                         const thumbWidthPx = trackWidth * (this.progressWidth / 100);
+                         const availableTrack = trackWidth - thumbWidthPx;
+                         const maxScroll = el.scrollWidth - el.clientWidth;
+                         if (availableTrack > 0 && maxScroll > 0) {
+                             el.scrollLeft = this.thumbStartScroll + (deltaX / availableTrack) * maxScroll;
+                             this.updateProgress();
+                         }
+                     }
+                 }, { passive: true });
+
+                 window.addEventListener('touchend', () => {
+                     if (this.isThumbDragging) this.isThumbDragging = false;
+                 });
+             },
+
+             setCategory(cat) {
+                 this.activeCategory = cat;
+                 cancelAnimationFrame(this.animFrame);
+                 this.$nextTick(() => {
+                     const el = this.$refs.carousel;
+                     if (el) {
+                         el.scrollTo({ left: 0, behavior: 'smooth' });
+                         this.updateProgress();
+                     }
+                 });
+             },
+
+             matches(cat) {
+                 if (this.activeCategory === 'All' || this.activeCategory === 'Semua') return true;
+                 return this.activeCategory.trim().toLowerCase() === cat.trim().toLowerCase();
+             },
+
+             updateProgress() {
+                 const el = this.$refs.carousel;
+                 if (!el) return;
+                 const maxScroll = el.scrollWidth - el.clientWidth;
+                 const ratio = el.clientWidth / (el.scrollWidth || 1);
+                 this.progressWidth = Math.max(16, Math.min(80, ratio * 100));
+                 if (maxScroll <= 0) {
+                     this.thumbLeftPercent = 0;
+                     return;
+                 }
+                 const scrollRatio = Math.max(0, Math.min(1, el.scrollLeft / maxScroll));
+                 this.thumbLeftPercent = scrollRatio * (100 - this.progressWidth);
+             },
+
+             handleTrackClick(e) {
+                 if (this.isThumbDragging) return;
+                 const track = this.$refs.track;
+                 const el = this.$refs.carousel;
+                 if (!track || !el) return;
+                 cancelAnimationFrame(this.animFrame);
+                 const rect = track.getBoundingClientRect();
+                 const clickX = e.clientX - rect.left;
+                 const clickRatio = Math.max(0, Math.min(1, clickX / rect.width));
+                 const maxScroll = el.scrollWidth - el.clientWidth;
+                 el.scrollTo({ left: clickRatio * maxScroll, behavior: 'smooth' });
+             },
+
+             startThumbDrag(e) {
+                 cancelAnimationFrame(this.animFrame);
+                 this.isThumbDragging = true;
+                 this.thumbStartX = e.clientX;
+                 this.thumbStartScroll = this.$refs.carousel ? this.$refs.carousel.scrollLeft : 0;
+                 e.preventDefault();
+             },
+
+             startThumbTouch(e) {
+                 if (!e.touches[0]) return;
+                 cancelAnimationFrame(this.animFrame);
+                 this.isThumbDragging = true;
+                 this.thumbStartX = e.touches[0].clientX;
+                 this.thumbStartScroll = this.$refs.carousel ? this.$refs.carousel.scrollLeft : 0;
+             },
+
+             // Buttery-smooth Card Dragging with Momentum Physics
+             startCardDrag(e) {
+                 if (e.button !== 0) return;
+                 cancelAnimationFrame(this.animFrame);
+                 this.isCardDragging = true;
+                 this.hasMoved = false;
+                 this.cardStartX = e.clientX;
+                 this.cardStartScroll = this.$refs.carousel ? this.$refs.carousel.scrollLeft : 0;
+                 this.lastX = e.clientX;
+                 this.lastTime = performance.now();
+                 this.velocity = 0;
+             },
+
+             onCardMove(clientX) {
+                 if (!this.isCardDragging) return;
+                 const delta = clientX - this.cardStartX;
+                 if (Math.abs(delta) > 4) {
+                     this.hasMoved = true;
+                 }
+                 const now = performance.now();
+                 const dt = Math.max(1, now - this.lastTime);
+                 this.velocity = (clientX - this.lastX) / dt;
+                 this.lastX = clientX;
+                 this.lastTime = now;
+                 
+                 const el = this.$refs.carousel;
+                 if (el) {
+                     el.scrollLeft = this.cardStartScroll - delta;
+                     this.updateProgress();
+                 }
+             },
+
+             stopCardDrag() {
+                 if (!this.isCardDragging) return;
+                 this.isCardDragging = false;
+                 
+                 const el = this.$refs.carousel;
+                 if (!el) return;
+
+                 // Inertia momentum glide
+                 if (Math.abs(this.velocity) > 0.15) {
+                     let speed = this.velocity * 16; // initial kinetic boost
+                     const decay = 0.94; // friction
+                     const step = () => {
+                         if (Math.abs(speed) > 0.4) {
+                             el.scrollLeft -= speed;
+                             speed *= decay;
+                             this.updateProgress();
+                             this.animFrame = requestAnimationFrame(step);
+                         } else {
+                             this.updateProgress();
+                         }
+                     };
+                     this.animFrame = requestAnimationFrame(step);
+                 }
+             },
+
+             handleCardClick(e) {
+                 if (this.hasMoved) {
+                     e.preventDefault();
+                     e.stopPropagation();
+                 }
+             }
+         }">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
-        <div class="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-4">
-            <div>
-                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-100 text-[#0e7c47] text-xs font-bold uppercase tracking-wider mb-2">
-                    <i class="fa-regular fa-newspaper"></i>
-                    <span>{{ __('Informasi & Edukasi') }}</span>
-                </div>
-                <h2 class="text-2xl sm:text-3xl font-extrabold text-[#0e7c47] tracking-tight">
-                    {{ __('Berita & Artikel Kesehatan') }}
-                </h2>
-            </div>
-            <a href="#berita" class="text-xs sm:text-sm font-bold text-[#0e7c47] hover:text-amber-600 flex items-center gap-1.5">
-                <span>{{ __('Lihat Semua Berita') }}</span> <i class="fa-solid fa-arrow-right"></i>
-            </a>
+        <!-- TITLE: HEALTH HUB -->
+        <div class="mb-3 sm:mb-4">
+            <h2 class="text-3xl sm:text-4xl font-extrabold text-[#0e7c47] tracking-tight">
+                Health Hub
+            </h2>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-            @foreach($latestNews as $item)
-            <div class="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md border border-gray-100 transition-all flex flex-col card-hover">
-                <div class="relative h-48 overflow-hidden bg-gray-100">
-                    <img src="{{ $item->thumbnail ?? 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=600&q=80' }}" 
-                         alt="{{ $item->tr('title') }}" 
-                         class="w-full h-full object-cover"
-                         loading="lazy">
-                    <div class="absolute top-3 left-3 bg-[#0e7c47] text-yellow-300 text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full">
-                        {{ $item->tr('category') }}
+        <!-- FILTER PILLS -->
+        @php
+            $pills = ['All', 'Kids Health', "Men's Health", "Women's Health", 'More Articles'];
+        @endphp
+        <div class="flex items-center gap-2 sm:gap-3 overflow-x-auto pb-1 mb-2.5 sm:mb-3 no-scrollbar">
+            @foreach($pills as $pill)
+            <button type="button" 
+                    @click="setCategory('{{ $pill }}')" 
+                    :class="activeCategory === '{{ $pill }}' 
+                        ? 'bg-[#0e7c47] text-white border-[#0e7c47] shadow-xs font-bold' 
+                        : 'bg-transparent text-[#0e7c47] border-[#0e7c47] hover:bg-[#0e7c47]/10 font-semibold'"
+                    class="px-5 sm:px-6 py-1 sm:py-1.5 rounded-full text-xs sm:text-sm border-2 transition-all whitespace-nowrap cursor-pointer shrink-0 {{ $pill === 'All' ? 'bg-[#0e7c47] text-white border-[#0e7c47] font-bold' : 'text-[#0e7c47] border-[#0e7c47] font-semibold' }}">
+                {{ $pill }}
+            </button>
+            @endforeach
+        </div>
+
+        <!-- HORIZONTAL CAROUSEL OF CARDS -->
+        <div class="relative -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8">
+            <div x-ref="carousel"
+                 @scroll.passive="updateProgress()"
+                 @mousedown="startCardDrag($event)"
+                 :class="isCardDragging ? 'cursor-grabbing select-none scroll-auto' : 'cursor-grab scroll-smooth'"
+                 class="flex gap-5 sm:gap-6 overflow-x-auto no-scrollbar pt-1 pb-1 select-none"
+                 style="scrollbar-width: none; -ms-overflow-style: none; -webkit-overflow-scrolling: touch;">
+                
+                @forelse($latestArticles as $article)
+                @php
+                    $catName = $article->tr('category') ?: 'More Articles';
+                    $artTitle = $article->tr('title');
+                    $artExcerpt = $article->tr('excerpt');
+                    $artImg = $article->thumbnail ?: 'https://images.unsplash.com/photo-1505751172876-fa1923c5c528?auto=format&fit=crop&w=600&q=80';
+                @endphp
+                <a href="{{ url('/informasi/artikel-kesehatan') }}" 
+                   @click="handleCardClick($event)"
+                   x-show="matches('{{ addslashes($catName) }}')"
+                   x-transition:enter="transition ease-out duration-200"
+                   x-transition:enter-start="opacity-0 scale-95"
+                   x-transition:enter-end="opacity-100 scale-100"
+                   class="shrink-0 w-[80vw] sm:w-[310px] md:w-[330px] lg:w-[345px] bg-white rounded-2xl border border-slate-100 shadow-[0_6px_25px_rgba(0,0,0,0.06)] hover:shadow-xl hover:-translate-y-1 transition-all duration-300 overflow-hidden flex flex-col justify-between group">
+                    
+                    <!-- 1. FEATURED IMAGE (MATCHING REFERENCE RATIO) -->
+                    <div class="relative aspect-[16/10] w-full overflow-hidden bg-slate-100 rounded-t-2xl pointer-events-none">
+                        <img src="{{ $artImg }}" 
+                             alt="{{ $artTitle }}" 
+                             draggable="false"
+                             class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 pointer-events-none" 
+                             loading="lazy">
                     </div>
-                </div>
-                <div class="p-6 flex-grow flex flex-col justify-between">
-                    <div>
-                        <div class="text-xs text-gray-400 font-medium mb-2 flex items-center gap-1">
-                            <i class="fa-regular fa-clock"></i>
-                            <span>{{ $item->published_at?->format('d M Y') }}</span>
+
+                    <!-- 2. CARD CONTENT (TITLE, EXCERPT, GREEN/YELLOW ARROW BUTTON) -->
+                    <div class="p-5 sm:p-6 flex flex-col flex-grow justify-between pointer-events-none">
+                        <div>
+                            <!-- TITLE -->
+                            <h3 class="text-sm sm:text-base font-bold text-gray-900 leading-snug line-clamp-2 mb-2 group-hover:text-[#0e7c47] transition-colors">
+                                {{ $artTitle }}
+                            </h3>
+
+                            <!-- EXCERPT -->
+                            <p class="text-xs text-gray-500 leading-relaxed line-clamp-3 mb-4 font-normal">
+                                {{ $artExcerpt }}
+                            </p>
                         </div>
-                        <h3 class="text-base font-bold text-[#0e7c47] hover:text-[#096237] transition-colors leading-snug mb-3">
-                            {{ $item->tr('title') }}
-                        </h3>
-                        <p class="text-gray-600 text-xs line-clamp-3 leading-relaxed">
-                            {{ $item->tr('excerpt') }}
-                        </p>
+
+                        <!-- 3. BOTTOM RIGHT CIRCULAR GREEN BUTTON WITH YELLOW ARROW -->
+                        <div class="flex items-center justify-end pt-1">
+                            <div class="w-8 h-8 rounded-full bg-[#0e7c47] group-hover:bg-[#096237] text-yellow-400 group-hover:text-yellow-300 flex items-center justify-center shadow-sm transition-transform group-hover:scale-110">
+                                <i class="fa-solid fa-chevron-right text-xs"></i>
+                            </div>
+                        </div>
                     </div>
-                    <div class="pt-4 mt-4 border-t border-gray-100">
-                        <a href="#berita" class="text-xs font-bold text-[#0e7c47] hover:text-amber-600 flex items-center gap-1">
-                            <span>{{ __('Selengkapnya') }}</span> <i class="fa-solid fa-angle-right text-[10px]"></i>
-                        </a>
-                    </div>
+                </a>
+                @empty
+                <div class="w-full text-center py-12 text-slate-400 text-sm">
+                    Belum ada artikel tersedia.
+                </div>
+                @endforelse
+
+            </div>
+        </div>
+
+        <!-- BOTTOM INTERACTIVE DRAGGABLE SCROLLBAR / PROGRESS TRACK -->
+        <div class="mt-3 sm:mt-4 pt-0 pb-1">
+            <div x-ref="track" 
+                 @click="handleTrackClick($event)"
+                 class="w-full bg-emerald-100/70 h-2.5 sm:h-3 rounded-full relative cursor-pointer select-none group/track shadow-inner hover:bg-emerald-100 transition-colors">
+                
+                <!-- DRAGGABLE THUMB BAR -->
+                <div x-ref="thumb"
+                     @mousedown.stop="startThumbDrag($event)"
+                     @touchstart.stop="startThumbTouch($event)"
+                     :class="isThumbDragging ? 'cursor-grabbing shadow-lg scale-y-110 brightness-105 ring-2 ring-emerald-400/50' : 'cursor-grab hover:brightness-105'"
+                     class="absolute top-0 bottom-0 bg-gradient-to-r from-[#0e7c47] to-amber-400 rounded-full shadow-md flex items-center justify-center touch-none select-none"
+                     :style="'width: ' + progressWidth + '%; left: ' + thumbLeftPercent + '%;'">
+                    <!-- Subtle grip line indicator on thumb -->
+                    <div class="w-4 h-1 bg-white/70 rounded-full"></div>
                 </div>
             </div>
-            @endforeach
+            <div class="flex items-center justify-between text-[11px] text-slate-400 font-medium mt-1.5 px-1">
+                <span><i class="fa-solid fa-arrows-left-right text-xs mr-1 text-[#0e7c47]"></i> Geser atau tarik bar untuk melihat artikel lainnya</span>
+            </div>
         </div>
 
     </div>
@@ -449,34 +716,6 @@ $youtubeVideos = [
 <!-- SECTION: EMERGENCY IGD 24 JAM & GOOGLE MAPS LOCATION -->
 <section id="kontak" class="py-20 bg-white">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        
-        <div class="bg-gradient-to-r from-[#0e7c47] to-[#096237] rounded-3xl p-8 sm:p-12 text-white shadow-xl relative overflow-hidden mb-16">
-            <div class="absolute -right-10 -bottom-10 w-72 h-72 rounded-full bg-red-500/10 blur-2xl"></div>
-            
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center relative z-10">
-                <div class="lg:col-span-8 space-y-4 text-center lg:text-left">
-                    <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-600/30 border border-red-400/50 text-red-300 text-xs font-bold uppercase tracking-wider">
-                        <i class="fa-solid fa-heart-pulse animate-pulse"></i> {{ __('Layanan Darurat Siaga') }}
-                    </span>
-                    <h2 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-white">
-                        {{ __('Instalasi Gawat Darurat (IGD) 24 Jam') }}
-                    </h2>
-                    <p class="text-emerald-100 text-sm sm:text-base max-w-2xl">
-                        {{ __('Segera hubungi tim medis darurat RSU Fikri Medika untuk penanganan medis darurat dan bantuan penjemputan ambulans siaga 24 jam.') }}
-                    </p>
-                </div>
-
-                <div class="lg:col-span-4 text-center lg:text-right space-y-3">
-                    <a href="tel:02678454999" class="inline-flex items-center justify-center gap-3 px-6 py-4 rounded-2xl bg-[#e31e24] hover:bg-red-700 text-white font-extrabold text-lg shadow-lg shadow-red-900/40 transition-all w-full sm:w-auto">
-                        <i class="fa-solid fa-phone-volume text-xl animate-bounce"></i>
-                        <span>(0267) 8454999</span>
-                    </a>
-                    <div class="text-xs text-gray-200">
-                        {{ __('Atau WhatsApp') }}: <a href="https://wa.me/6281234567890" target="_blank" class="text-yellow-300 font-bold underline">0812-3456-7890</a>
-                    </div>
-                </div>
-            </div>
-        </div>
 
         <!-- LOCATION MAP & CONTACT DETAILS -->
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">

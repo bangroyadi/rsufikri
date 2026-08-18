@@ -40,7 +40,6 @@ class HomeController extends Controller
 
         $latestArticles = Article::where('is_published', true)
             ->orderBy('published_at', 'desc')
-            ->take(3)
             ->get();
 
         return view('public.home', compact(
