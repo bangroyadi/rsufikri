@@ -5,8 +5,8 @@
 <!-- MAIN CONTENT & INTERACTIVE PAGINATED TABLE (MATCHING DATABASE STRUCTURE) -->
 <section class="py-12 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto" x-data="{
     searchName: '{{ request()->get('q') }}',
-    selectedPoli: '',
-    selectedDay: '',
+    selectedPoli: '{{ request()->get('poli') ?? '' }}',
+    selectedDay: '{{ request()->get('hari') ?? '' }}',
     currentPage: 1,
     perPage: 10,
     doctorsData: [

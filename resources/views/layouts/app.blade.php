@@ -13,6 +13,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
     <!-- Alpine.js for lightweight interactive components -->
+    <style>[x-cloak] { display: none !important; }</style>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -189,26 +190,28 @@
                             </style>
 
                             <!-- LAYANAN UNGGULAN SUB-DROPDOWN -->
+                            @php
+                                $navFeaturedServices = \App\Models\Service::where('is_active', true)->where('is_featured', true)->orderBy('order', 'asc')->get();
+                                if ($navFeaturedServices->isEmpty()) {
+                                    $navFeaturedServices = \App\Models\Service::where('is_active', true)->orderBy('order', 'asc')->get();
+                                }
+                            @endphp
                             <div class="unggulan-menu-item">
-                                <a href="{{ url('/layanan/unggulan') }}" class="flex items-center justify-between px-4 py-3 hover:bg-emerald-50 hover:text-[#0e7c47] transition-colors text-gray-700 font-semibold border-b border-gray-100 {{ request()->is('layanan/unggulan*') || request()->is('layanan/trauma-center*') || request()->is('layanan/spesialis-mata*') || request()->is('layanan/kemilau-cinta*') || request()->is('layanan/layanan-antar-jemput*') ? 'text-[#0e7c47] font-bold bg-emerald-50' : '' }}">
+                                <a href="{{ url('/layanan/unggulan') }}" class="flex items-center justify-between px-4 py-3 hover:bg-emerald-50 hover:text-[#0e7c47] transition-colors text-gray-700 font-semibold border-b border-gray-100 {{ request()->is('layanan/unggulan*') ? 'text-[#0e7c47] font-bold bg-emerald-50' : '' }}">
                                     <span>Layanan Unggulan</span>
                                     <i class="fa-solid fa-chevron-right text-[10px] text-[#0e7c47]"></i>
                                 </a>
 
                                 <!-- SUB-MENU POPUP (RIGHT SIDE) -->
                                 <div class="unggulan-sub-menu">
-                                    <a href="{{ url('/layanan/trauma-center') }}" class="block px-4 py-3 hover:bg-emerald-50 hover:text-[#0e7c47] transition-colors border-b border-gray-100 {{ request()->is('layanan/trauma-center*') ? 'text-[#0e7c47] font-bold bg-emerald-50' : '' }}">
-                                        Trauma Center
+                                    @foreach($navFeaturedServices as $navFeat)
+                                    @php
+                                        $featSlug = $navFeat->slug ?: \Illuminate\Support\Str::slug($navFeat->tr('name'));
+                                    @endphp
+                                    <a href="{{ url('/layanan/' . $featSlug) }}" class="block px-4 py-2.5 hover:bg-emerald-50 hover:text-[#0e7c47] transition-colors border-b border-gray-100 last:border-0 {{ request()->is('layanan/' . $featSlug . '*') ? 'text-[#0e7c47] font-bold bg-emerald-50' : '' }}">
+                                        {{ $navFeat->tr('name') }}
                                     </a>
-                                    <a href="{{ url('/layanan/spesialis-mata') }}" class="block px-4 py-3 hover:bg-emerald-50 hover:text-[#0e7c47] transition-colors border-b border-gray-100 {{ request()->is('layanan/spesialis-mata*') ? 'text-[#0e7c47] font-bold bg-emerald-50' : '' }}">
-                                        Spesialis Mata
-                                    </a>
-                                    <a href="{{ url('/layanan/kemilau-cinta') }}" class="block px-4 py-3 hover:bg-emerald-50 hover:text-[#0e7c47] transition-colors border-b border-gray-100 {{ request()->is('layanan/kemilau-cinta*') ? 'text-[#0e7c47] font-bold bg-emerald-50' : '' }}">
-                                        Kemilau Cinta (Ibu & Anak)
-                                    </a>
-                                    <a href="{{ url('/layanan/layanan-antar-jemput') }}" class="block px-4 py-3 hover:bg-emerald-50 hover:text-[#0e7c47] transition-colors {{ request()->is('layanan/layanan-antar-jemput*') ? 'text-[#0e7c47] font-bold bg-emerald-50' : '' }}">
-                                        Antar Jemput Pasien
-                                    </a>
+                                    @endforeach
                                 </div>
                             </div>
 
@@ -382,11 +385,14 @@
                             <i class="fa-solid fa-chevron-down text-[10px] text-[#0e7c47] transition-transform" :class="mobileUnggulanOpen ? 'rotate-180' : ''"></i>
                         </button>
                         <div x-show="mobileUnggulanOpen" class="pl-4 py-1 space-y-1 bg-gray-50 rounded-lg my-1 text-xs">
-                            <a href="{{ url('/layanan/unggulan') }}" @click="mobileMenuOpen = false" class="block py-2 px-2 hover:text-[#0e7c47] font-semibold text-[#0e7c47]">Semua Layanan Unggulan</a>
-                            <a href="{{ url('/layanan/trauma-center') }}" @click="mobileMenuOpen = false" class="block py-2 px-2 hover:text-[#0e7c47]">Trauma Center</a>
-                            <a href="{{ url('/layanan/spesialis-mata') }}" @click="mobileMenuOpen = false" class="block py-2 px-2 hover:text-[#0e7c47]">Spesialis Mata</a>
-                            <a href="{{ url('/layanan/kemilau-cinta') }}" @click="mobileMenuOpen = false" class="block py-2 px-2 hover:text-[#0e7c47]">Kemilau Cinta (Ibu & Anak)</a>
-                            <a href="{{ url('/layanan/layanan-antar-jemput') }}" @click="mobileMenuOpen = false" class="block py-2 px-2 hover:text-[#0e7c47]">Antar Jemput Pasien</a>
+                            @foreach($navFeaturedServices as $navFeat)
+                            @php
+                                $featSlug = $navFeat->slug ?: \Illuminate\Support\Str::slug($navFeat->tr('name'));
+                            @endphp
+                            <a href="{{ url('/layanan/' . $featSlug) }}" @click="mobileMenuOpen = false" class="block py-2 px-2 hover:text-[#0e7c47] {{ request()->is('layanan/' . $featSlug . '*') ? 'text-[#0e7c47] font-bold' : '' }}">
+                                {{ $navFeat->tr('name') }}
+                            </a>
+                            @endforeach
                         </div>
                     </div>
 
@@ -609,7 +615,7 @@
                         <ul class="space-y-2.5 text-xs sm:text-[13px] text-slate-500">
                             <li><a href="{{ url('/layanan/trauma-center') }}" class="hover:text-[#0e7c47] transition-colors block">Trauma Center</a></li>
                             <li><a href="{{ url('/layanan/spesialis-mata') }}" class="hover:text-[#0e7c47] transition-colors block">Spesialis Mata</a></li>
-                            <li><a href="{{ url('/layanan/kemilau-cinta') }}" class="hover:text-[#0e7c47] transition-colors block">Kemilau Cinta</a></li>
+                            <li><a href="{{ url('/layanan/kemilau-cinta-layanan-ibu-anak') }}" class="hover:text-[#0e7c47] transition-colors block">Kemilau Cinta (Ibu & Anak)</a></li>
                             <li><a href="{{ url('/layanan/layanan-antar-jemput') }}" class="hover:text-[#0e7c47] transition-colors block">Antar Jemput</a></li>
                             <li><a href="{{ url('/layanan/rawat-inap') }}" class="hover:text-[#0e7c47] transition-colors block">Rawat Inap</a></li>
                             <li><a href="{{ url('/layanan/rawat-jalan') }}" class="hover:text-[#0e7c47] transition-colors block">Rawat Jalan</a></li>

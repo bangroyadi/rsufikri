@@ -58,6 +58,8 @@ class HomeController extends Controller
     {
         $layananTitles = [
             'unggulan' => 'Layanan Unggulan RSU Fikri Medika',
+            'kemilau-cinta-layanan-ibu-anak' => 'Program Unggulan Kemilau Cinta (Layanan Ibu & Anak)',
+            'kemilau-cinta' => 'Program Unggulan Kemilau Cinta (Layanan Ibu & Anak)',
             'rawat-inap' => 'Instalasi Rawat Inap',
             'rawat-jalan' => 'Klinik Rawat Jalan',
             'igd' => 'Instalasi Gawat Darurat (IGD 24 Jam)',
