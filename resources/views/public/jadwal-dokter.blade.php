@@ -2,11 +2,39 @@
 
 @section('content')
 
+@php
+    $initPoliId = request()->get('poli') ?? '';
+    $initPoliName = '-- ' . __('Semua Poli') . ' --';
+    if ($initPoliId && isset($polyclinics)) {
+        $matched = $polyclinics->firstWhere('id', $initPoliId);
+        if ($matched) {
+            $initPoliName = is_array($matched->name) ? ($matched->name[app()->getLocale()] ?? $matched->name['id'] ?? '') : $matched->name;
+        }
+    } elseif (request()->get('spesialis') && isset($polyclinics)) {
+        $spesParam = strtolower(request()->get('spesialis'));
+        $matched = $polyclinics->first(function($p) use ($spesParam) {
+            $nameStr = is_array($p->name) ? ($p->name['id'] ?? '') : $p->name;
+            return str_contains(strtolower($nameStr), $spesParam) || str_contains(strtolower($p->slug), $spesParam);
+        });
+        if ($matched) {
+            $initPoliId = $matched->id;
+            $initPoliName = is_array($matched->name) ? ($matched->name[app()->getLocale()] ?? $matched->name['id'] ?? '') : $matched->name;
+        }
+    }
+    $initDay = request()->get('hari') ?? '';
+    $initDayName = $initDay ? $initDay : '-- ' . __('Semua Hari') . ' --';
+@endphp
+
 <!-- MAIN CONTENT & INTERACTIVE PAGINATED TABLE (MATCHING DATABASE STRUCTURE) -->
 <section class="py-12 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto" x-data="{
     searchName: '{{ request()->get('q') }}',
-    selectedPoli: '{{ request()->get('poli') ?? '' }}',
-    selectedDay: '{{ request()->get('hari') ?? '' }}',
+    selectedPoli: '{{ $initPoliId }}',
+    selectedPoliName: '{{ addslashes($initPoliName) }}',
+    selectedDay: '{{ $initDay }}',
+    selectedDayName: '{{ addslashes($initDayName) }}',
+    poliDropdownOpen: false,
+    poliSearchQuery: '',
+    dayDropdownOpen: false,
     currentPage: 1,
     perPage: 10,
     doctorsData: [
@@ -56,34 +84,111 @@
                        @input="currentPage = 1"
                        placeholder="{{ __('Ketik nama dokter...') }}" 
                        style="padding-left: 38px; padding-right: 16px; padding-top: 10px; padding-bottom: 10px; border-radius: 12px; border: 1px solid #cbd5e1; font-size: 14px; width: 100%; outline: none;"
-                       class="focus:ring-2 focus:ring-[#0e7c47] bg-white">
+                       class="focus:ring-2 focus:ring-[#0e7c47] bg-white text-gray-800">
             </div>
         </div>
 
-        <!-- FILTER BY POLICLINIC -->
-        <div>
+        <!-- FILTER BY POLICLINIC (Responsive Alpine.js Dropdown) -->
+        <div class="relative" @click.outside="poliDropdownOpen = false">
             <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">{{ __('Pilih Poliklinik') }}</label>
-            <select x-model="selectedPoli" @change="currentPage = 1" class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:ring-2 focus:ring-[#0e7c47] focus:border-[#0e7c47] outline-none bg-white">
-                <option value="">-- {{ __('Semua Poli') }} --</option>
-                @foreach($polyclinics as $poli)
-                    <option value="{{ $poli->id }}">{{ is_array($poli->name) ? ($poli->name[app()->getLocale()] ?? $poli->name['id'] ?? $poli->name['en']) : $poli->name }}</option>
-                @endforeach
-            </select>
+            
+            <!-- Trigger Button -->
+            <button type="button" 
+                    @click="poliDropdownOpen = !poliDropdownOpen; dayDropdownOpen = false" 
+                    class="w-full pl-9 pr-8 py-2.5 rounded-xl border border-gray-300 focus:ring-2 focus:ring-[#0e7c47] focus:border-[#0e7c47] text-sm text-left bg-white outline-none transition-all flex items-center justify-between cursor-pointer relative"
+                    :class="selectedPoli ? 'text-gray-900 font-semibold border-emerald-400' : 'text-gray-600'">
+                <i class="fa-solid fa-stethoscope absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-xs pointer-events-none"></i>
+                <span class="truncate pr-2" x-text="selectedPoliName">-- {{ __('Semua Poli') }} --</span>
+                <i class="fa-solid fa-chevron-down absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-[10px] transition-transform duration-200" :class="poliDropdownOpen ? 'rotate-180 text-[#0e7c47]' : ''"></i>
+            </button>
+
+            <!-- Dropdown Menu List -->
+            <div x-show="poliDropdownOpen" 
+                 x-cloak
+                 x-transition:enter="transition ease-out duration-150 transform"
+                 x-transition:enter-start="opacity-0 -translate-y-2 scale-95"
+                 x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+                 x-transition:leave="transition ease-in duration-100 transform"
+                 x-transition:leave-start="opacity-100 translate-y-0 scale-100"
+                 x-transition:leave-end="opacity-0 -translate-y-2 scale-95"
+                 class="absolute left-0 right-0 top-full mt-1.5 z-50 bg-white rounded-2xl shadow-2xl border border-emerald-100 p-2 max-h-60 overflow-y-auto w-full">
+                
+                <!-- Search filter for quick selection -->
+                <div class="px-1 pb-1.5 mb-1 border-b border-gray-100">
+                    <input type="text" 
+                           x-model="poliSearchQuery" 
+                           placeholder="{{ __('Cari spesialisasi...') }}" 
+                           @click.stop
+                           class="w-full px-2.5 py-1.5 text-xs rounded-lg bg-gray-50 border border-gray-200 outline-none focus:border-[#0e7c47] focus:bg-white text-gray-800 placeholder-gray-400">
+                </div>
+
+                <!-- All Option -->
+                <div @click="selectedPoli = ''; selectedPoliName = '-- {{ __('Semua Poli') }} --'; currentPage = 1; poliDropdownOpen = false" 
+                     x-show="!poliSearchQuery || 'semua poli'.includes(poliSearchQuery.toLowerCase())"
+                     class="px-3 py-2 rounded-xl text-xs font-semibold cursor-pointer transition-colors flex items-center justify-between"
+                     :class="selectedPoli === '' ? 'bg-emerald-50 text-[#0e7c47]' : 'text-gray-700 hover:bg-gray-50'">
+                    <span>-- {{ __('Semua Poli') }} --</span>
+                    <i x-show="selectedPoli === ''" class="fa-solid fa-check text-xs text-[#0e7c47]"></i>
+                </div>
+
+                @if(isset($polyclinics))
+                    @foreach($polyclinics as $poli)
+                        @php
+                            $poliTitle = is_array($poli->name) ? ($poli->name[app()->getLocale()] ?? $poli->name['id'] ?? $poli->name['en']) : $poli->name;
+                        @endphp
+                        <div @click="selectedPoli = '{{ $poli->id }}'; selectedPoliName = '{{ addslashes($poliTitle) }}'; currentPage = 1; poliDropdownOpen = false" 
+                             x-show="!poliSearchQuery || '{{ strtolower(addslashes($poliTitle)) }}'.includes(poliSearchQuery.toLowerCase())"
+                             class="px-3 py-2 rounded-xl text-xs font-semibold cursor-pointer transition-colors flex items-center justify-between"
+                             :class="selectedPoli == '{{ $poli->id }}' ? 'bg-emerald-50 text-[#0e7c47]' : 'text-gray-700 hover:bg-gray-50'">
+                            <span class="truncate">{{ $poliTitle }}</span>
+                            <i x-show="selectedPoli == '{{ $poli->id }}'" class="fa-solid fa-check text-xs text-[#0e7c47]"></i>
+                        </div>
+                    @endforeach
+                @endif
+            </div>
         </div>
 
-        <!-- FILTER BY DAY -->
-        <div>
+        <!-- FILTER BY DAY (Responsive Alpine.js Dropdown) -->
+        <div class="relative" @click.outside="dayDropdownOpen = false">
             <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">{{ __('Pilih Hari Praktik') }}</label>
-            <select x-model="selectedDay" @change="currentPage = 1" class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:ring-2 focus:ring-[#0e7c47] focus:border-[#0e7c47] outline-none bg-white">
-                <option value="">-- {{ __('Semua Hari') }} --</option>
-                <option value="Senin">{{ __('Senin') }}</option>
-                <option value="Selasa">{{ __('Selasa') }}</option>
-                <option value="Rabu">{{ __('Rabu') }}</option>
-                <option value="Kamis">{{ __('Kamis') }}</option>
-                <option value="Jumat">{{ __('Jumat') }}</option>
-                <option value="Sabtu">{{ __('Sabtu') }}</option>
-                <option value="Minggu">{{ __('Minggu') }}</option>
-            </select>
+            
+            <!-- Trigger Button -->
+            <button type="button" 
+                    @click="dayDropdownOpen = !dayDropdownOpen; poliDropdownOpen = false" 
+                    class="w-full pl-9 pr-8 py-2.5 rounded-xl border border-gray-300 focus:ring-2 focus:ring-[#0e7c47] focus:border-[#0e7c47] text-sm text-left bg-white outline-none transition-all flex items-center justify-between cursor-pointer relative"
+                    :class="selectedDay ? 'text-gray-900 font-semibold border-emerald-400' : 'text-gray-600'">
+                <i class="fa-regular fa-calendar absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-xs pointer-events-none"></i>
+                <span class="truncate pr-2" x-text="selectedDayName">-- {{ __('Semua Hari') }} --</span>
+                <i class="fa-solid fa-chevron-down absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-[10px] transition-transform duration-200" :class="dayDropdownOpen ? 'rotate-180 text-[#0e7c47]' : ''"></i>
+            </button>
+
+            <!-- Dropdown Menu List -->
+            <div x-show="dayDropdownOpen" 
+                 x-cloak
+                 x-transition:enter="transition ease-out duration-150 transform"
+                 x-transition:enter-start="opacity-0 -translate-y-2 scale-95"
+                 x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+                 x-transition:leave="transition ease-in duration-100 transform"
+                 x-transition:leave-start="opacity-100 translate-y-0 scale-100"
+                 x-transition:leave-end="opacity-0 -translate-y-2 scale-95"
+                 class="absolute left-0 right-0 top-full mt-1.5 z-50 bg-white rounded-2xl shadow-2xl border border-emerald-100 p-2 max-h-60 overflow-y-auto w-full">
+                
+                <div @click="selectedDay = ''; selectedDayName = '-- {{ __('Semua Hari') }} --'; currentPage = 1; dayDropdownOpen = false" 
+                     class="px-3 py-2 rounded-xl text-xs font-semibold cursor-pointer transition-colors flex items-center justify-between"
+                     :class="selectedDay === '' ? 'bg-emerald-50 text-[#0e7c47]' : 'text-gray-700 hover:bg-gray-50'">
+                    <span>-- {{ __('Semua Hari') }} --</span>
+                    <i x-show="selectedDay === ''" class="fa-solid fa-check text-xs text-[#0e7c47]"></i>
+                </div>
+
+                @foreach(['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'] as $day)
+                    <div @click="selectedDay = '{{ $day }}'; selectedDayName = '{{ $day }}'; currentPage = 1; dayDropdownOpen = false" 
+                         class="px-3 py-2 rounded-xl text-xs font-semibold cursor-pointer transition-colors flex items-center justify-between"
+                         :class="selectedDay == '{{ $day }}' ? 'bg-emerald-50 text-[#0e7c47]' : 'text-gray-700 hover:bg-gray-50'">
+                        <span>{{ $day }}</span>
+                        <i x-show="selectedDay == '{{ $day }}'" class="fa-solid fa-check text-xs text-[#0e7c47]"></i>
+                    </div>
+                @endforeach
+            </div>
         </div>
 
     </div>

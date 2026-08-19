@@ -222,7 +222,7 @@
 
 <!-- SECTION: FLOATING CARI DOKTER CARD (MATCHING REFERENCE DESIGN) -->
 <section class="relative z-30 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-4 sm:-mt-8 lg:-mt-10 mb-8 sm:mb-12">
-    <div class="bg-white rounded-2xl sm:rounded-3xl shadow-xl border border-gray-100/90 overflow-hidden">
+    <div class="bg-white rounded-2xl sm:rounded-3xl shadow-xl border border-gray-100/90">
         
         <!-- CARD TOP TAB -->
         <div class="border-b border-gray-100 px-6 sm:px-8 pt-2">
@@ -234,7 +234,7 @@
 
         <!-- CARD FORM CONTENT -->
         <div class="p-6 sm:p-8">
-            <form action="{{ route('jadwal.dokter') }}" method="GET" class="space-y-6">
+            <form action="{{ route('jadwal.dokter') }}" method="GET" class="space-y-6" id="cariDokterForm">
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
                     
                     <!-- 1. Nama Dokter -->
@@ -260,39 +260,123 @@
                         </div>
                     </div>
 
-                    <!-- 3. Spesialisasi -->
-                    <div>
+                    <!-- 3. Spesialisasi (Responsive Alpine.js Dropdown) -->
+                    <div x-data="{ 
+                            open: false, 
+                            selectedId: '{{ request('poli', '') }}',
+                            selectedName: '{{ request('poli') && isset($polyclinics) && $polyclinics->firstWhere('id', request('poli')) ? (is_array($polyclinics->firstWhere('id', request('poli'))->name) ? ($polyclinics->firstWhere('id', request('poli'))->name[app()->getLocale()] ?? $polyclinics->firstWhere('id', request('poli'))->name['id'] ?? '') : $polyclinics->firstWhere('id', request('poli'))->name) : 'Pilih Spesialisasi' }}',
+                            searchQuery: ''
+                         }" 
+                         @click.outside="open = false" 
+                         @reset-form.window="selectedId = ''; selectedName = 'Pilih Spesialisasi'; searchQuery = ''"
+                         class="relative">
                         <label class="block text-xs font-bold text-gray-800 mb-2">Spesialisasi</label>
-                        <div class="relative">
-                            <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-xs pointer-events-none"></i>
-                            <select name="poli" class="w-full pl-9 pr-8 py-2.5 rounded-xl border border-gray-200 focus:border-[#0e7c47] focus:ring-1 focus:ring-[#0e7c47] text-xs sm:text-sm text-gray-700 bg-white outline-none appearance-none cursor-pointer">
-                                <option value="">Pilih Spesialisasi</option>
-                                @if(isset($polyclinics))
-                                    @foreach($polyclinics as $poli)
-                                        <option value="{{ $poli->id }}">{{ is_array($poli->name) ? ($poli->name[app()->getLocale()] ?? $poli->name['id'] ?? $poli->name['en']) : $poli->name }}</option>
-                                    @endforeach
-                                @endif
-                            </select>
-                            <i class="fa-solid fa-chevron-down absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-[10px] pointer-events-none"></i>
+                        <input type="hidden" name="poli" :value="selectedId">
+                        
+                        <!-- Trigger Button -->
+                        <button type="button" 
+                                @click="open = !open" 
+                                class="w-full pl-9 pr-8 py-2.5 rounded-xl border border-gray-200 focus:border-[#0e7c47] focus:ring-1 focus:ring-[#0e7c47] text-xs sm:text-sm text-left bg-white outline-none transition-all flex items-center justify-between cursor-pointer relative"
+                                :class="selectedId ? 'text-gray-900 font-semibold border-emerald-300' : 'text-gray-600'">
+                            <i class="fa-solid fa-stethoscope absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-xs pointer-events-none"></i>
+                            <span class="truncate pr-2" x-text="selectedName">Pilih Spesialisasi</span>
+                            <i class="fa-solid fa-chevron-down absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-[10px] transition-transform duration-200" :class="open ? 'rotate-180 text-[#0e7c47]' : ''"></i>
+                        </button>
+
+                        <!-- Dropdown Menu List (Contained to Column Width) -->
+                        <div x-show="open" 
+                             x-cloak
+                             x-transition:enter="transition ease-out duration-150 transform"
+                             x-transition:enter-start="opacity-0 -translate-y-2 scale-95"
+                             x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+                             x-transition:leave="transition ease-in duration-100 transform"
+                             x-transition:leave-start="opacity-100 translate-y-0 scale-100"
+                             x-transition:leave-end="opacity-0 -translate-y-2 scale-95"
+                             class="absolute left-0 right-0 top-full mt-1.5 z-50 bg-white rounded-2xl shadow-2xl border border-emerald-100 p-2 max-h-60 overflow-y-auto w-full">
+                            
+                            <!-- Search filter for quick selection -->
+                            <div class="px-1 pb-1.5 mb-1 border-b border-gray-100">
+                                <input type="text" 
+                                       x-model="searchQuery" 
+                                       placeholder="Cari spesialisasi..." 
+                                       @click.stop
+                                       class="w-full px-2.5 py-1.5 text-xs rounded-lg bg-gray-50 border border-gray-200 outline-none focus:border-[#0e7c47] focus:bg-white text-gray-800 placeholder-gray-400">
+                            </div>
+
+                            <!-- All Option -->
+                            <div @click="selectedId = ''; selectedName = 'Semua Spesialisasi'; open = false" 
+                                 x-show="!searchQuery || 'semua spesialisasi'.includes(searchQuery.toLowerCase())"
+                                 class="px-3 py-2 rounded-xl text-xs font-semibold cursor-pointer transition-colors flex items-center justify-between"
+                                 :class="selectedId === '' ? 'bg-emerald-50 text-[#0e7c47]' : 'text-gray-700 hover:bg-gray-50'">
+                                <span>Semua Spesialisasi</span>
+                                <i x-show="selectedId === ''" class="fa-solid fa-check text-xs text-[#0e7c47]"></i>
+                            </div>
+
+                            @if(isset($polyclinics))
+                                @foreach($polyclinics as $poli)
+                                    @php
+                                        $poliTitle = is_array($poli->name) ? ($poli->name[app()->getLocale()] ?? $poli->name['id'] ?? $poli->name['en']) : $poli->name;
+                                    @endphp
+                                    <div @click="selectedId = '{{ $poli->id }}'; selectedName = '{{ addslashes($poliTitle) }}'; open = false" 
+                                         x-show="!searchQuery || '{{ strtolower(addslashes($poliTitle)) }}'.includes(searchQuery.toLowerCase())"
+                                         class="px-3 py-2 rounded-xl text-xs font-semibold cursor-pointer transition-colors flex items-center justify-between"
+                                         :class="selectedId == '{{ $poli->id }}' ? 'bg-emerald-50 text-[#0e7c47]' : 'text-gray-700 hover:bg-gray-50'">
+                                        <span class="truncate">{{ $poliTitle }}</span>
+                                        <i x-show="selectedId == '{{ $poli->id }}'" class="fa-solid fa-check text-xs text-[#0e7c47]"></i>
+                                    </div>
+                                @endforeach
+                            @endif
                         </div>
                     </div>
 
-                    <!-- 4. Pilihan Hari -->
-                    <div>
+                    <!-- 4. Pilihan Hari (Responsive Alpine.js Dropdown) -->
+                    <div x-data="{ 
+                            open: false, 
+                            selectedHari: '{{ request('hari', '') }}',
+                            selectedName: '{{ request('hari') ? request('hari') : 'Pilih Hari / Tanggal' }}'
+                         }" 
+                         @click.outside="open = false" 
+                         @reset-form.window="selectedHari = ''; selectedName = 'Pilih Hari / Tanggal'"
+                         class="relative">
                         <label class="block text-xs font-bold text-gray-800 mb-2">Pilihan Hari</label>
-                        <div class="relative">
+                        <input type="hidden" name="hari" :value="selectedHari">
+                        
+                        <!-- Trigger Button -->
+                        <button type="button" 
+                                @click="open = !open" 
+                                class="w-full pl-9 pr-8 py-2.5 rounded-xl border border-gray-200 focus:border-[#0e7c47] focus:ring-1 focus:ring-[#0e7c47] text-xs sm:text-sm text-left bg-white outline-none transition-all flex items-center justify-between cursor-pointer relative"
+                                :class="selectedHari ? 'text-gray-900 font-semibold border-emerald-300' : 'text-gray-600'">
                             <i class="fa-regular fa-calendar absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-xs pointer-events-none"></i>
-                            <select name="hari" class="w-full pl-9 pr-8 py-2.5 rounded-xl border border-gray-200 focus:border-[#0e7c47] focus:ring-1 focus:ring-[#0e7c47] text-xs sm:text-sm text-gray-700 bg-white outline-none appearance-none cursor-pointer">
-                                <option value="">Pilih Hari / Tanggal</option>
-                                <option value="Senin">Senin</option>
-                                <option value="Selasa">Selasa</option>
-                                <option value="Rabu">Rabu</option>
-                                <option value="Kamis">Kamis</option>
-                                <option value="Jumat">Jumat</option>
-                                <option value="Sabtu">Sabtu</option>
-                                <option value="Minggu">Minggu</option>
-                            </select>
-                            <i class="fa-solid fa-chevron-down absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-[10px] pointer-events-none"></i>
+                            <span class="truncate pr-2" x-text="selectedName">Pilih Hari / Tanggal</span>
+                            <i class="fa-solid fa-chevron-down absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-[10px] transition-transform duration-200" :class="open ? 'rotate-180 text-[#0e7c47]' : ''"></i>
+                        </button>
+
+                        <!-- Dropdown Menu List -->
+                        <div x-show="open" 
+                             x-cloak
+                             x-transition:enter="transition ease-out duration-150 transform"
+                             x-transition:enter-start="opacity-0 -translate-y-2 scale-95"
+                             x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+                             x-transition:leave="transition ease-in duration-100 transform"
+                             x-transition:leave-start="opacity-100 translate-y-0 scale-100"
+                             x-transition:leave-end="opacity-0 -translate-y-2 scale-95"
+                             class="absolute left-0 right-0 top-full mt-1.5 z-50 bg-white rounded-2xl shadow-2xl border border-emerald-100 p-2 max-h-60 overflow-y-auto w-full">
+                            
+                            <div @click="selectedHari = ''; selectedName = 'Semua Hari'; open = false" 
+                                 class="px-3 py-2 rounded-xl text-xs font-semibold cursor-pointer transition-colors flex items-center justify-between"
+                                 :class="selectedHari === '' ? 'bg-emerald-50 text-[#0e7c47]' : 'text-gray-700 hover:bg-gray-50'">
+                                <span>Semua Hari</span>
+                                <i x-show="selectedHari === ''" class="fa-solid fa-check text-xs text-[#0e7c47]"></i>
+                            </div>
+
+                            @foreach(['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'] as $day)
+                                <div @click="selectedHari = '{{ $day }}'; selectedName = '{{ $day }}'; open = false" 
+                                     class="px-3 py-2 rounded-xl text-xs font-semibold cursor-pointer transition-colors flex items-center justify-between"
+                                     :class="selectedHari == '{{ $day }}' ? 'bg-emerald-50 text-[#0e7c47]' : 'text-gray-700 hover:bg-gray-50'">
+                                    <span>{{ $day }}</span>
+                                    <i x-show="selectedHari == '{{ $day }}'" class="fa-solid fa-check text-xs text-[#0e7c47]"></i>
+                                </div>
+                            @endforeach
                         </div>
                     </div>
 
@@ -300,7 +384,9 @@
 
                 <!-- BOTTOM ACTION BUTTONS -->
                 <div class="flex items-center justify-end gap-3 pt-2">
-                    <button type="reset" class="px-7 py-2.5 rounded-xl border border-[#0e7c47] text-[#0e7c47] hover:bg-emerald-50 text-xs sm:text-sm font-bold transition-all duration-200 cursor-pointer">
+                    <button type="button" 
+                            @click="document.getElementById('cariDokterForm').reset(); window.dispatchEvent(new CustomEvent('reset-form'));" 
+                            class="px-7 py-2.5 rounded-xl border border-[#0e7c47] text-[#0e7c47] hover:bg-emerald-50 text-xs sm:text-sm font-bold transition-all duration-200 cursor-pointer">
                         Reset
                     </button>
                     <button type="submit" style="background-color: #0e7c47; color: #ffffff;" class="px-7 py-2.5 rounded-xl bg-[#0e7c47] hover:bg-[#096237] text-white text-xs sm:text-sm font-bold shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer">

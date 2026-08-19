@@ -697,15 +697,16 @@
         
         <!-- FLOATING TRIGGER BUTTON -->
         <button @click="toggleChat()" 
-                class="fixed bottom-20 lg:bottom-6 right-4 sm:right-6 z-50 bg-[#065c36] hover:bg-[#097a47] text-white p-1.5 sm:p-2 pr-4 sm:pr-5 rounded-full shadow-2xl border-2 border-white/40 flex items-center gap-2.5 sm:gap-3 transition-all transform hover:scale-105 active:scale-95 cursor-pointer group">
+                aria-label="Tanya Kaka Fikri"
+                class="fixed bottom-20 lg:bottom-6 right-4 sm:right-6 z-50 bg-[#065c36] hover:bg-[#097a47] text-white p-1 sm:p-2 sm:pr-5 rounded-full shadow-2xl border-2 border-white/40 flex items-center justify-center sm:justify-start sm:gap-3 transition-all transform hover:scale-105 active:scale-95 cursor-pointer group">
             <div class="relative shrink-0">
                 <img src="{{ asset('avatar-fikri.png') }}" 
                      alt="Kaka Fikri" 
-                     class="w-10 h-10 sm:w-11 sm:h-11 rounded-full object-cover border-2 border-yellow-300 shadow-md group-hover:rotate-6 transition-transform bg-white">
+                     class="w-11 h-11 sm:w-11 sm:h-11 rounded-full object-cover border-2 border-yellow-300 shadow-md group-hover:rotate-6 transition-transform bg-white">
                 <span class="absolute bottom-0 right-0 w-3 h-3 bg-emerald-400 border-2 border-white rounded-full animate-ping"></span>
                 <span class="absolute bottom-0 right-0 w-3 h-3 bg-emerald-400 border-2 border-white rounded-full"></span>
             </div>
-            <div class="text-left leading-tight">
+            <div class="hidden sm:block text-left leading-tight">
                 <div class="text-xs sm:text-sm font-black text-white flex items-center gap-1.5" style="color: #ffffff !important;">
                     <span>Tanya Kaka Fikri Yuk</span>
                     <i class="fa-solid fa-sparkles text-yellow-300 text-xs animate-bounce"></i>
