@@ -154,6 +154,7 @@
                             <img src="{{ $docPhoto }}" 
                                  alt="{{ $doc->name }}" 
                                  class="w-full h-full rounded-full object-cover"
+                                 style="object-fit: cover; object-position: center 8%; transform: translateY(4px) scale(1.04);"
                                  onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
                             <div class="w-full h-full rounded-full bg-gradient-to-tr from-[#0e7c47] to-emerald-500 text-white hidden items-center justify-center text-3xl sm:text-4xl font-bold shadow-inner">
                                 <i class="fa-solid fa-user-doctor"></i>

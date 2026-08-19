@@ -82,7 +82,7 @@
                         <td class="p-4 flex items-center gap-3">
                             <div style="background-color: #d1fae5; border: 1px solid #a7f3d0; color: #0e7c47;" class="w-10 h-10 rounded-full flex items-center justify-center font-bold overflow-hidden shrink-0">
                                 @if(!empty($doc->photo))
-                                <img src="{{ \Illuminate\Support\Str::startsWith($doc->photo, ['http://', 'https://']) ? $doc->photo : asset($doc->photo) }}" alt="{{ $doc->name }}" class="w-full h-full object-cover">
+                                <img src="{{ \Illuminate\Support\Str::startsWith($doc->photo, ['http://', 'https://']) ? $doc->photo : asset($doc->photo) }}" alt="{{ $doc->name }}" class="w-full h-full object-cover" style="object-fit: cover; object-position: center 10%;">
                                 @else
                                 <i class="fa-solid fa-user-doctor text-sm"></i>
                                 @endif
