@@ -115,18 +115,25 @@ class SmartAssistantService
      * Daftar spesialisasi poliklinik dan kata kuncinya (diurutkan frasa spesifik lebih dahulu)
      */
     protected array $specialties = [
-        'bedah saraf'     => ['poli bedah saraf', 'dokter bedah saraf', 'spesialis bedah saraf', 'bedah saraf', 'neurologi', 'saraf', 'stroke', 'vertigo', 'otak', 'tulang belakang'],
-        'bedah plastik'   => ['poli bedah plastik', 'dokter bedah plastik', 'spesialis bedah plastik', 'bedah plastik', 'estetika', 'rekonstruksi'],
-        'bedah'           => ['poli bedah umum', 'poli bedah', 'dokter bedah', 'spesialis bedah', 'bedah umum', 'bedah', 'operasi', 'usus buntu', 'hernia'],
-        'penyakit dalam'  => ['poli penyakit dalam', 'dokter penyakit dalam', 'spesialis penyakit dalam', 'penyakit dalam', 'internis', 'lambung', 'maag', 'diabetes', 'ginjal', 'hati'],
-        'anak'            => ['poli anak', 'dokter anak', 'spesialis anak', 'anak', 'pediatri', 'bayi', 'balita', 'imunisasi', 'tumbuh kembang'],
-        'kandungan'       => ['poli kandungan', 'poli kebidanan', 'dokter kandungan', 'spesialis kandungan', 'kandungan', 'kebidanan', 'obgyn', 'spog', 'hamil', 'melahirkan', 'persalinan', 'usg 4d'],
-        'jantung'         => ['poli jantung', 'dokter jantung', 'spesialis jantung', 'jantung', 'kardiologi', 'ekg', 'pembuluh darah', 'echo'],
-        'paru'            => ['poli paru', 'dokter paru', 'spesialis paru', 'paru', 'pulmonologi', 'tb', 'tbc', 'asma', 'sesak nafas'],
-        'mata'            => ['poli mata', 'dokter mata', 'spesialis mata', 'mata', 'katarak', 'minus', 'silinder', 'glaukoma', 'phaco'],
-        'tht'             => ['poli tht', 'dokter tht', 'spesialis tht', 'tht', 'telinga', 'hidung', 'tenggorokan', 'amandel'],
-        'gigi'            => ['poli gigi', 'dokter gigi', 'gigi spesialis', 'gigi', 'cabut gigi', 'tambal gigi', 'kawat gigi', 'orthodonti', 'bedah mulut'],
-        'psikiatri'       => ['poli psikiatri', 'dokter psikiatri', 'spesialis psikiatri', 'psikiatri', 'jiwa', 'kesehatan jiwa', 'psikologis', 'depresi', 'stres'],
+        'spesialis gigi (periodonti)' => ['poli spesialis gigi (periodonti)', 'spesialis gigi periodonti', 'periodonti', 'dokter gigi spesialis periodonti', 'sp.perio', 'gusi berdarah', 'periodontitis', 'karang gigi mendalam'],
+        'bedah mulut'                 => ['poli bedah mulut', 'dokter bedah mulut', 'spesialis bedah mulut', 'bedah mulut', 'sp.bm', 'odontektomi', 'cabut gigi bungsu', 'fraktur rahang', 'kista mulut'],
+        'bedah saraf'                 => ['poli bedah saraf', 'dokter bedah saraf', 'spesialis bedah saraf', 'bedah saraf', 'sp.bs', 'operasi saraf', 'operasi otak', 'tumor otak', 'trauma kepala'],
+        'kulit dan kelamin'           => ['poli kulit dan kelamin', 'poli kulit', 'dokter kulit', 'spesialis kulit', 'kulit dan kelamin', 'dermatologi', 'sp.kk', 'sp.dv', 'alergi kulit', 'jerawat', 'eksim'],
+        'rehab medik'                 => ['poli rehab medik', 'rehab medik', 'rehabilitasi medik', 'dokter rehab medik', 'sp.kfr', 'fisioterapi', 'terapi fisik', 'okupasi terapi'],
+        'neurologi (saraf)'           => ['poli saraf', 'poli neurologi', 'dokter saraf', 'dokter neurologi', 'spesialis saraf', 'spesialis neurologi', 'neurologi', 'saraf', 'sp.s', 'sp.n', 'stroke', 'vertigo', 'migrain', 'saraf terjepit', 'hnp', 'epilepsi'],
+        'tht – kl'                    => ['poli tht - kl', 'poli tht kl', 'poli tht', 'dokter tht', 'spesialis tht', 'tht – kl', 'tht - kl', 'tht kl', 'tht', 'sp.tht', 'telinga', 'hidung', 'tenggorokan', 'amandel', 'sinusitis', 'polip'],
+        'penyakit dalam'              => ['poli penyakit dalam', 'dokter penyakit dalam', 'spesialis penyakit dalam', 'penyakit dalam', 'internis', 'sp.pd', 'lambung', 'maag', 'diabetes', 'ginjal', 'hati'],
+        'obgyn (kandungan)'           => ['poli obgyn', 'poli kandungan', 'poli kebidanan', 'dokter kandungan', 'dokter obgyn', 'spesialis kandungan', 'kandungan', 'kebidanan', 'obgyn', 'sp.og', 'spog', 'hamil', 'melahirkan', 'persalinan', 'usg 4d'],
+        'orthopedi'                   => ['poli orthopedi', 'poli ortopedi', 'dokter orthopedi', 'dokter ortopedi', 'spesialis orthopedi', 'orthopedi', 'ortopedi', 'sp.ot', 'tulang', 'patah tulang', 'sendi', 'dislokasi', 'trauma tulang'],
+        'urologi'                     => ['poli urologi', 'dokter urologi', 'spesialis urologi', 'urologi', 'sp.u', 'saluran kemih', 'batu ginjal', 'prostat', 'kandung kemih', 'kencing'],
+        'jantung'                     => ['poli jantung', 'dokter jantung', 'spesialis jantung', 'jantung', 'kardiologi', 'sp.jp', 'ekg', 'pembuluh darah', 'echo', 'treadmill'],
+        'bedah'                       => ['poli bedah umum', 'poli bedah', 'dokter bedah', 'spesialis bedah', 'bedah umum', 'bedah', 'sp.b', 'operasi', 'usus buntu', 'hernia'],
+        'paru'                        => ['poli paru', 'dokter paru', 'spesialis paru', 'paru', 'pulmonologi', 'sp.p', 'tb', 'tbc', 'asma', 'sesak nafas', 'bronkitis'],
+        'mata'                        => ['poli mata', 'dokter mata', 'spesialis mata', 'mata', 'sp.m', 'katarak', 'minus', 'silinder', 'glaukoma', 'phaco'],
+        'anak'                        => ['poli anak', 'dokter anak', 'spesialis anak', 'anak', 'pediatri', 'sp.a', 'bayi', 'balita', 'imunisasi', 'tumbuh kembang'],
+        'jiwa'                        => ['poli jiwa', 'poli psikiatri', 'dokter jiwa', 'dokter psikiatri', 'spesialis psikiatri', 'jiwa', 'psikiatri', 'sp.kj', 'psikiater', 'kesehatan jiwa', 'depresi', 'stres', 'anxiety', 'insomnia'],
+        'gigi'                        => ['poli gigi', 'dokter gigi', 'gigi', 'cabut gigi', 'tambal gigi', 'kawat gigi', 'orthodonti', 'scaling', 'saluran akar', 'karies'],
+        'radiologi'                   => ['poli radiologi', 'radiologi', 'dokter radiologi', 'spesialis radiologi', 'sp.rad', 'rontgen', 'x-ray', 'xray', 'usg', 'panoramic', 'ct scan'],
     ];
 
     /**
