@@ -736,12 +736,17 @@
                             <span>Kaka Fikri</span>
                             <span class="text-[9px] font-bold px-2 py-0.5 rounded-full bg-yellow-400 text-slate-950 uppercase" style="color: #020617 !important;">Online AI</span>
                         </h3>
-                        <p class="text-[11px] text-emerald-100 font-medium" style="color: #d1fae5 !important;">Asisten Medis RSU Fikri Medika</p>
+                        <p class="text-[11px] text-emerald-100 font-medium" style="color: #d1fae5 !important;">Asisten Virtual RSU Fikri Medika</p>
                     </div>
                 </div>
-                <button @click="open = false" class="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors">
-                    <i class="fa-solid fa-xmark text-sm"></i>
-                </button>
+                <div class="flex items-center gap-1.5">
+                    <button type="button" @click="resetChat()" title="Reset Percakapan" class="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors cursor-pointer text-xs">
+                        <i class="fa-solid fa-rotate-right"></i>
+                    </button>
+                    <button type="button" @click="open = false" title="Tutup Chat" class="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors cursor-pointer text-sm">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
             </div>
 
             <!-- MESSAGES CONTAINER -->
@@ -751,26 +756,11 @@
                     <div>
                         <!-- AI MESSAGE -->
                         <template x-if="msg.sender === 'ai'">
-                            <div class="flex items-start gap-2.5 max-w-[92%]">
+                            <div class="flex items-start gap-2.5 max-w-[96%]">
                                 <img src="{{ asset('avatar-fikri.png') }}" class="w-8 h-8 rounded-full border border-emerald-200 shrink-0 mt-0.5 object-cover bg-white">
-                                <div class="space-y-2">
-                                    <div class="bg-[#e8f4f8] p-3.5 rounded-2xl rounded-tl-xs text-xs sm:text-sm leading-relaxed border border-sky-200 shadow-xs space-y-2 font-semibold text-slate-900" style="color: #0f172a !important;" x-html="msg.text">
+                                <div class="w-full">
+                                    <div class="bg-[#e8f4f8] p-3 rounded-2xl rounded-tl-xs text-[12px] sm:text-[12.5px] leading-relaxed border border-sky-200 shadow-xs font-semibold text-slate-900" style="color: #0f172a !important;" x-html="msg.text">
                                     </div>
-                                    <!-- DYNAMIC SUGGESTIONS FOR FALLBACK -->
-                                    <template x-if="msg.suggestions && msg.suggestions.length > 0">
-                                        <div class="flex flex-wrap gap-1.5 pt-1">
-                                            <template x-for="(sug, sIdx) in msg.suggestions" :key="sIdx">
-                                                <span>
-                                                    <template x-if="sug.url">
-                                                        <a :href="sug.url" class="px-2.5 py-1 rounded-full bg-emerald-100 hover:bg-emerald-200 text-[#0e7c47] font-bold text-[11px] border border-emerald-300 transition-colors inline-block mb-1" x-text="sug.label"></a>
-                                                    </template>
-                                                    <template x-if="sug.query">
-                                                        <button type="button" @click="sendQuickQuery(sug.query)" class="px-2.5 py-1 rounded-full bg-white hover:bg-emerald-50 text-[#0e7c47] font-bold text-[11px] border border-emerald-200 transition-colors inline-block mb-1 cursor-pointer" x-text="sug.label"></button>
-                                                    </template>
-                                                </span>
-                                            </template>
-                                        </div>
-                                    </template>
                                 </div>
                             </div>
                         </template>
@@ -778,7 +768,7 @@
                         <!-- USER MESSAGE -->
                         <template x-if="msg.sender === 'user'">
                             <div class="flex justify-end">
-                                <div class="bg-[#0e7c47] p-3.5 rounded-2xl rounded-tr-xs text-xs sm:text-sm leading-relaxed shadow-sm max-w-[85%] font-semibold text-white" style="color: #ffffff !important;" x-text="msg.text">
+                                <div class="bg-[#0e7c47] p-3 rounded-2xl rounded-tr-xs text-[12px] sm:text-[12.5px] leading-relaxed shadow-sm max-w-[85%] font-semibold text-white" style="color: #ffffff !important;" x-text="msg.text">
                                 </div>
                             </div>
                         </template>
@@ -789,45 +779,34 @@
                 <div x-show="isTyping" class="flex items-start gap-2.5">
                     <img src="{{ asset('avatar-fikri.png') }}" class="w-8 h-8 rounded-full border border-emerald-200 shrink-0 object-cover bg-white">
                     <div class="bg-[#e8f4f8] p-3 rounded-2xl rounded-tl-xs flex items-center gap-1.5 border border-sky-100">
-                        <span class="w-2 h-2 bg-sky-600 rounded-full animate-bounce"></span>
-                        <span class="w-2 h-2 bg-sky-600 rounded-full animate-bounce [animation-delay:0.2s]"></span>
-                        <span class="w-2 h-2 bg-sky-600 rounded-full animate-bounce [animation-delay:0.4s]"></span>
+                        <span class="w-2 h-2 bg-emerald-600 rounded-full animate-bounce"></span>
+                        <span class="w-2 h-2 bg-emerald-600 rounded-full animate-bounce [animation-delay:0.2s]"></span>
+                        <span class="w-2 h-2 bg-emerald-600 rounded-full animate-bounce [animation-delay:0.4s]"></span>
                     </div>
                 </div>
 
             </div>
 
-            <!-- QUICK SUGGESTION PILLS -->
-            <div class="px-3 py-2 bg-white border-t border-gray-100 flex items-center gap-1.5 overflow-x-auto text-[11px] font-semibold text-slate-700 no-scrollbar">
-                <button @click="sendQuickQuery('Persyaratan BPJS Kesehatan')" class="px-2.5 py-1 rounded-full bg-emerald-50 text-[#0e7c47] hover:bg-emerald-100 transition-colors whitespace-nowrap border border-emerald-200 shrink-0">
-                    📋 Syarat BPJS
-                </button>
-                <button @click="sendQuickQuery('Jadwal Dokter Spesialis')" class="px-2.5 py-1 rounded-full bg-emerald-50 text-[#0e7c47] hover:bg-emerald-100 transition-colors whitespace-nowrap border border-emerald-200 shrink-0">
-                    📅 Jadwal Dokter
-                </button>
-                <button @click="sendQuickQuery('Nomor Telepon IGD 24 Jam')" class="px-2.5 py-1 rounded-full bg-red-50 text-red-600 hover:bg-red-100 transition-colors whitespace-nowrap border border-red-200 shrink-0">
-                    🚨 Emergency IGD
-                </button>
-            </div>
+
 
             <!-- INPUT BOX & DISCLAIMER -->
             <div class="p-3 bg-white border-t border-gray-100 space-y-2">
                 <form @submit.prevent="sendMessage()" class="flex items-center gap-2">
                     <input type="text" x-model="userInput" placeholder="Ketik pertanyaan Anda..." 
                            class="flex-grow px-3.5 py-2.5 rounded-xl border border-gray-300 text-slate-900 placeholder-slate-400 text-xs sm:text-sm focus:outline-none focus:border-[#0e7c47] focus:ring-1 focus:ring-[#0e7c47] bg-white font-medium" style="color: #0f172a !important;">
-                    <button type="submit" class="w-10 h-10 rounded-xl bg-[#0e7c47] hover:bg-[#096237] text-white flex items-center justify-center shrink-0 transition-colors shadow-md disabled:opacity-50" :disabled="!userInput.trim()">
+                    <button type="submit" class="w-10 h-10 rounded-xl bg-[#0e7c47] hover:bg-[#096237] text-white flex items-center justify-center shrink-0 transition-colors shadow-md disabled:opacity-50 cursor-pointer" :disabled="!userInput.trim() || isTyping">
                         <i class="fa-solid fa-paper-plane text-xs text-white"></i>
                     </button>
                 </form>
                 <div class="text-[9px] text-gray-500 text-center leading-tight font-medium" style="color: #64748b !important;">
-                    Disclaimer : Informasi yang diberikan bersifat umum dan tidak menggantikan saran medis. Jawaban AI tidak dapat dijadikan acuan.
+                    Disclaimer: Asisten virtual cerdas RSU Fikri Medika memberikan informasi operasional umum dan bukan pengganti diagnosis medis.
                 </div>
             </div>
 
         </div>
     </div>
 
-    <!-- SCRIPT FOR FIKRI CHAT AI ENGINE (LOKAL & SMART KNOWLEDGE BASE) -->
+    <!-- SCRIPT FOR FIKRI CHAT AI ENGINE (INTELLIGENT RULE-BASED & LIVE DATABASE) -->
     <script>
     function fikriChatWidget() {
         return {
@@ -837,22 +816,23 @@
             messages: [
                 {
                     sender: 'ai',
-                    text: 'Halo 👋 Saya <strong>Tanya Fikri</strong>, asisten virtual RSU Fikri Medika. Ada yang bisa saya bantu?'
+                    text: 'Halo 👋 Saya <strong>Kakak Fikri</strong>, asisten virtual resmi RSU Fikri Medika Karawang.<br><br>Ada yang bisa saya bantu terkait jadwal dokter, pendaftaran rawat jalan, kamar rawat inap, BPJS, atau fasilitas rumah sakit hari ini? 😊'
                 }
             ],
 
             toggleChat() {
                 this.open = !this.open;
                 if (this.open) {
+                    this.scrollToBottom();
                 }
             },
             sendQuickQuery(queryText) {
                 this.userInput = queryText;
                 this.sendMessage();
             },
-            sendMessage() {
+            async sendMessage() {
                 const query = this.userInput.trim();
-                if (!query) return;
+                if (!query || this.isTyping) return;
 
                 // Push User Message
                 this.messages.push({ sender: 'user', text: query });
@@ -860,13 +840,64 @@
                 this.isTyping = true;
                 this.scrollToBottom();
 
-                // Simulate AI Processing & Response Generation
-                setTimeout(() => {
-                    const responseText = this.generateAiResponse(query);
-                    this.messages.push({ sender: 'ai', text: responseText });
+                try {
+                    const response = await fetch('{{ route("ai.chat") }}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                            'Accept': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            message: query
+                        })
+                    });
+
+                    const data = await response.json();
+
+                    if (data.success && data.reply) {
+                        this.messages.push({
+                            sender: 'ai',
+                            text: data.reply
+                        });
+                    } else {
+                        this.messages.push({
+                            sender: 'ai',
+                            text: data.message || 'Maaf, Kakak Fikri sedang mengalami kendala jaringan. Silakan coba sesaat lagi. 🙏'
+                        });
+                    }
+                } catch (err) {
+                    console.error('Tanya Fikri Chat Error:', err);
+                    this.messages.push({
+                        sender: 'ai',
+                        text: 'Maaf, sambungan terputus. Silakan periksa koneksi internet Anda atau hubungi Customer Service kami. 🙏'
+                    });
+                } finally {
                     this.isTyping = false;
                     this.scrollToBottom();
-                }, 1000);
+                }
+            },
+            async resetChat() {
+                try {
+                    await fetch('{{ route("ai.reset") }}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                            'Accept': 'application/json',
+                        }
+                    });
+                } catch (e) {
+                    // Ignore
+                }
+
+                this.messages = [
+                    {
+                        sender: 'ai',
+                        text: 'Sesi percakapan telah direset 👋 Ada topik atau informasi lain yang ingin Anda cari bersama <strong>Kakak Fikri</strong>?'
+                    }
+                ];
+                this.scrollToBottom();
             },
             scrollToBottom() {
                 this.$nextTick(() => {
@@ -875,27 +906,6 @@
                         el.scrollTop = el.scrollHeight;
                     }
                 });
-            },
-            generateAiResponse(text) {
-                const lower = text.toLowerCase();
-
-                if (lower.includes('sakit perut') || lower.includes('perut')) {
-                    return `Halo, sakit perut bisa disebabkan oleh berbagai hal, mulai dari yang ringan hingga kondisi yang memerlukan perhatian medis. Agar mendapatkan diagnosis dan penanganan yang tepat, sangat disarankan untuk berkonsultasi dengan dokter.<br><br>Apakah Anda ingin saya carikan jadwal dokter spesialis penyakit dalam atau spesialis lainnya di RSU Fikri Medika Karawang? Atau mungkin Anda ingin mencari informasi tentang layanan kesehatan terkait pencernaan?`;
-                }
-
-                if (lower.includes('jadwal') || lower.includes('dokter') || lower.includes('spesialis')) {
-                    return `Untuk melihat jadwal praktek harian dokter spesialis di RSU Fikri Medika Karawang, Anda dapat langsung mengunjungi halaman <a href="/jadwal-dokter" class="text-[#0e7c47] font-bold underline">Jadwal Dokter</a>.<br><br>Kami memiliki dokter spesialis Penyakit Dalam, Kebidanan & Kandungan, Anak, Bedah, serta Spesialis Mata dan Gigi.`;
-                }
-
-                if (lower.includes('igd') || lower.includes('darurat') || lower.includes('emergency') || lower.includes('ambulans')) {
-                    return `🚨 <strong>Instalasi Gawat Darurat (IGD 24 Jam) RSU Fikri Medika</strong><br><br>Tim medis dan perawat siaga penuh 24 jam nonstop.<br>Panggilan Darurat: <strong>(0267) 8454999</strong><br>WhatsApp IGD: <strong>0812-3456-7890</strong>`;
-                }
-
-                if (lower.includes('bpjs') || lower.includes('persyaratan')) {
-                    return `RSU Fikri Medika melayani pasien <strong>BPJS Kesehatan</strong>.<br><br>Persyaratan berkas:<br>1. Kartu BPJS Kesehatan Aktif<br>2. Surat Rujukan Faskes 1<br>3. KTP / Kartu Keluarga`;
-                }
-
-                return `Halo! Kaka Fikri siap membantu Anda mengenai informasi medis, konsultasi kesehatan umum, jadwal dokter spesialis, serta pendaftaran online di RSU Fikri Medika Karawang. Ada yang ingin Anda tanyakan lagi? 😊`;
             }
         };
     }

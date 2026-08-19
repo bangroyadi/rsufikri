@@ -15,6 +15,8 @@ use App\Http\Controllers\Admin\AdminArticleController;
 use App\Http\Controllers\Admin\AdminGalleryController;
 use App\Http\Controllers\Admin\AdminBannerController;
 use App\Http\Controllers\Admin\AdminContactController;
+use App\Http\Controllers\Admin\AdminKnowledgeBaseController;
+use App\Http\Controllers\AiChatController;
 
 // Public Routes
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -31,7 +33,9 @@ Route::get('/kontak', [HomeController::class, 'kontakPage'])->name('kontak');
 Route::get('/karir', [HomeController::class, 'karirPage'])->name('karir');
 Route::get('/buat-janji', [HomeController::class, 'buatJanjiPage'])->name('buat.janji');
 
-
+// Tanya Kakak Fikri - Intelligent AI Chatbot Routes
+Route::post('/ai/chat', [AiChatController::class, 'chat'])->name('ai.chat');
+Route::post('/ai/reset-session', [AiChatController::class, 'resetSession'])->name('ai.reset');
 
 // Default Login Route Alias for Laravel Auth Middleware
 Route::get('/login', fn () => redirect()->route('admin.login'))->name('login');
@@ -92,5 +96,14 @@ Route::prefix('admin')->name('admin.')->middleware('prevent-back-history')->grou
 
         Route::get('/contact', [AdminContactController::class, 'index'])->name('contact.index');
         Route::post('/contact', [AdminContactController::class, 'update'])->name('contact.update');
+
+        // Tanya Kakak Fikri - Knowledge Base & Learning System Routes
+        Route::get('/knowledge-base', [AdminKnowledgeBaseController::class, 'index'])->name('knowledge.index');
+        Route::post('/knowledge-base', [AdminKnowledgeBaseController::class, 'store'])->name('knowledge.store');
+        Route::put('/knowledge-base/{id}', [AdminKnowledgeBaseController::class, 'update'])->name('knowledge.update');
+        Route::delete('/knowledge-base/{id}', [AdminKnowledgeBaseController::class, 'destroy'])->name('knowledge.destroy');
+        Route::post('/knowledge-base/auto-process', [AdminKnowledgeBaseController::class, 'autoProcess'])->name('knowledge.auto_process');
+        Route::post('/knowledge-base/unrecognized/{id}/resolve', [AdminKnowledgeBaseController::class, 'resolveUnrecognized'])->name('knowledge.unrecognized.resolve');
+        Route::delete('/knowledge-base/unrecognized/{id}', [AdminKnowledgeBaseController::class, 'destroyUnrecognized'])->name('knowledge.unrecognized.destroy');
     });
 });

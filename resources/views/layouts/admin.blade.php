@@ -902,7 +902,12 @@
         <a href="{{ route('admin.banners.index') }}"
            class="sb-item {{ request()->routeIs('admin.banners.*') ? 'active' : '' }}">
             <span class="sb-item-icon"><i class="fa-solid fa-sliders"></i></span>
-            Banner Homepage
+        <div class="sb-group">Asisten Virtual AI</div>
+
+        <a href="{{ route('admin.knowledge.index') }}"
+           class="sb-item {{ request()->routeIs('admin.knowledge.*') ? 'active' : '' }}">
+            <span class="sb-item-icon"><i class="fa-solid fa-brain"></i></span>
+            Knowledge Base (AI)
         </a>
 
     </nav>
