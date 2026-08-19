@@ -1199,10 +1199,14 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         <!-- TITLE: HEALTH HUB -->
-        <div class="mb-3 sm:mb-4">
+        <div class="mb-3 sm:mb-4 flex items-center justify-between">
             <h2 class="text-3xl sm:text-4xl font-extrabold text-[#0e7c47] tracking-tight">
                 Health Hub
             </h2>
+            <a href="{{ route('artikel.index') }}" class="inline-flex items-center gap-1.5 text-xs sm:text-sm font-bold text-[#0e7c47] hover:text-[#096237] transition-colors">
+                <span>{{ __('Lihat Semua Artikel') }}</span>
+                <i class="fa-solid fa-arrow-right text-xs"></i>
+            </a>
         </div>
 
         <!-- FILTER PILLS -->
@@ -1212,8 +1216,8 @@
         <div class="flex items-center gap-2 sm:gap-3 overflow-x-auto pb-1 mb-2.5 sm:mb-3 no-scrollbar">
             @foreach($pills as $pill)
             <button type="button" 
-                    @click="setCategory('{{ $pill }}')" 
-                    :class="activeCategory === '{{ $pill }}' 
+                    @click="setCategory({{ json_encode($pill) }})" 
+                    :class="activeCategory === {{ json_encode($pill) }} 
                         ? 'bg-[#0e7c47] text-white border-[#0e7c47] shadow-xs font-bold' 
                         : 'bg-transparent text-[#0e7c47] border-[#0e7c47] hover:bg-[#0e7c47]/10 font-semibold'"
                     class="px-5 sm:px-6 py-1 sm:py-1.5 rounded-full text-xs sm:text-sm border-2 transition-all whitespace-nowrap cursor-pointer shrink-0 {{ $pill === 'All' ? 'bg-[#0e7c47] text-white border-[#0e7c47] font-bold' : 'text-[#0e7c47] border-[#0e7c47] font-semibold' }}">
@@ -1221,6 +1225,7 @@
             </button>
             @endforeach
         </div>
+
 
         <!-- HORIZONTAL CAROUSEL OF CARDS -->
         <div class="relative -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8">
@@ -1238,13 +1243,14 @@
                     $artExcerpt = $article->tr('excerpt');
                     $artImg = $article->thumbnail ?: 'https://images.unsplash.com/photo-1505751172876-fa1923c5c528?auto=format&fit=crop&w=600&q=80';
                 @endphp
-                <a href="{{ url('/informasi/artikel-kesehatan') }}" 
+                <a href="{{ route('artikel.show', $article->slug) }}" 
                    @click="handleCardClick($event)"
-                   x-show="matches('{{ addslashes($catName) }}')"
+                   x-show="matches({{ json_encode($catName) }})"
                    x-transition:enter="transition ease-out duration-200"
                    x-transition:enter-start="opacity-0 scale-95"
                    x-transition:enter-end="opacity-100 scale-100"
                    class="shrink-0 w-[80vw] sm:w-[310px] md:w-[330px] lg:w-[345px] bg-white rounded-2xl border border-slate-100 shadow-[0_6px_25px_rgba(0,0,0,0.06)] hover:shadow-xl hover:-translate-y-1 transition-all duration-300 overflow-hidden flex flex-col justify-between group">
+
                     
                     <!-- 1. FEATURED IMAGE (MATCHING REFERENCE RATIO) -->
                     <div class="relative aspect-[16/10] w-full overflow-hidden bg-slate-100 rounded-t-2xl pointer-events-none">

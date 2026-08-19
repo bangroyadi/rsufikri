@@ -107,8 +107,18 @@ class HomeController extends Controller
         return view('public.page', compact('title', 'category', 'slug', 'profile', 'services', 'service'));
     }
 
-    public function informasiPage($slug)
+    public function informasiPage(Request $request, $slug)
     {
+        if ($slug === 'artikel-kesehatan' || $slug === 'artikel') {
+            return $this->artikelIndex($request);
+        }
+
+        // Check if slug matches an article
+        $article = Article::where('slug', $slug)->where('is_published', true)->first();
+        if ($article) {
+            return $this->artikelShow($slug);
+        }
+
         $informasiTitles = [
             'artikel-kesehatan' => 'Artikel Kesehatan',
             'event' => 'Event & Kegiatan Hospital',
@@ -124,6 +134,56 @@ class HomeController extends Controller
         $news = News::where('is_published', true)->orderBy('published_at', 'desc')->get();
 
         return view('public.page', compact('title', 'category', 'slug', 'profile', 'articles', 'news'));
+    }
+
+    public function artikelIndex(Request $request)
+    {
+        $category = $request->query('kategori');
+        $query = $request->query('q');
+
+        $articlesQuery = Article::where('is_published', true)->orderBy('published_at', 'desc');
+
+        if (!empty($category) && $category !== 'all') {
+            $articlesQuery->where(function($q) use ($category) {
+                $q->where('category->id', 'like', "%{$category}%")
+                  ->orWhere('category->en', 'like', "%{$category}%");
+            });
+        }
+
+        if (!empty($query)) {
+            $articlesQuery->where(function($q) use ($query) {
+                $q->where('title->id', 'like', "%{$query}%")
+                  ->orWhere('title->en', 'like', "%{$query}%")
+                  ->orWhere('content->id', 'like', "%{$query}%")
+                  ->orWhere('content->en', 'like', "%{$query}%")
+                  ->orWhere('excerpt->id', 'like', "%{$query}%")
+                  ->orWhere('excerpt->en', 'like', "%{$query}%");
+            });
+        }
+
+        $articles = $articlesQuery->paginate(9)->withQueryString();
+        $profile = HospitalProfile::first();
+
+        return view('public.artikel.index', compact('articles', 'profile'));
+    }
+
+    public function artikelShow($slug)
+    {
+        $article = Article::where('slug', $slug)->where('is_published', true)->first();
+
+        if (!$article) {
+            // fallback check
+            $article = Article::where('is_published', true)->get()->first(function($a) use ($slug) {
+                return $a->slug === $slug || Str::slug($a->tr('title')) === $slug;
+            });
+        }
+
+        if (!$article) {
+            abort(404, 'Artikel kesehatan tidak ditemukan');
+        }
+
+        $profile = HospitalProfile::first();
+        return view('public.artikel.show', compact('article', 'profile'));
     }
 
     public function profilPage()

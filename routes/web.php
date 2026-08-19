@@ -26,6 +26,13 @@ Route::get('/lang/{locale}', [LanguageController::class, 'switch'])->name('lang.
 Route::get('/layanan/{slug}', [HomeController::class, 'layananPage'])->name('layanan.show');
 Route::get('/informasi/{slug}', [HomeController::class, 'informasiPage'])->name('informasi.show');
 
+// Edukasi & Artikel Kesehatan Routes
+Route::get('/artikel', [HomeController::class, 'artikelIndex'])->name('artikel.index');
+Route::get('/artikel/{slug}', [HomeController::class, 'artikelShow'])->name('artikel.show');
+Route::get('/edukasi-kesehatan', [HomeController::class, 'artikelIndex'])->name('edukasi.index');
+Route::get('/edukasi-kesehatan/{slug}', [HomeController::class, 'artikelShow'])->name('edukasi.show');
+
+
 // Dedicated Page Routes
 Route::get('/profil', [HomeController::class, 'profilPage'])->name('profil');
 Route::get('/jadwal-dokter', [HomeController::class, 'jadwalDokterPage'])->name('jadwal.dokter');

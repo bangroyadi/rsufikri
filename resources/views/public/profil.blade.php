@@ -1,134 +1,359 @@
 @extends('layouts.app')
 
+@section('title', __('Tentang Kami') . ' - RSU Fikri Medika')
+
 @section('content')
 
+<!-- EXPLICIT SELF-CONTAINED CSS (100% INDEPENDENT OF TAILWIND COMPILATION) -->
+<style>
+    .mitra-body-bg {
+        background-color: #EDF6FB;
+        font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        color: #334155;
+        overflow-x: hidden;
+    }
+    
+    .mitra-container {
+        max-width: 1200px;
+        margin-left: auto;
+        margin-right: auto;
+        padding-left: 24px;
+        padding-right: 24px;
+    }
 
+    /* 1. HERO SECTION */
+    .mitra-hero-section {
+        background: linear-gradient(180deg, #FFFFFF 0%, #EDF6FB 100%);
+        padding-top: 24px;
+        padding-bottom: 70px;
+        position: relative;
+    }
+    .mitra-breadcrumb {
+        font-size: 13px;
+        color: #8C98A4;
+        font-weight: 500;
+        margin-bottom: 24px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+    .mitra-breadcrumb a {
+        color: #8C98A4;
+        text-decoration: none;
+    }
+    .mitra-breadcrumb a:hover {
+        color: #0085CA;
+    }
 
+    .mitra-hero-row {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        gap: 48px;
+        width: 100%;
+    }
+    .mitra-hero-img-col {
+        flex: 0 0 50%;
+        max-width: 50%;
+        position: relative;
+    }
+    .mitra-hero-text-col {
+        flex: 0 0 50%;
+        max-width: 50%;
+        text-align: left;
+    }
+    .mitra-hero-title-pink {
+        color: #E61B72;
+        font-weight: 800;
+        font-size: 46px;
+        line-height: 1.15;
+        letter-spacing: -0.02em;
+        margin: 0 0 6px 0;
+    }
+    .mitra-hero-title-blue {
+        color: #0085CA;
+        font-weight: 800;
+        font-size: 46px;
+        line-height: 1.15;
+        letter-spacing: -0.02em;
+        margin: 0 0 6px 0;
+    }
 
-<!-- MAIN CONTENT SECTION -->
-<section class="py-12 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto space-y-16">
+    /* 2. OVERLAPPING CARDS & IMAGES */
+    .mitra-section-wrap {
+        padding: 40px 0;
+        position: relative;
+    }
+    .mitra-overlap-row {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        position: relative;
+        width: 100%;
+    }
+    .mitra-card-floating {
+        background: #FFFFFF;
+        border-radius: 28px;
+        box-shadow: 0 15px 35px rgba(0, 85, 150, 0.08);
+        padding: 44px 40px;
+        position: relative;
+        z-index: 10;
+        flex: 0 0 54%;
+        max-width: 54%;
+    }
+    .mitra-img-floating {
+        flex: 0 0 54%;
+        max-width: 54%;
+        height: 380px;
+        border-radius: 28px;
+        overflow: hidden;
+        box-shadow: 0 15px 35px rgba(0, 85, 150, 0.08);
+        position: relative;
+        background: #FFFFFF;
+    }
+    .mitra-img-floating img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+    }
 
-    <!-- SEJARAH & SEKILAS PROFIL -->
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
-        <!-- LEFT TEXT CONTENT -->
-        <div class="lg:col-span-7 space-y-5">
-            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-emerald-100/70 text-[#0e7c47] text-xs font-bold">
-                <i class="fa-solid fa-building-hospital"></i> Profil Perusahaan
-            </div>
-            <h2 class="text-2xl sm:text-3xl font-extrabold text-gray-900 tracking-tight leading-snug">
-                Rumah Sakit Umum Fikri Medika Karawang
-            </h2>
-            <p class="text-gray-600 text-sm sm:text-base leading-relaxed">
-                <strong>Fikri Medika GROUP</strong> yang bernaung di bawah <strong>PT. Karya Mandiri Medika Utama</strong> adalah perusahaan yang bergerak di bidang pelayanan jasa kesehatan, yang dimulai dengan berdirinya sarana pelayanan kesehatan berupa Klinik & Rumah Bersalin.
-            </p>
-            <p class="text-gray-600 text-sm sm:text-base leading-relaxed">
-                Seiring berjalannya waktu dan meningkatnya kebutuhan masyarakat akan fasilitas medis komprehensif, Fikri Medika berkembang pesat menjadi Rumah Sakit Umum (RSU) yang menyediakan layanan medis terpadu, rawat jalan, rawat inap, IGD 24 Jam, serta berbagai layanan medis spesialis dengan standar mutu dan keselamatan pasien tinggi.
-            </p>
+    .mitra-card-left {
+        margin-right: -8%;
+    }
+    .mitra-card-right {
+        margin-left: -8%;
+    }
 
-            <!-- HIGHLIGHT POINTS -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
-                <div class="flex items-start gap-3 p-3.5 rounded-xl bg-emerald-50/60 border border-emerald-100">
-                    <i class="fa-solid fa-circle-check text-[#0e7c47] text-lg mt-0.5"></i>
-                    <div>
-                        <h4 class="font-bold text-gray-900 text-sm">Badan Hukum Resmi</h4>
-                        <p class="text-xs text-gray-600 mt-0.5">PT. Karya Mandiri Medika Utama.</p>
-                    </div>
-                </div>
-                <div class="flex items-start gap-3 p-3.5 rounded-xl bg-emerald-50/60 border border-emerald-100">
-                    <i class="fa-solid fa-hand-holding-medical text-[#0e7c47] text-lg mt-0.5"></i>
-                    <div>
-                        <h4 class="font-bold text-gray-900 text-sm">Fasilitas Lengkap</h4>
-                        <p class="text-xs text-gray-600 mt-0.5">Pelayanan Hemodialisa, Fisioterapi, MCU, & IGD 24 Jam.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
+    /* PILL BADGES */
+    .mitra-badge-orange-pink {
+        background: linear-gradient(90deg, #FF6B35 0%, #E61B72 100%);
+        color: #FFFFFF;
+        font-weight: 700;
+        font-size: 18px;
+        padding: 10px 32px;
+        border-radius: 50px;
+        position: absolute;
+        top: -24px;
+        box-shadow: 0 6px 16px rgba(230, 27, 114, 0.35);
+        display: inline-block;
+        white-space: nowrap;
+    }
+    .mitra-badge-green-yellow {
+        background: linear-gradient(90deg, #0e7c47 0%, #16a34a 55%, #eab308 100%);
+        color: #FFFFFF;
+        font-weight: 700;
+        font-size: 18px;
+        padding: 10px 32px;
+        border-radius: 50px;
+        position: absolute;
+        top: -24px;
+        box-shadow: 0 6px 16px rgba(14, 124, 71, 0.35);
+        display: inline-block;
+        white-space: nowrap;
+    }
 
-        <!-- RIGHT SHOWCASE CARD IMAGE (GEDUNG 2) -->
-        <div class="lg:col-span-5 relative">
-            <div class="relative rounded-3xl overflow-hidden shadow-2xl border-4 border-white bg-white p-2">
-                <img src="{{ asset('gedung2_web.jpg') }}" 
-                     alt="Gedung RSU Fikri Medika" 
-                     class="w-full h-80 sm:h-96 object-cover rounded-2xl"
-                     loading="lazy"
-                     decoding="async">
-                
-                <!-- FLOATING BADGE -->
-                <div class="absolute bottom-6 left-6 right-6 bg-slate-900/80 backdrop-blur-md border border-white/20 p-4 rounded-2xl text-white shadow-xl flex items-center justify-between">
-                    <div>
-                        <div class="text-[10px] text-yellow-300 font-extrabold uppercase tracking-wider">Gedung Utama</div>
-                        <div class="text-sm font-bold text-white">RSU Fikri Medika Karawang</div>
-                    </div>
-                    <span class="px-3 py-1 rounded-full bg-emerald-600 text-white text-[11px] font-bold">
-                        <i class="fa-solid fa-location-dot text-[10px]"></i> Karawang
-                    </span>
-                </div>
-            </div>
-        </div>
-    </div>
+    /* 4. CORE VALUES SECTION */
+    .mitra-values-card {
+        background: #FFFFFF;
+        border-radius: 28px;
+        box-shadow: 0 15px 35px rgba(0, 85, 150, 0.08);
+        padding: 48px 44px;
+        position: relative;
+        margin-top: 20px;
+        margin-bottom: 20px;
+    }
+    .mitra-values-row {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        gap: 32px;
+        margin-top: 16px;
+    }
+    .mitra-values-text-col {
+        flex: 0 0 58%;
+        max-width: 58%;
+        text-align: left;
+    }
+    .mitra-values-diagram-col {
+        flex: 0 0 38%;
+        max-width: 38%;
+        display: flex;
+        justify-content: center;
+    }
 
-    <!-- VISI & MISI SECTION (OFFICIAL TEXT) -->
-    <div class="space-y-10 pt-4">
-        <div class="text-center max-w-2xl mx-auto space-y-2">
-            <span class="inline-block px-3 py-1 rounded-full bg-emerald-100 text-[#0e7c47] text-xs font-bold">
-                Landasan Utama
-            </span>
-            <h2 class="text-2xl sm:text-4xl font-extrabold text-gray-900">Visi & Misi Rumah Sakit</h2>
-            <p class="text-gray-600 text-sm">Pedoman resmi RSU Fikri Medika dalam melayani masyarakat.</p>
-        </div>
+    /* 5. WHATSAPP CTA BANNER */
+    .mitra-wa-banner {
+        background: #0085CA;
+        background: linear-gradient(90deg, #0085CA 0%, #009FE3 100%);
+        padding: 28px 0;
+        color: #FFFFFF;
+        width: 100%;
+        margin-top: 40px;
+    }
+    .mitra-wa-flex {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        gap: 24px;
+    }
+    .mitra-wa-btn {
+        background: #FFFFFF;
+        color: #0085CA !important;
+        border-radius: 50px;
+        padding: 12px 34px;
+        font-weight: 800;
+        font-size: 22px;
+        display: inline-flex;
+        align-items: center;
+        gap: 12px;
+        text-decoration: none;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        white-space: nowrap;
+    }
+    .mitra-wa-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 12px 25px rgba(0, 0, 0, 0.2);
+    }
 
-        <!-- ELEGANT CLEAR WHITE VISI SHOWCASE CARD (NO PHOTO, CLEAR THEME, RS HIGHLIGHT) -->
-        <div class="bg-white rounded-3xl p-8 sm:p-10 lg:p-12 text-slate-900 shadow-xl relative overflow-hidden border border-gray-100">
+    /* RESPONSIVE MEDIA QUERIES */
+    @media (max-width: 992px) {
+        .mitra-hero-row, .mitra-overlap-row, .mitra-values-row, .mitra-wa-flex {
+            flex-direction: column !important;
+            gap: 32px !important;
+        }
+        .mitra-hero-img-col, .mitra-hero-text-col, .mitra-card-floating, .mitra-img-floating, .mitra-values-text-col, .mitra-values-diagram-col {
+            flex: 0 0 100% !important;
+            max-width: 100% !important;
+            margin-left: 0 !important;
+            margin-right: 0 !important;
+        }
+        .mitra-hero-title-pink, .mitra-hero-title-blue {
+            font-size: 32px;
+        }
+    }
+</style>
+
+<div class="mitra-body-bg">
+
+    <!-- =========================================================================
+         1. HERO HEADER SECTION (FULL-WIDTH BANNER GEDUNG 1)
+         ========================================================================= -->
+    <section class="mitra-hero-section">
+        <div class="mitra-container">
             
-            <div class="max-w-4xl mx-auto space-y-8 text-center">
-                <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-50 text-[#0e7c47] text-xs font-black uppercase tracking-wider border border-emerald-200 shadow-xs">
-                    <i class="fa-solid fa-compass text-sm text-[#0e7c47]"></i>
-                    <span>Visi Utama RSU Fikri Medika</span>
+            <!-- BREADCRUMB -->
+            <div class="mitra-breadcrumb">
+                <a href="{{ route('home') }}">Beranda</a>
+                <span>></span>
+                <span style="color: #212529; font-weight: 600;">Tentang Kami</span>
+            </div>
+
+            <!-- FULL WIDTH BANNER IMAGE -->
+            <div style="width: 100%; height: 420px; border-radius: 28px; overflow: hidden; box-shadow: 0 15px 35px rgba(0, 85, 150, 0.08); background: #FFFFFF;">
+                <img src="{{ asset('gedung1_web.jpg') }}" 
+                     alt="Gedung RSU Fikri Medika" 
+                     style="width: 100%; height: 100%; object-fit: cover; object-position: center; display: block;">
+            </div>
+
+        </div>
+    </section>
+
+    <!-- =========================================================================
+         2. SEKILAS TENTANG KAMI (EXACT OVERLAPPING WHITE CARD LEFT, IMAGE RIGHT)
+         ========================================================================= -->
+    <section class="mitra-section-wrap">
+        <div class="mitra-container">
+            <div class="mitra-overlap-row">
+                
+                <!-- LEFT: FLOATING WHITE CARD -->
+                <div class="mitra-card-floating mitra-card-left">
+                    <!-- FLOATING ORANGE-PINK PILL BADGE -->
+                    <div class="mitra-badge-orange-pink" style="left: 36px;">
+                        Tentang Kami
+                    </div>
+
+                    <div style="font-size: 14.5px; color: #334155; line-height: 1.75; margin-top: 8px;">
+                        <p style="margin-bottom: 14px;">
+                            <strong>RSU Fikri Medika</strong> berdiri pada tahun 2008 dan didirikan dengan semangat untuk mendekatkan akses pelayanan kesehatan sekunder bagi masyarakat Karawang dan sekitarnya. Sejak awal berdirinya, rumah sakit ini terus mengalami perkembangan yang signifikan, baik dari segi penambahan fasilitas fisik, peningkatan jumlah dokter spesialis, maupun digitalisasi proses bisnis.
+                        </p>
+                        <p style="margin-bottom: 0;">
+                            Transformasi digital yang dimulai dari sistem billing sederhana kini telah berkembang menjadi sistem informasi rumah sakit terintegrasi yang mencakup implementasi Rekam Medis Elektronik (RME) secara menyeluruh. Di bawah kepemimpinan Direktur <strong>Apt. Bintari Ari Kusumawati, S.Farm., MMRS</strong>, RSU Fikri Medika berkomitmen penuh untuk menjalani siklus akreditasi berkala sebagai bentuk penjaminan mutu pelayanan dan keselamatan pasien.
+                        </p>
+                    </div>
                 </div>
 
-                <h3 class="text-2xl sm:text-3xl lg:text-4xl font-black leading-relaxed text-slate-900 max-w-3xl mx-auto">
-                    "Menjadikan rumah sakit swasta yang menyediakan layanan <span class="text-[#0e7c47] underline decoration-[#0e7c47]/30 decoration-wavy decoration-2">berkualitas</span>, <span class="text-[#0e7c47] underline decoration-[#0e7c47]/30 decoration-wavy decoration-2">unggul</span>, dan <span class="text-[#0e7c47] underline decoration-[#0e7c47]/30 decoration-wavy decoration-2">terpercaya</span> di Karawang."
-                </h3>
+                <!-- RIGHT: RECEPTIONIST PHOTO -->
+                <div class="mitra-img-floating">
+                    <img src="https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&w=1000&q=80" 
+                         alt="Pelayanan Ramah RSU Fikri Medika">
+                </div>
 
-                <!-- 3 CORE RS HIGHLIGHT PILLARS -->
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 pt-4 text-left">
-                    <div class="p-6 rounded-2xl bg-slate-50 border border-gray-100 hover:border-emerald-200 transition-all hover:shadow-md group">
-                        <div class="w-12 h-12 rounded-2xl bg-[#0e7c47] text-white flex items-center justify-center text-xl font-bold mb-4 shadow-sm group-hover:scale-110 transition-transform">
-                            <i class="fa-solid fa-star text-yellow-300"></i>
-                        </div>
-                        <h4 class="font-extrabold text-slate-900 text-base mb-1">Berkualitas</h4>
-                        <p class="text-xs text-gray-500 font-medium leading-relaxed">
-                            Standar mutu pelayanan medis tinggi, ditunjang oleh dokter spesialis & perawat berpengalaman.
+            </div>
+        </div>
+    </section>
+
+    <!-- =========================================================================
+         3. VISI & MISI & MOTTO (MIRRORED OVERLAP: IMAGE LEFT, WHITE CARD RIGHT)
+         ========================================================================= -->
+    <section class="mitra-section-wrap">
+        <div class="mitra-container">
+            <div class="mitra-overlap-row">
+                
+                <!-- LEFT: DOCTOR EXAMINING CHILD PHOTO -->
+                <div class="mitra-img-floating">
+                    <img src="https://images.unsplash.com/photo-1576765608535-5f04d1e3f289?auto=format&fit=crop&w=1000&q=80" 
+                         alt="Pelayanan Medis RSU Fikri Medika">
+                </div>
+
+                <!-- RIGHT: FLOATING WHITE CARD -->
+                <div class="mitra-card-floating mitra-card-right">
+                    <!-- FLOATING GREEN-YELLOW PILL BADGE -->
+                    <div class="mitra-badge-green-yellow" style="right: 36px;">
+                        Visi & Misi
+                    </div>
+
+                    <!-- VISI -->
+                    <div style="margin-top: 8px;">
+                        <h3 style="font-size: 21px; font-weight: 700; color: #0f172a; margin-bottom: 6px;">Visi RSU Fikri Medika</h3>
+                        <p style="font-size: 14.5px; color: #334155; line-height: 1.6; margin: 0;">
+                            Menjadikan Rumah Sakit Swasta yang menyediakan layanan berkualitas, unggul dan terpercaya di Karawang.
                         </p>
                     </div>
 
-                    <div class="p-6 rounded-2xl bg-slate-50 border border-gray-100 hover:border-emerald-200 transition-all hover:shadow-md group">
-                        <div class="w-12 h-12 rounded-2xl bg-[#0e7c47] text-white flex items-center justify-center text-xl font-bold mb-4 shadow-sm group-hover:scale-110 transition-transform">
-                            <i class="fa-solid fa-award text-yellow-300"></i>
-                        </div>
-                        <h4 class="font-extrabold text-slate-900 text-base mb-1">Unggul</h4>
-                        <p class="text-xs text-gray-500 font-medium leading-relaxed">
-                            Fasilitas medis modern, IGD 24 jam, kamar perawatan nyaman, dan unit penunjang terpadu.
-                        </p>
+                    <!-- DIVIDER -->
+                    <hr style="border: 0; border-top: 1px solid #e2e8f0; margin: 18px 0;">
+
+                    <!-- MISI -->
+                    <div>
+                        <h3 style="font-size: 21px; font-weight: 700; color: #0f172a; margin-bottom: 6px;">Misi RSU Fikri Medika</h3>
+                        <ol style="margin: 0; padding-left: 20px; font-size: 14.5px; color: #334155; line-height: 1.7;">
+                            <li style="margin-bottom: 4px;">Memberikan Pelayanan Kesehatan dan Medis terbaik kepada masyarakat.</li>
+                            <li style="margin-bottom: 4px;">Mewujudkan Kesejahteraan bagi seluruh Stakeholder.</li>
+                            <li style="margin-bottom: 0;">Peduli kepada lingkungan, masyarakat dan bangsa.</li>
+                        </ol>
                     </div>
 
-                    <div class="p-6 rounded-2xl bg-slate-50 border border-gray-100 hover:border-emerald-200 transition-all hover:shadow-md group">
-                        <div class="w-12 h-12 rounded-2xl bg-[#0e7c47] text-white flex items-center justify-center text-xl font-bold mb-4 shadow-sm group-hover:scale-110 transition-transform">
-                            <i class="fa-solid fa-hand-holding-heart text-yellow-300"></i>
-                        </div>
-                        <h4 class="font-extrabold text-slate-900 text-base mb-1">Terpercaya</h4>
-                        <p class="text-xs text-gray-500 font-medium leading-relaxed">
-                            Pelayanan yang berpusat pada keselamatan pasien dengan mengedepankan nilai-nilai kedokteran Islami.
+                    <!-- DIVIDER -->
+                    <hr style="border: 0; border-top: 1px solid #e2e8f0; margin: 18px 0;">
+
+                    <!-- MOTTO -->
+                    <div>
+                        <h3 style="font-size: 18px; font-weight: 700; color: #0f172a; margin-bottom: 4px;">Motto RSU Fikri Medika</h3>
+                        <p style="font-size: 14.5px; font-weight: 600; color: #0e7c47; margin: 0; font-style: italic;">
+                            "Kesehatan Anda Prioritas Layanan Utama Kami."
                         </p>
                     </div>
                 </div>
 
             </div>
         </div>
+    </section>
 
+</div>
 
-    </div>
-
-
-</section>
 @endsection
