@@ -36,7 +36,9 @@ Route::get('/edukasi-kesehatan/{slug}', [HomeController::class, 'artikelShow'])-
 // Dedicated Page Routes
 Route::get('/profil', [HomeController::class, 'profilPage'])->name('profil');
 Route::get('/jadwal-dokter', [HomeController::class, 'jadwalDokterPage'])->name('jadwal.dokter');
-Route::get('/kontak', [HomeController::class, 'kontakPage'])->name('kontak');
+Route::get('/lokasi', [HomeController::class, 'lokasiPage'])->name('lokasi');
+Route::get('/map', [HomeController::class, 'lokasiPage'])->name('map');
+Route::get('/kontak', [HomeController::class, 'lokasiPage'])->name('kontak');
 Route::get('/karir', [HomeController::class, 'karirPage'])->name('karir');
 Route::get('/buat-janji', [HomeController::class, 'buatJanjiPage'])->name('buat.janji');
 

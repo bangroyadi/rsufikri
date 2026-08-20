@@ -81,7 +81,7 @@
             
             <!-- LEFT INFO ITEMS -->
             <div class="flex items-center gap-2 sm:gap-4 truncate">
-                <a href="https://maps.google.com" target="_blank" class="inline-flex items-center gap-1 text-gray-100 hover:text-yellow-300 transition-colors text-[11px] sm:text-xs">
+                <a href="{{ url('/lokasi') }}" class="inline-flex items-center gap-1 text-gray-100 hover:text-yellow-300 transition-colors text-[11px] sm:text-xs">
                     <i class="fa-solid fa-location-dot text-yellow-300 text-xs"></i>
                     <span class="inline">{{ __('Lokasi') }}</span>
                 </a>
@@ -288,12 +288,17 @@
                     <a href="{{ url('/karir') }}" class="flex items-center h-full transition-colors {{ request()->is('karir') ? 'text-[#0e7c47] font-bold relative after:content-[\'\'] after:absolute after:bottom-0 after:left-0 after:w-full after:h-0.5 after:bg-[#0e7c47]' : 'hover:text-[#0e7c47]' }}">{{ __('Karir') }}</a>
                 </nav>
 
-                <!-- RIGHT CONTROLS: SEARCH ICON AND DESKTOP CTA -->
-                <div class="flex items-center gap-2 sm:gap-3 shrink-0">
+                <!-- RIGHT CONTROLS: SEARCH ICON, LOCATION ICON, AND DESKTOP CTA -->
+                <div class="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
                     <!-- SEARCH BUTTON -->
                     <button @click="searchOpen = !searchOpen" class="p-1.5 rounded-lg text-[#0e7c47] hover:bg-emerald-50 transition-colors focus:outline-none" title="Cari">
                         <i class="fa-solid fa-magnifying-glass text-base sm:text-lg"></i>
                     </button>
+
+                    <!-- LOCATION ICON BUTTON -->
+                    <a href="{{ url('/lokasi') }}" class="p-1.5 rounded-lg text-[#0e7c47] hover:bg-emerald-50 transition-colors focus:outline-none {{ request()->is('lokasi*') || request()->is('map*') ? 'bg-emerald-50 font-bold' : '' }}" title="Lokasi & Petunjuk Arah">
+                        <i class="fa-solid fa-location-dot text-base sm:text-lg"></i>
+                    </a>
 
                     <!-- DESKTOP CTA BUTTON -->
                     <a href="{{ url('/buat-janji') }}" class="hidden lg:flex px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-[#e31e24] text-white hover:bg-red-700 shadow-md shadow-red-200 transition-all items-center gap-2">
@@ -436,8 +441,13 @@
                 </div>
             </div>
 
-            <a href="{{ url('/karir') }}" @click="mobileMenuOpen = false" class="flex items-center justify-between py-2 px-1 font-semibold text-gray-700 hover:text-[#0e7c47] text-sm">
+            <a href="{{ url('/karir') }}" @click="mobileMenuOpen = false" class="flex items-center justify-between py-2 px-1 font-semibold text-gray-700 hover:text-[#0e7c47] border-b border-gray-100 text-sm">
                 <span>{{ __('Karir') }}</span>
+                <i class="fa-solid fa-chevron-right text-xs text-gray-400"></i>
+            </a>
+
+            <a href="{{ url('/lokasi') }}" @click="mobileMenuOpen = false" class="flex items-center justify-between py-2 px-1 font-semibold text-gray-700 hover:text-[#0e7c47] text-sm">
+                <span>{{ __('Lokasi & Peta') }}</span>
                 <i class="fa-solid fa-chevron-right text-xs text-gray-400"></i>
             </a>
 
@@ -502,7 +512,7 @@
     </main>
 
     <!-- FOOTER -->
-    <footer class="bg-white border-t border-slate-200 mt-auto text-slate-700">
+    <footer class="bg-white border-t border-slate-200 mt-auto text-gray-700">
         
         <!-- GREEN TOP CONTACT & INFO BAR -->
         <div class="bg-[#0e7c47] text-white py-7 px-4 sm:px-6 lg:px-8 border-b border-[#096237]">
@@ -556,138 +566,174 @@
             </div>
         </div>
 
-        <!-- MAIN WHITE FOOTER CONTENT -->
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12">
+        <!-- MAIN WHITE FOOTER CONTENT (4 COLUMNS) -->
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 lg:pt-10 pb-8" style="padding-top: 2.25rem; padding-bottom: 2rem;">
+            <!-- 4 COLUMNS FOOTER CONTENT -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-8 mb-12">
                 
-                <!-- LEFT HOSPITAL PROFILE (4 COLS) -->
-                <div class="lg:col-span-4 space-y-4">
+                <!-- COLUMN 1: LOGO & BRAND INFO -->
+                <div class="space-y-3.5">
                     <a href="{{ route('home') }}" class="inline-block">
                         <img src="{{ asset('logodasboard.png') }}" 
-                             alt="RSU Fikri Medika Logo" 
+                             alt="RSU Fikri Medika" 
                              class="h-12 sm:h-14 w-auto object-contain">
                     </a>
-                    
-                    <div class="border-b-2 border-[#0e7c47] pb-1.5 w-fit pr-4">
-                        <h3 class="text-sm font-extrabold text-[#0e7c47] uppercase tracking-wider">
-                            RUMAH SAKIT UMUM FIKRI MEDIKA
-                        </h3>
-                    </div>
 
-                    <p class="text-xs sm:text-sm text-slate-500 uppercase tracking-wide leading-relaxed font-medium">
-                        Jl. Raya Kosambi - Telagasari No. 9, Klari, Kabupaten Karawang, Jawa Barat 41371
+                    <p class="text-xs sm:text-sm text-gray-800 font-medium leading-relaxed">
+                        Memberikan pelayanan kesehatan prima, modern, dan profesional dengan mengutamakan keselamatan serta kenyamanan pasien dan keluarga.
                     </p>
 
-                    <div class="space-y-1 text-xs sm:text-sm text-slate-600 font-normal pt-1">
-                        <p>
-                            General information: <a href="tel:02678454123" class="font-bold text-[#0e7c47] hover:underline">(0267) 8454123</a>
-                        </p>
-                        <p>
-                            New Patients & BPJS: <a href="https://wa.me/6281234567890" target="_blank" class="font-bold text-[#0e7c47] hover:underline">0812-3456-7890</a>
-                        </p>
+                    <!-- BPJS BADGE -->
+                    <div class="pt-1">
+                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-blue-50 text-blue-900 text-[11px] font-bold border border-blue-200 shadow-2xs">
+                            <i class="fa-solid fa-hand-holding-medical text-blue-600"></i>
+                            <span>Mitra Resmi BPJS Kesehatan</span>
+                        </span>
                     </div>
 
-                    <!-- SOCIAL ICONS -->
-                    <div class="flex items-center gap-2 pt-2">
-                        <a href="https://www.instagram.com/rsu.fikrimedika/" target="_blank" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-[#0e7c47] text-slate-600 hover:text-white flex items-center justify-center transition-colors" title="Instagram">
-                            <i class="fa-brands fa-instagram text-xs"></i>
-                        </a>
-                        <a href="https://www.tiktok.com/@rsu.fikrimedika" target="_blank" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-900 text-slate-600 hover:text-white flex items-center justify-center transition-colors" title="TikTok">
-                            <i class="fa-brands fa-tiktok text-xs"></i>
-                        </a>
-                        <a href="https://www.youtube.com/@rsufikrimedika" target="_blank" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-red-600 text-slate-600 hover:text-white flex items-center justify-center transition-colors" title="YouTube">
-                            <i class="fa-brands fa-youtube text-xs"></i>
-                        </a>
-                        <a href="https://wa.me/6281234567890" target="_blank" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-emerald-600 text-slate-600 hover:text-white flex items-center justify-center transition-colors" title="WhatsApp">
-                            <i class="fa-brands fa-whatsapp text-xs"></i>
-                        </a>
+                    <!-- SHORT ADDRESS -->
+                    <div class="text-xs text-gray-800 font-semibold pt-1 flex items-start gap-2">
+                        <i class="fa-solid fa-location-dot text-[#0e7c47] mt-0.5 shrink-0"></i>
+                        <span>Jl. Raya Kosambi - Telagasari No. 9, Klari, Karawang</span>
                     </div>
                 </div>
 
-                <!-- RIGHT NAVIGATION COLUMNS (8 COLS) -->
-                <div class="lg:col-span-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
-                    
-                    <!-- COLUMN 1: CENTERS / LAYANAN -->
-                    <div>
-                        <h4 class="text-xs font-bold text-slate-900 uppercase tracking-wider mb-4 border-b border-slate-200 pb-2">
-                            {{ __('Layanan') }}
-                        </h4>
-                        <ul class="space-y-2.5 text-xs sm:text-[13px] text-slate-500">
-                            <li><a href="{{ url('/layanan/trauma-center') }}" class="hover:text-[#0e7c47] transition-colors block">Trauma Center</a></li>
-                            <li><a href="{{ url('/layanan/spesialis-mata') }}" class="hover:text-[#0e7c47] transition-colors block">Spesialis Mata</a></li>
-                            <li><a href="{{ url('/layanan/kemilau-cinta-layanan-ibu-anak') }}" class="hover:text-[#0e7c47] transition-colors block">Kemilau Cinta (Ibu & Anak)</a></li>
-                            <li><a href="{{ url('/layanan/layanan-antar-jemput') }}" class="hover:text-[#0e7c47] transition-colors block">Antar Jemput</a></li>
-                            <li><a href="{{ url('/layanan/rawat-inap') }}" class="hover:text-[#0e7c47] transition-colors block">Rawat Inap</a></li>
-                            <li><a href="{{ url('/layanan/rawat-jalan') }}" class="hover:text-[#0e7c47] transition-colors block">Rawat Jalan</a></li>
-                            <li><a href="{{ url('/layanan/igd') }}" class="hover:text-[#0e7c47] transition-colors block">IGD 24 Jam</a></li>
-                            <li><a href="{{ url('/layanan/farmasi-24-jam') }}" class="hover:text-[#0e7c47] transition-colors block">Farmasi 24 Jam</a></li>
-                        </ul>
-                    </div>
+                <!-- COLUMN 2: CORPORATE -->
+                <div>
+                    <h4 class="text-xs font-extrabold text-gray-900 uppercase tracking-wider mb-4">
+                        CORPORATE
+                    </h4>
+                    <ul class="space-y-3 text-sm text-gray-900 font-medium">
+                        <li>
+                            <a href="{{ url('/profil') }}" class="text-gray-800 hover:text-[#0e7c47] font-semibold transition-colors">
+                                Tentang Kami
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ url('/profil') }}" class="text-gray-800 hover:text-[#0e7c47] font-semibold transition-colors">
+                                Investor
+                            </a>
+                        </li>
+                        <li class="pt-2">
+                            <p class="text-xs sm:text-sm text-gray-900 font-bold mb-3">
+                                Download RSU Fikri Medika App
+                            </p>
+                            <!-- APP STORE & GOOGLE PLAY BADGES (HIGH CONTRAST SOLID DARK) -->
+                            <div class="flex flex-wrap items-center gap-2.5">
+                                <a href="#" style="background-color: #0f172a !important; color: #ffffff !important;" class="inline-flex items-center gap-2.5 bg-slate-900 text-white px-3.5 py-2 rounded-xl hover:bg-slate-800 transition-colors shadow-md border border-slate-700">
+                                    <svg class="w-5 h-5 shrink-0" viewBox="0 0 24 24" fill="#ffffff">
+                                        <path fill="#ffffff" d="M3,20.5V3.5C3,2.91 3.34,2.39 3.84,2.15L13.69,12L3.84,21.85C3.34,21.6 3,21.09 3,20.5M16.81,15.12L6.05,21.34L14.54,12.85L16.81,15.12M20.16,10.81C20.5,11.08 20.75,11.5 20.75,12C20.75,12.5 20.53,12.9 20.18,13.18L17.89,14.5L15.39,12L17.89,9.5L20.16,10.81M6.05,2.66L16.81,8.88L14.54,11.15L6.05,2.66Z" />
+                                    </svg>
+                                    <div class="text-left">
+                                        <div class="text-[8px] leading-tight uppercase font-bold text-slate-200" style="color: #e2e8f0 !important;">GET IT ON</div>
+                                        <div class="text-[12px] leading-tight font-extrabold tracking-tight text-white" style="color: #ffffff !important;">Google Play</div>
+                                    </div>
+                                </a>
+                                <a href="#" style="background-color: #0f172a !important; color: #ffffff !important;" class="inline-flex items-center gap-2.5 bg-slate-900 text-white px-3.5 py-2 rounded-xl hover:bg-slate-800 transition-colors shadow-md border border-slate-700">
+                                    <svg class="w-5 h-5 shrink-0" viewBox="0 0 24 24" fill="#ffffff">
+                                        <path fill="#ffffff" d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 6.37c.61-.75 1.04-1.8 1.01-2.87-.96.04-2.12.65-2.8 1.45-.6.69-.97 1.77-.83 2.84 1.07.08 2.01-.67 2.62-1.42z" />
+                                    </svg>
+                                    <div class="text-left">
+                                        <div class="text-[8px] leading-tight font-bold text-slate-200" style="color: #e2e8f0 !important;">Download on the</div>
+                                        <div class="text-[12px] leading-tight font-extrabold tracking-tight text-white" style="color: #ffffff !important;">App Store</div>
+                                    </div>
+                                </a>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
 
-                    <!-- COLUMN 2: CLINICAL DEPARTMENTS SUBCOL 1 -->
-                    <div>
-                        <h4 class="text-xs font-bold text-slate-900 uppercase tracking-wider mb-4 border-b border-slate-200 pb-2">
-                            {{ __('Penunjang') }}
-                        </h4>
-                        <ul class="space-y-2.5 text-xs sm:text-[13px] text-slate-500">
-                            <li><a href="{{ url('/layanan/radiologi-24-jam') }}" class="hover:text-[#0e7c47] transition-colors block">Radiologi 24 Jam</a></li>
-                            <li><a href="{{ url('/layanan/laboratorium-klinik') }}" class="hover:text-[#0e7c47] transition-colors block">Laboratorium Klinik</a></li>
-                            <li><a href="{{ url('/layanan/laboratorium-patologi') }}" class="hover:text-[#0e7c47] transition-colors block">Patologi Anatomi</a></li>
-                            <li><a href="{{ url('/layanan/rehabilitasi-medik') }}" class="hover:text-[#0e7c47] transition-colors block">Rehabilitasi Medik</a></li>
-                            <li><a href="{{ url('/layanan/penunjang-medis') }}" class="hover:text-[#0e7c47] transition-colors block">Penunjang Medis</a></li>
-                        </ul>
-                    </div>
+                <!-- COLUMN 3: QUICK MENU -->
+                <div>
+                    <h4 class="text-xs font-extrabold text-gray-900 uppercase tracking-wider mb-4">
+                        QUICK MENU
+                    </h4>
+                    <ul class="space-y-3 text-sm font-semibold">
+                        <li>
+                            <a href="{{ url('/buat-janji') }}" class="text-gray-800 hover:text-[#0e7c47] transition-colors">
+                                Buat Janji Temu
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ url('/jadwal-dokter') }}" class="text-gray-800 hover:text-[#0e7c47] transition-colors">
+                                Cari Dokter
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ url('/lokasi') }}" class="text-gray-800 hover:text-[#0e7c47] transition-colors">
+                                Cari Lokasi
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ url('/karir') }}" class="text-gray-800 hover:text-[#0e7c47] transition-colors">
+                                Karir
+                            </a>
+                        </li>
+                    </ul>
+                </div>
 
-                    <!-- COLUMN 3: CLINICAL DEPARTMENTS SUBCOL 2 / SPESIALIS -->
-                    <div>
-                        <h4 class="text-xs font-bold text-slate-900 uppercase tracking-wider mb-4 border-b border-slate-200 pb-2">
-                            {{ __('Poliklinik') }}
-                        </h4>
-                        <ul class="space-y-2.5 text-xs sm:text-[13px] text-slate-500">
-                            <li><a href="{{ url('/jadwal-dokter') }}" class="hover:text-[#0e7c47] transition-colors block">Penyakit Dalam</a></li>
-                            <li><a href="{{ url('/jadwal-dokter') }}" class="hover:text-[#0e7c47] transition-colors block">Kebidanan & Kandungan</a></li>
-                            <li><a href="{{ url('/jadwal-dokter') }}" class="hover:text-[#0e7c47] transition-colors block">Kesehatan Anak</a></li>
-                            <li><a href="{{ url('/jadwal-dokter') }}" class="hover:text-[#0e7c47] transition-colors block">Bedah Umum</a></li>
-                            <li><a href="{{ url('/jadwal-dokter') }}" class="hover:text-[#0e7c47] transition-colors block">Poli Gigi & Mulut</a></li>
-                        </ul>
-                    </div>
-
-                    <!-- COLUMN 4: DEPARTMENTS / INFORMASI -->
-                    <div>
-                        <h4 class="text-xs font-bold text-slate-900 uppercase tracking-wider mb-4 border-b border-slate-200 pb-2">
-                            {{ __('Informasi') }}
-                        </h4>
-                        <ul class="space-y-2.5 text-xs sm:text-[13px] text-slate-500">
-                            <li><a href="{{ url('/jadwal-dokter') }}" class="hover:text-[#0e7c47] transition-colors block">{{ __('Jadwal Dokter') }}</a></li>
-                            <li><a href="{{ url('/buat-janji') }}" class="hover:text-[#0e7c47] transition-colors block">{{ __('Buat Janji') }}</a></li>
-                            <li><a href="{{ url('/informasi/artikel-kesehatan') }}" class="hover:text-[#0e7c47] transition-colors block">{{ __('Artikel') }}</a></li>
-                            <li><a href="{{ url('/informasi/event') }}" class="hover:text-[#0e7c47] transition-colors block">{{ __('Event') }}</a></li>
-                            <li><a href="{{ url('/informasi/penawaran-khusus') }}" class="hover:text-[#0e7c47] transition-colors block">{{ __('Penawaran') }}</a></li>
-                            <li><a href="{{ url('/informasi/aduan-layanan') }}" class="hover:text-[#0e7c47] transition-colors block">{{ __('Aduan') }}</a></li>
-                            <li><a href="{{ url('/informasi/ikm') }}" class="hover:text-[#0e7c47] transition-colors block">{{ __('IKM') }}</a></li>
-                            <li><a href="{{ url('/karir') }}" class="hover:text-[#0e7c47] transition-colors block">{{ __('Karir') }}</a></li>
-                            <li><a href="{{ route('admin.login') }}" class="hover:text-[#0e7c47] transition-colors block text-slate-400">{{ __('Admin') }}</a></li>
-                        </ul>
-                    </div>
-
+                <!-- COLUMN 4: HUBUNGI KAMI -->
+                <div>
+                    <h4 class="text-xs font-extrabold text-gray-900 uppercase tracking-wider mb-4">
+                        HUBUNGI KAMI
+                    </h4>
+                    <ul class="space-y-3 text-sm font-semibold">
+                        <li>
+                            <a href="https://www.instagram.com/rsu.fikrimedika/" target="_blank" class="flex items-center gap-3 text-gray-800 hover:text-[#0e7c47] transition-colors group">
+                                <i class="fa-brands fa-square-instagram text-[#0284c7] text-base w-4 text-center"></i>
+                                <span>Instagram</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://www.tiktok/@rsu.fikrimedika" target="_blank" class="flex items-center gap-3 text-gray-800 hover:text-[#0e7c47] transition-colors group">
+                                <i class="fa-brands fa-tiktok text-[#0284c7] text-base w-4 text-center"></i>
+                                <span>TikTok</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://www.youtube.com/@rsufikrimedika" target="_blank" class="flex items-center gap-3 text-gray-800 hover:text-[#0e7c47] transition-colors group">
+                                <i class="fa-brands fa-youtube text-[#0284c7] text-base w-4 text-center"></i>
+                                <span>Youtube</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" class="flex items-center gap-3 text-gray-800 hover:text-[#0e7c47] transition-colors group">
+                                <i class="fa-brands fa-linkedin text-[#0284c7] text-base w-4 text-center"></i>
+                                <span>Linkedin</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" class="flex items-center gap-3 text-gray-800 hover:text-[#0e7c47] transition-colors group">
+                                <i class="fa-brands fa-square-facebook text-[#0284c7] text-base w-4 text-center"></i>
+                                <span>Facebook</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="mailto:info@rsufikrimedika.com" class="flex items-center gap-3 text-gray-800 hover:text-[#0e7c47] transition-colors group">
+                                <i class="fa-solid fa-envelope text-[#0284c7] text-base w-4 text-center"></i>
+                                <span>Email</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" class="flex items-center gap-3 text-gray-800 hover:text-[#0e7c47] transition-colors group">
+                                <i class="fa-solid fa-podcast text-[#0284c7] text-base w-4 text-center"></i>
+                                <span>Podcast</span>
+                            </a>
+                        </li>
+                    </ul>
                 </div>
 
             </div>
-        </div>
 
-        <!-- COPYRIGHT & SCROLL TO TOP -->
-        <div class="border-t border-slate-100 bg-white py-5 px-4 sm:px-6 lg:px-8">
-            <div class="max-w-7xl mx-auto flex justify-between items-center text-xs text-slate-500">
+            <!-- BOTTOM COPYRIGHT & PRIVACY POLICY -->
+            <div class="border-t border-gray-200 pt-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-gray-900 font-semibold">
                 <div>
-                    &copy; {{ date('Y') }} <strong>RSU Fikri Medika</strong>. {{ __('Hak Cipta Dilindungi.') }}
+                    Copyright &copy; {{ date('Y') }} Rumah Sakit Umum Fikri Medika
                 </div>
-                <div class="flex items-center gap-3">
-                    <button type="button" 
-                            onclick="window.scrollTo({top: 0, behavior: 'smooth'})" 
-                            class="w-8 h-8 rounded bg-[#0e7c47] hover:bg-[#096237] text-white flex items-center justify-center transition-colors shadow-xs cursor-pointer" 
-                            title="Kembali ke atas">
-                        <i class="fa-solid fa-chevron-up text-xs"></i>
-                    </button>
+                <div>
+                    <a href="{{ url('/kebijakan-privasi') }}" class="font-extrabold text-[#0284c7] hover:text-[#0369a1] hover:underline">
+                        Kebijakan Privasi
+                    </a>
                 </div>
             </div>
         </div>

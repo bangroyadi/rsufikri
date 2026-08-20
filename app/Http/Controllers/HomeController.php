@@ -206,13 +206,18 @@ class HomeController extends Controller
         return view('public.jadwal-dokter', compact('title', 'category', 'slug', 'profile', 'doctors', 'polyclinics'));
     }
 
+    public function lokasiPage()
+    {
+        $title = 'Lokasi Strategis & Petunjuk Arah';
+        $category = 'Lokasi';
+        $slug = 'lokasi';
+        $profile = HospitalProfile::first();
+        return view('public.lokasi', compact('title', 'category', 'slug', 'profile'));
+    }
+
     public function kontakPage()
     {
-        $title = 'Kontak & Lokasi';
-        $category = 'Kontak';
-        $slug = 'kontak';
-        $profile = HospitalProfile::first();
-        return view('public.page', compact('title', 'category', 'slug', 'profile'));
+        return $this->lokasiPage();
     }
 
     public function karirPage()
