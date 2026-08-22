@@ -60,7 +60,7 @@
                     <i class="fa-solid fa-headset text-[#0e7c47] text-lg mt-0.5"></i>
                     <div>
                         <h4 class="font-bold text-gray-900 text-sm">{{ __('Pendaftaran & Info') }}</h4>
-                        <p class="text-xs text-gray-600 mt-0.5">(0267) 8454123 / WA: 0812-3456-7890</p>
+                        <p class="text-xs text-gray-600 mt-0.5">0822 8074 9999 / WA: 0896 7821 1575</p>
                     </div>
                 </div>
             </div>
@@ -72,7 +72,7 @@
                 <h3 class="text-lg sm:text-xl font-bold">{{ __('Butuh Bantuan & Konsultasi Medis?') }}</h3>
                 <p class="text-xs sm:text-sm text-red-100 mt-1">{{ __('Hubungi Call Center Emergency atau Pendaftaran Poliklinik RSU Fikri Medika.') }}</p>
             </div>
-            <a href="https://wa.me/6281234567890" target="_blank" class="px-5 py-3 rounded-xl bg-yellow-400 text-gray-900 font-bold text-xs sm:text-sm hover:bg-yellow-300 transition-colors shadow flex items-center gap-2 shrink-0">
+            <a href="https://wa.me/6289678211575" target="_blank" class="px-5 py-3 rounded-xl bg-yellow-400 text-gray-900 font-bold text-xs sm:text-sm hover:bg-yellow-300 transition-colors shadow flex items-center gap-2 shrink-0">
                 <i class="fa-brands fa-whatsapp text-base"></i>
                 <span>Hubungi Whatsapp</span>
             </a>

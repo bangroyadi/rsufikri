@@ -49,20 +49,35 @@ class AdminKnowledgeBaseController extends Controller
 
     public function store(Request $request)
     {
+        // Auto-generate intent if not provided or normalize to snake_case
+        $intent = trim($request->input('intent', ''));
+        if (empty($intent)) {
+            $intent = \Illuminate\Support\Str::slug($request->input('question', 'intent_' . time()), '_');
+        } else {
+            $intent = \Illuminate\Support\Str::slug($intent, '_');
+        }
+
+        // Ensure intent is unique by appending number if exists
+        $originalIntent = $intent;
+        $count = 1;
+        while (KnowledgeBase::where('intent', $intent)->exists()) {
+            $intent = $originalIntent . '_' . $count;
+            $count++;
+        }
+
         $validated = $request->validate([
             'category'  => ['required', 'string', 'max:100'],
-            'intent'    => ['required', 'string', 'max:100', 'unique:knowledge_bases,intent'],
             'question'  => ['required', 'string', 'max:255'],
             'keywords'  => ['nullable', 'string'],
             'synonyms'  => ['nullable', 'string'],
             'answer'    => ['required', 'string'],
             'priority'  => ['nullable', 'integer', 'min:0', 'max:100'],
-            'is_active' => ['nullable', 'boolean'],
             'unrec_id'  => ['nullable', 'integer'],
         ]);
 
-        $validated['priority'] = $validated['priority'] ?? 0;
-        $validated['is_active'] = $request->has('is_active') ? true : false;
+        $validated['intent'] = $intent;
+        $validated['priority'] = !empty($validated['priority']) ? (int) $validated['priority'] : 0;
+        $validated['is_active'] = $request->boolean('is_active', true);
 
         KnowledgeBase::create($validated);
 
@@ -78,19 +93,33 @@ class AdminKnowledgeBaseController extends Controller
     {
         $kb = KnowledgeBase::findOrFail($id);
 
+        $intent = trim($request->input('intent', ''));
+        if (empty($intent)) {
+            $intent = \Illuminate\Support\Str::slug($request->input('question', 'intent_' . time()), '_');
+        } else {
+            $intent = \Illuminate\Support\Str::slug($intent, '_');
+        }
+
+        // Ensure intent is unique excluding current record
+        $originalIntent = $intent;
+        $count = 1;
+        while (KnowledgeBase::where('intent', $intent)->where('id', '!=', $id)->exists()) {
+            $intent = $originalIntent . '_' . $count;
+            $count++;
+        }
+
         $validated = $request->validate([
             'category'  => ['required', 'string', 'max:100'],
-            'intent'    => ['required', 'string', 'max:100', 'unique:knowledge_bases,intent,' . $id],
             'question'  => ['required', 'string', 'max:255'],
             'keywords'  => ['nullable', 'string'],
             'synonyms'  => ['nullable', 'string'],
             'answer'    => ['required', 'string'],
             'priority'  => ['nullable', 'integer', 'min:0', 'max:100'],
-            'is_active' => ['nullable', 'boolean'],
         ]);
 
-        $validated['priority'] = $validated['priority'] ?? 0;
-        $validated['is_active'] = $request->has('is_active') ? true : false;
+        $validated['intent'] = $intent;
+        $validated['priority'] = !empty($validated['priority']) ? (int) $validated['priority'] : 0;
+        $validated['is_active'] = $request->boolean('is_active');
 
         $kb->update($validated);
 

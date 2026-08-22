@@ -62,12 +62,26 @@
         .grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
         .grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
         .grid-cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+        .grid-cols-6 { grid-template-columns: repeat(6, minmax(0, 1fr)); }
         @media (min-width: 640px) {
             .sm\:grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .sm\:grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+            .sm\:grid-cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+            .sm\:flex { display: flex; }
+            .sm\:inline { display: inline; }
             .sm\:flex-row { flex-direction: row; }
             .sm\:items-center { align-items: center; }
+            .sm\:justify-between { justify-content: space-between; }
             .sm\:p-5 { padding: 20px; }
+            .sm\:p-7 { padding: 28px; }
             .sm\:p-8 { padding: 32px; }
+            .sm\:mb-6 { margin-bottom: 24px; }
+            .sm\:gap-4 { gap: 16px; }
+        }
+        @media (min-width: 1024px) {
+            .lg\:grid-cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+            .lg\:grid-cols-6 { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+            .lg\:hidden { display: none !important; }
         }
 
         /* Display */
@@ -818,14 +832,130 @@
         }
         .empty-state i { font-size: 32px; margin-bottom: 12px; display: block; }
         .empty-state p { font-size: 13px; font-weight: 500; }
+
+        /* =========================================
+           RESPONSIVE MOBILE ADMIN STYLES
+        ========================================= */
+        .tb-hamburger {
+            display: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            background: #f1f5f9;
+            color: #1e293b;
+            align-items: center;
+            justify-content: center;
+            font-size: 15px;
+            cursor: pointer;
+            margin-right: 10px;
+            transition: all 0.15s;
+            flex-shrink: 0;
+            border: 1px solid #e2e8f0;
+        }
+        .tb-hamburger:hover {
+            background: #e2e8f0;
+            color: #0e7c47;
+        }
+        .sb-backdrop {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.65);
+            backdrop-filter: blur(3px);
+            -webkit-backdrop-filter: blur(3px);
+            z-index: 998;
+        }
+        .sb-close-btn {
+            display: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 7px;
+            background: rgba(255, 255, 255, 0.1);
+            color: #9ca3af;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            cursor: pointer;
+            margin-left: auto;
+            transition: all 0.15s;
+        }
+        .sb-close-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+        }
+
+        @media (max-width: 1023.98px) {
+            body {
+                overflow-x: hidden;
+                width: 100%;
+                position: relative;
+            }
+            .tb-hamburger {
+                display: inline-flex;
+            }
+            .sb-backdrop {
+                display: block;
+            }
+            .sb-close-btn {
+                display: inline-flex;
+            }
+            #sidebar {
+                position: fixed;
+                top: 0;
+                left: 0;
+                bottom: 0;
+                z-index: 999;
+                width: 270px;
+                min-width: 270px;
+                transform: translateX(-100%);
+                transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+                box-shadow: none;
+            }
+            #sidebar.open {
+                transform: translateX(0);
+                box-shadow: 10px 0 40px rgba(0, 0, 0, 0.5);
+            }
+            #main-wrap {
+                width: 100%;
+                min-width: 100%;
+                height: 100vh;
+                overflow: hidden;
+            }
+            #topbar {
+                padding: 0 12px;
+                height: 56px;
+                min-height: 56px;
+                gap: 8px;
+            }
+            .tb-breadcrumb {
+                display: none;
+            }
+            .tb-title {
+                font-size: 15px;
+                line-height: 1.2;
+            }
+            #page-content {
+                padding: 12px 12px 24px 12px;
+            }
+            .flash-area {
+                padding: 10px 12px 0;
+            }
+        }
     </style>
 </head>
-<body>
+<body x-data="{ sidebarOpen: false }">
+
+{{-- BACKDROP FOR MOBILE SIDEBAR --}}
+<div x-show="sidebarOpen" 
+     x-transition.opacity
+     @click="sidebarOpen = false" 
+     x-cloak 
+     class="sb-backdrop"></div>
 
 {{-- ==============================
      SIDEBAR
 ============================== --}}
-<aside id="sidebar">
+<aside id="sidebar" :class="{ 'open': sidebarOpen }">
 
     {{-- Brand --}}
     <div class="sb-brand">
@@ -836,6 +966,9 @@
             <div class="sb-brand-name">RSU Fikri Medika</div>
             <div class="sb-brand-sub">Admin CMS</div>
         </div>
+        <button type="button" @click="sidebarOpen = false" class="sb-close-btn" title="Tutup Menu">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
     </div>
 
     {{-- Navigation --}}
@@ -844,16 +977,19 @@
         <div class="sb-group">Utama</div>
 
         <a href="{{ route('admin.dashboard') }}"
+           @click="sidebarOpen = false"
            class="sb-item {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
             <span class="sb-item-icon"><i class="fa-solid fa-gauge-high"></i></span>
             Dashboard
         </a>
         <a href="{{ route('admin.profile.index') }}"
+           @click="sidebarOpen = false"
            class="sb-item {{ request()->routeIs('admin.profile.*') ? 'active' : '' }}">
             <span class="sb-item-icon"><i class="fa-solid fa-hospital"></i></span>
             Profil Rumah Sakit
         </a>
         <a href="{{ route('admin.contact.index') }}"
+           @click="sidebarOpen = false"
            class="sb-item {{ request()->routeIs('admin.contact.*') ? 'active' : '' }}">
             <span class="sb-item-icon"><i class="fa-solid fa-address-book"></i></span>
             Informasi Kontak
@@ -862,21 +998,25 @@
         <div class="sb-group">Layanan Medis</div>
 
         <a href="{{ route('admin.doctors.index') }}"
+           @click="sidebarOpen = false"
            class="sb-item {{ request()->routeIs('admin.doctors.*') ? 'active' : '' }}">
             <span class="sb-item-icon"><i class="fa-solid fa-user-doctor"></i></span>
             Dokter Spesialis
         </a>
         <a href="{{ route('admin.schedules.index') }}"
+           @click="sidebarOpen = false"
            class="sb-item {{ request()->routeIs('admin.schedules.*') ? 'active' : '' }}">
             <span class="sb-item-icon"><i class="fa-regular fa-calendar-check"></i></span>
             Jadwal Dokter
         </a>
         <a href="{{ route('admin.polyclinics.index') }}"
+           @click="sidebarOpen = false"
            class="sb-item {{ request()->routeIs('admin.polyclinics.*') ? 'active' : '' }}">
             <span class="sb-item-icon"><i class="fa-solid fa-clinic-medical"></i></span>
             Poli / Departemen
         </a>
         <a href="{{ route('admin.services.index') }}"
+           @click="sidebarOpen = false"
            class="sb-item {{ request()->routeIs('admin.services.*') ? 'active' : '' }}">
             <span class="sb-item-icon"><i class="fa-solid fa-briefcase-medical"></i></span>
             Fasilitas & Layanan
@@ -885,26 +1025,40 @@
         <div class="sb-group">Media & Publikasi</div>
 
         <a href="{{ route('admin.news.index') }}"
+           @click="sidebarOpen = false"
            class="sb-item {{ request()->routeIs('admin.news.*') ? 'active' : '' }}">
             <span class="sb-item-icon"><i class="fa-regular fa-newspaper"></i></span>
             Berita RS
         </a>
         <a href="{{ route('admin.articles.index') }}"
+           @click="sidebarOpen = false"
            class="sb-item {{ request()->routeIs('admin.articles.*') ? 'active' : '' }}">
             <span class="sb-item-icon"><i class="fa-solid fa-file-medical"></i></span>
             Artikel Kesehatan
         </a>
         <a href="{{ route('admin.galleries.index') }}"
+           @click="sidebarOpen = false"
            class="sb-item {{ request()->routeIs('admin.galleries.*') ? 'active' : '' }}">
             <span class="sb-item-icon"><i class="fa-solid fa-images"></i></span>
             Galeri Foto
         </a>
         <a href="{{ route('admin.banners.index') }}"
+           @click="sidebarOpen = false"
            class="sb-item {{ request()->routeIs('admin.banners.*') ? 'active' : '' }}">
             <span class="sb-item-icon"><i class="fa-solid fa-sliders"></i></span>
+            Banner Slider
+        </a>
+        <a href="{{ route('admin.tiktok.index') }}"
+           @click="sidebarOpen = false"
+           class="sb-item {{ request()->routeIs('admin.tiktok.*') ? 'active' : '' }}">
+            <span class="sb-item-icon"><i class="fa-brands fa-tiktok"></i></span>
+            Postingan TikTok
+        </a>
+
         <div class="sb-group">Asisten Virtual AI</div>
 
         <a href="{{ route('admin.knowledge.index') }}"
+           @click="sidebarOpen = false"
            class="sb-item {{ request()->routeIs('admin.knowledge.*') ? 'active' : '' }}">
             <span class="sb-item-icon"><i class="fa-solid fa-brain"></i></span>
             Knowledge Base (AI)
@@ -934,30 +1088,35 @@
 
     {{-- Topbar --}}
     <header id="topbar">
-        <div class="tb-left">
-            <div class="tb-breadcrumb">
-                <i class="fa-solid fa-house" style="color:#0e7c47; font-size:10px;"></i>
-                <span class="sep">›</span>
-                <span>CMS Portal</span>
-                <span class="sep">›</span>
-                <span class="curr">@yield('title', 'Dashboard')</span>
+        <div class="tb-left flex items-center">
+            <button type="button" @click="sidebarOpen = !sidebarOpen" class="tb-hamburger" aria-label="Toggle Sidebar Menu">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+            <div>
+                <div class="tb-breadcrumb">
+                    <i class="fa-solid fa-house" style="color:#0e7c47; font-size:10px;"></i>
+                    <span class="sep">›</span>
+                    <span>CMS Portal</span>
+                    <span class="sep">›</span>
+                    <span class="curr">@yield('title', 'Dashboard')</span>
+                </div>
+                <div class="tb-title">@yield('title', 'Dashboard')</div>
             </div>
-            <div class="tb-title">@yield('title', 'Dashboard')</div>
         </div>
         <div class="tb-right">
-            <div class="tb-chip tb-chip-neutral">
+            <div class="tb-chip tb-chip-neutral hidden sm:flex">
                 <i class="fa-regular fa-calendar-days" style="color:#0e7c47;"></i>
-                {{ date('d M Y') }}
+                <span>{{ date('d M Y') }}</span>
             </div>
-            <a href="{{ route('home') }}" target="_blank" class="tb-btn tb-btn-green">
+            <a href="{{ route('home') }}" target="_blank" class="tb-btn tb-btn-green" title="Lihat Website">
                 <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:10px;"></i>
-                Lihat Website
+                <span class="hidden sm:inline">Lihat Website</span>
             </a>
             <form action="{{ route('admin.logout') }}" method="POST" style="display:inline;">
                 @csrf
-                <button type="submit" class="tb-btn tb-btn-red">
+                <button type="submit" class="tb-btn tb-btn-red" title="Keluar">
                     <i class="fa-solid fa-right-from-bracket" style="font-size:11px;"></i>
-                    Keluar
+                    <span class="hidden sm:inline">Keluar</span>
                 </button>
             </form>
         </div>
@@ -980,6 +1139,21 @@
                 <div class="flash-error">
                     <i class="fa-solid fa-circle-exclamation"></i>
                     {{ session('error') }}
+                </div>
+            </div>
+        @endif
+        @if($errors->any())
+            <div class="flash-area">
+                <div class="flash-error">
+                    <i class="fa-solid fa-circle-exclamation"></i>
+                    <div>
+                        <div style="font-weight: 700; margin-bottom: 2px;">Terdapat kesalahan pengisian:</div>
+                        <ul style="margin: 0; padding-left: 18px; font-weight: 500; font-size: 12px;">
+                            @foreach($errors->all() as $err)
+                                <li>{{ $err }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
                 </div>
             </div>
         @endif

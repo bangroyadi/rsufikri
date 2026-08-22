@@ -325,10 +325,10 @@
                 </h3>
 
                 <div class="space-y-3 text-xs">
-                    <a href="tel:02678454999" class="p-3.5 rounded-2xl bg-red-50/80 border border-red-200/80 flex items-center justify-between text-red-900 font-bold hover:bg-red-100 transition-colors">
+                    <a href="tel:081287075555" class="p-3.5 rounded-2xl bg-red-50/80 border border-red-200/80 flex items-center justify-between text-red-900 font-bold hover:bg-red-100 transition-colors">
                         <div class="flex items-center gap-2">
                             <i class="fa-solid fa-phone-volume text-red-600"></i>
-                            <span>IGD 24 Jam: (0267) 8454999</span>
+                            <span>IGD 24 Jam: 0812 8707 5555</span>
                         </div>
                         <i class="fa-solid fa-chevron-right text-[10px] text-red-400"></i>
                     </a>

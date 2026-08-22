@@ -12,6 +12,7 @@ use App\Models\Doctor;
 use App\Models\DoctorSchedule;
 use App\Models\News;
 use App\Models\Article;
+use App\Models\TiktokPost;
 
 class HomeController extends Controller
 {
@@ -42,6 +43,12 @@ class HomeController extends Controller
             ->orderBy('published_at', 'desc')
             ->get();
 
+        $tiktokPosts = TiktokPost::where('is_active', true)
+            ->orderBy('order', 'asc')
+            ->orderBy('id', 'desc')
+            ->take(6)
+            ->get();
+
         return view('public.home', compact(
             'profile',
             'banners',
@@ -50,7 +57,8 @@ class HomeController extends Controller
             'doctors',
             'schedules',
             'latestNews',
-            'latestArticles'
+            'latestArticles',
+            'tiktokPosts'
         ));
     }
 

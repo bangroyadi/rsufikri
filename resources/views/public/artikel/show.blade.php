@@ -352,13 +352,13 @@
                 </div>
 
                 <div class="pt-2 space-y-2">
-                    <a href="tel:02678454999" class="w-full py-2.5 px-4 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold text-xs flex items-center justify-center gap-2 shadow transition-colors">
+                    <a href="tel:081287075555" class="w-full py-2.5 px-4 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold text-xs flex items-center justify-center gap-2 shadow transition-colors">
                         <i class="fa-solid fa-phone-volume animate-pulse"></i>
-                        <span>Call Center IGD: (0267) 8454999</span>
+                        <span>Call Center IGD: 0812 8707 5555</span>
                     </a>
-                    <a href="https://wa.me/6281234567890" target="_blank" class="w-full py-2.5 px-4 rounded-xl bg-yellow-400 hover:bg-yellow-300 text-gray-900 font-extrabold text-xs flex items-center justify-center gap-2 shadow transition-colors">
+                    <a href="https://wa.me/6289678211575" target="_blank" class="w-full py-2.5 px-4 rounded-xl bg-yellow-400 hover:bg-yellow-300 text-gray-900 font-extrabold text-xs flex items-center justify-center gap-2 shadow transition-colors">
                         <i class="fa-brands fa-whatsapp text-sm"></i>
-                        <span>WhatsApp: 0812-3456-7890</span>
+                        <span>WhatsApp: 0896 7821 1575</span>
                     </a>
                 </div>
             </div>

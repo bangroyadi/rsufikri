@@ -107,28 +107,108 @@
                     </div>
                 </div>
 
-                <!-- CARD 3: HUBUNGI KAMI & DARURAT -->
+                <!-- CARD 3: HUBUNGI KAMI & DARURAT (EMERGENCY CONTACT NUMBER) -->
                 <div class="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
                     <div class="flex items-start gap-4">
                         <div class="w-12 h-12 rounded-2xl bg-red-50 text-red-600 flex items-center justify-center font-bold text-lg shrink-0 border border-red-200 shadow-xs">
-                            <i class="fa-solid fa-phone-volume"></i>
+                            <i class="fa-solid fa-phone-volume animate-pulse"></i>
                         </div>
-                        <div class="space-y-2 flex-1">
-                            <h3 class="font-black text-gray-900 text-base">
-                                {{ __('Kontak Cepat & Darurat') }}
-                            </h3>
-                            <div class="space-y-2 text-xs sm:text-sm font-semibold">
-                                <div class="flex items-center justify-between">
-                                    <span class="text-gray-700">{{ __('Darurat IGD') }}:</span>
-                                    <a href="tel:02678454999" class="font-extrabold text-red-600 hover:underline">(0267) 8454999</a>
+                        <div class="space-y-3 flex-1">
+                            <div>
+                                <h3 class="font-black text-gray-900 text-base flex items-center gap-2">
+                                    <span>{{ __('Kontak Darurat & Layanan') }}</span>
+                                    <span class="text-[10px] px-2 py-0.5 rounded-full bg-red-100 text-red-700 font-bold uppercase">24 Jam</span>
+                                </h3>
+                                <p class="text-xs text-gray-500 font-medium mt-0.5">Layanan informasi cepat tanggap RSU Fikri Medika</p>
+                            </div>
+
+                            <div class="space-y-2 text-xs sm:text-sm font-semibold divide-y divide-gray-100">
+                                <div class="flex items-center justify-between pt-1">
+                                    <span class="text-gray-700 flex items-center gap-1.5">
+                                        <i class="fa-solid fa-triangle-exclamation text-red-600"></i>
+                                        <span>{{ __('IGD 24 Jam') }}:</span>
+                                    </span>
+                                    <a href="tel:081287075555" class="font-extrabold text-red-600 hover:underline">0812 8707 5555</a>
                                 </div>
-                                <div class="flex items-center justify-between">
-                                    <span class="text-gray-700">{{ __('Telepon Informasi') }}:</span>
-                                    <a href="tel:02678454123" class="font-bold text-gray-900 hover:text-[#0e7c47]">(0267) 8454123</a>
+                                <div class="flex items-center justify-between pt-2">
+                                    <span class="text-gray-700 flex items-center gap-1.5">
+                                        <i class="fa-solid fa-truck-medical text-red-500"></i>
+                                        <span>{{ __('Ambulance') }}:</span>
+                                    </span>
+                                    <a href="tel:082280749999" class="font-bold text-gray-900 hover:text-[#0e7c47]">0822 8074 9999</a>
                                 </div>
-                                <div class="flex items-center justify-between">
-                                    <span class="text-gray-700">{{ __('WhatsApp Pendaftaran') }}:</span>
-                                    <a href="https://wa.me/6281234567890" target="_blank" class="font-extrabold text-[#0e7c47] hover:underline">0812-3456-7890</a>
+                                <div class="flex items-center justify-between pt-2">
+                                    <span class="text-gray-700 flex items-center gap-1.5">
+                                        <i class="fa-solid fa-headset text-emerald-600"></i>
+                                        <span>{{ __('Call Center') }}:</span>
+                                    </span>
+                                    <a href="tel:082280749999" class="font-bold text-gray-900 hover:text-[#0e7c47]">0822 8074 9999</a>
+                                </div>
+                                <div class="flex items-center justify-between pt-2">
+                                    <span class="text-gray-700 flex items-center gap-1.5">
+                                        <i class="fa-brands fa-whatsapp text-emerald-600"></i>
+                                        <span>{{ __('Pendaftaran Rawat Jalan') }}:</span>
+                                    </span>
+                                    <a href="https://wa.me/6289678211575" target="_blank" class="font-extrabold text-[#0e7c47] hover:underline">0896 7821 1575</a>
+                                </div>
+                                <div class="flex items-center justify-between pt-2">
+                                    <span class="text-gray-700 flex items-center gap-1.5">
+                                        <i class="fa-solid fa-baby text-pink-500"></i>
+                                        <span>{{ __('Ruang Bersalin (VK)') }}:</span>
+                                    </span>
+                                    <a href="tel:081315232044" class="font-bold text-gray-900 hover:text-pink-600">0813 1523 2044</a>
+                                </div>
+                                <div class="flex items-center justify-between pt-2">
+                                    <span class="text-gray-700 flex items-center gap-1.5">
+                                        <i class="fa-solid fa-comments text-amber-500"></i>
+                                        <span>{{ __('Pengaduan Pasien') }}:</span>
+                                    </span>
+                                    <a href="tel:082280749999" class="font-bold text-gray-900 hover:text-[#0e7c47]">0822 8074 9999</a>
+                                </div>
+                                <div class="flex items-center justify-between pt-2">
+                                    <span class="text-gray-700 flex items-center gap-1.5">
+                                        <i class="fa-solid fa-user-doctor text-sky-600"></i>
+                                        <span>{{ __('MPP (Manajer Pelayanan Pasien)') }}:</span>
+                                    </span>
+                                    <a href="tel:082320556365" class="font-bold text-gray-900 hover:text-[#0e7c47]">0823 2055 6365</a>
+                                </div>
+                            </div>
+
+                            <!-- MARKETING TEAM CONTACTS -->
+                            <div class="mt-4 pt-3 border-t border-gray-200">
+                                <div class="text-xs font-black text-gray-900 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                                    <i class="fa-solid fa-bullhorn text-red-600"></i>
+                                    <span>Kontak Tim Marketing:</span>
+                                </div>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs font-semibold">
+                                    <a href="https://wa.me/6281316720656" target="_blank" class="p-2 rounded-xl bg-red-50 hover:bg-red-100 text-red-900 border border-red-100 flex items-center gap-2 transition-colors">
+                                        <i class="fa-brands fa-whatsapp text-emerald-600 text-sm"></i>
+                                        <div>
+                                            <div class="font-bold text-[11px]">Ibu Ulfah</div>
+                                            <div class="text-[10px] text-gray-600">0813-1672-0656</div>
+                                        </div>
+                                    </a>
+                                    <a href="https://wa.me/6281384656298" target="_blank" class="p-2 rounded-xl bg-red-50 hover:bg-red-100 text-red-900 border border-red-100 flex items-center gap-2 transition-colors">
+                                        <i class="fa-brands fa-whatsapp text-emerald-600 text-sm"></i>
+                                        <div>
+                                            <div class="font-bold text-[11px]">Ibu Ai</div>
+                                            <div class="text-[10px] text-gray-600">0813-8465-6298</div>
+                                        </div>
+                                    </a>
+                                    <a href="https://wa.me/628988965646" target="_blank" class="p-2 rounded-xl bg-red-50 hover:bg-red-100 text-red-900 border border-red-100 flex items-center gap-2 transition-colors">
+                                        <i class="fa-brands fa-whatsapp text-emerald-600 text-sm"></i>
+                                        <div>
+                                            <div class="font-bold text-[11px]">Ibu Rina</div>
+                                            <div class="text-[10px] text-gray-600">0898-8965-646</div>
+                                        </div>
+                                    </a>
+                                    <a href="https://wa.me/6281382895002" target="_blank" class="p-2 rounded-xl bg-red-50 hover:bg-red-100 text-red-900 border border-red-100 flex items-center gap-2 transition-colors">
+                                        <i class="fa-brands fa-whatsapp text-emerald-600 text-sm"></i>
+                                        <div>
+                                            <div class="font-bold text-[11px]">Ibu Itje</div>
+                                            <div class="text-[10px] text-gray-600">0813-8289-5002</div>
+                                        </div>
+                                    </a>
                                 </div>
                             </div>
                         </div>

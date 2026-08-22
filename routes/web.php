@@ -16,6 +16,7 @@ use App\Http\Controllers\Admin\AdminGalleryController;
 use App\Http\Controllers\Admin\AdminBannerController;
 use App\Http\Controllers\Admin\AdminContactController;
 use App\Http\Controllers\Admin\AdminKnowledgeBaseController;
+use App\Http\Controllers\Admin\AdminTiktokPostController;
 use App\Http\Controllers\AiChatController;
 
 // Public Routes
@@ -102,6 +103,12 @@ Route::prefix('admin')->name('admin.')->middleware('prevent-back-history')->grou
         Route::post('/banners', [AdminBannerController::class, 'store'])->name('banners.store');
         Route::put('/banners/{id}', [AdminBannerController::class, 'update'])->name('banners.update');
         Route::delete('/banners/{id}', [AdminBannerController::class, 'destroy'])->name('banners.destroy');
+
+        // TikTok Posts Routes
+        Route::get('/tiktok', [AdminTiktokPostController::class, 'index'])->name('tiktok.index');
+        Route::post('/tiktok', [AdminTiktokPostController::class, 'store'])->name('tiktok.store');
+        Route::put('/tiktok/{id}', [AdminTiktokPostController::class, 'update'])->name('tiktok.update');
+        Route::delete('/tiktok/{id}', [AdminTiktokPostController::class, 'destroy'])->name('tiktok.destroy');
 
         Route::get('/contact', [AdminContactController::class, 'index'])->name('contact.index');
         Route::post('/contact', [AdminContactController::class, 'update'])->name('contact.update');

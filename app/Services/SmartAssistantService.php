@@ -732,10 +732,10 @@ class SmartAssistantService
             'found'       => true,
             'intent'      => 'medical_disclaimer',
             'score'       => 100.0,
-            'answer'      => '⚠️ <strong>Pemberitahuan Medis:</strong><br><br>Saya adalah <strong>Kakak Fikri</strong> (Asisten Virtual RSU Fikri Medika) dan <strong>tidak dapat memberikan diagnosis medis maupun resep obat mandiri</strong> melalui chat.<br><br>Jika Anda atau keluarga sedang mengalami keluhan sakit atau gejala yang mengganggu:<br>• 🚨 <strong>Kondisi Gawat Darurat (Nyeri dada, sesak, trauma berat):</strong> Segera datang ke <strong>IGD 24 Jam RSU Fikri Medika</strong> atau hubungi Call Center <strong>(0267) 8454999</strong>.<br>• 🩺 <strong>Kondisi Non-Darurat:</strong> Silakan konsultasikan langsung dengan <strong>Dokter Spesialis</strong> kami melalui Poliklinik Rawat Jalan.',
+            'answer'      => '⚠️ <strong>Pemberitahuan Medis:</strong><br><br>Saya adalah <strong>Kakak Fikri</strong> (Asisten Virtual RSU Fikri Medika) dan <strong>tidak dapat memberikan diagnosis medis maupun resep obat mandiri</strong> melalui chat.<br><br>Jika Anda atau keluarga sedang mengalami keluhan sakit atau gejala yang mengganggu:<br>• 🚨 <strong>Kondisi Gawat Darurat (Nyeri dada, sesak, trauma berat):</strong> Segera datang ke <strong>IGD 24 Jam RSU Fikri Medika</strong> atau hubungi Call Center <strong>0812 8707 5555</strong>.<br>• 🩺 <strong>Kondisi Non-Darurat:</strong> Silakan konsultasikan langsung dengan <strong>Dokter Spesialis</strong> kami melalui Poliklinik Rawat Jalan.',
             'is_fallback' => false,
             'buttons'     => [
-                ['label' => '🚨 Emergency Call IGD (0267 8454999)', 'url' => 'tel:02678454999'],
+                ['label' => '🚨 Emergency Call IGD (0812 8707 5555)', 'url' => 'tel:081287075555'],
                 ['label' => '📅 Buat Janji Dokter Spesialis', 'url' => '/buat-janji'],
                 ['label' => '💬 Chat Customer Care', 'url' => 'https://wa.me/6282280749999?text=' . urlencode("Halo RSU Fikri Medika, saya ingin konsultasi pendaftaran poliklinik")],
             ],
@@ -754,14 +754,14 @@ class SmartAssistantService
     {
         $profile = HospitalProfile::first();
         if ($profile) {
-            $phone = $profile->phone ?? '(0267) 8615555';
-            $emergency = $profile->emergency_call ?? '(0267) 8454999';
-            $wa = $profile->whatsapp ?? '0822-8074-9999';
-            $address = $profile->address ?? 'Jl. Raya Kosambi - Telagasari No. 1, Klari, Karawang';
+            $phone = $profile->phone ?? '0822 8074 9999';
+            $emergency = $profile->emergency_phone ?? '0812 8707 5555';
+            $wa = $profile->whatsapp ?? '0896 7821 1575';
+            $address = $profile->address ?? 'Jl. Raya Kosambi - Telagasari No. 9, Klari, Karawang';
 
             $answer = str_replace(
-                ['(0267) 8454999', '0822-8074-9999', 'info@rsufikrimedika.com'],
-                [$emergency, $wa, $profile->email ?? 'info@rsufikrimedika.com'],
+                ['(0267) 8454999', '0812 8707 5555', '0822-8074-9999', 'info@rsufikrimedika.com'],
+                [$emergency, $emergency, $phone, $profile->email ?? 'info@rsufikrimedika.com'],
                 $answer
             );
         }
@@ -783,30 +783,30 @@ class SmartAssistantService
             ],
             'hospital_hours' => [
                 ['label' => '📅 Cek Jadwal Dokter', 'url' => '/jadwal-dokter'],
-                ['label' => '🚨 Emergency IGD 24 Jam', 'url' => 'tel:02678454999'],
+                ['label' => '🚨 Emergency IGD 24 Jam', 'url' => 'tel:081287075555'],
                 ['label' => '💬 Chat WhatsApp', 'url' => 'https://wa.me/6282280749999'],
             ],
             'hospital_location' => [
                 ['label' => '📍 Buka Google Maps', 'url' => 'https://maps.google.com/?q=RSU+Fikri+Medika+Karawang'],
-                ['label' => '📞 Telepon RS', 'url' => 'tel:02678615555'],
+                ['label' => '📞 Telepon RS', 'url' => 'tel:082280749999'],
             ],
             'hospital_contact' => [
-                ['label' => '💬 WhatsApp Info 0822-8074-9999', 'url' => 'https://wa.me/6282280749999'],
-                ['label' => '📞 Telepon (0267) 8615555', 'url' => 'tel:02678615555'],
-                ['label' => '🚨 Emergency (0267) 8454999', 'url' => 'tel:02678454999'],
+                ['label' => '💬 WhatsApp Info 0896 7821 1575', 'url' => 'https://wa.me/6289678211575'],
+                ['label' => '📞 Call Center 0822 8074 9999', 'url' => 'tel:082280749999'],
+                ['label' => '🚨 Emergency IGD 0812 8707 5555', 'url' => 'tel:081287075555'],
             ],
             'emergency' => [
-                ['label' => '🚨 Telepon IGD (0267 8454999)', 'url' => 'tel:02678454999'],
-                ['label' => '🚑 Panggil Ambulans WhatsApp', 'url' => 'https://wa.me/6282280749999?text=' . urlencode("DARURAT: Butuh ambulans penjemputan segera")],
+                ['label' => '🚨 Telepon IGD (0812 8707 5555)', 'url' => 'tel:081287075555'],
+                ['label' => '🚑 Panggil Ambulans (0822 8074 9999)', 'url' => 'tel:082280749999'],
             ],
             'registration_bpjs' => [
                 ['label' => '📝 Buat Janji Online', 'url' => '/buat-janji'],
                 ['label' => '📅 Cek Jadwal Dokter', 'url' => '/jadwal-dokter'],
-                ['label' => '💬 Konfirmasi Berkas BPJS via WA', 'url' => 'https://wa.me/6282280749999?text=' . urlencode("Halo, saya mau tanya berkas rujukan BPJS")],
+                ['label' => '💬 Konfirmasi via WA (0896 7821 1575)', 'url' => 'https://wa.me/6289678211575?text=' . urlencode("Halo, saya mau tanya berkas rujukan BPJS")],
             ],
             'registration_online' => [
                 ['label' => '🌐 Buka Form Buat Janji Online', 'url' => '/buat-janji'],
-                ['label' => '💬 Daftar via WhatsApp', 'url' => 'https://wa.me/6282280749999?text=' . urlencode("Halo RSU Fikri Medika, saya mau daftar berobat")],
+                ['label' => '💬 Daftar via WhatsApp (0896 7821 1575)', 'url' => 'https://wa.me/6289678211575?text=' . urlencode("Halo RSU Fikri Medika, saya mau daftar berobat")],
             ],
             'inpatient' => [
                 ['label' => '🛏️ Informasi Kamar VIP & Kelas', 'url' => '/layanan/rawat-inap'],

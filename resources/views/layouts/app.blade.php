@@ -13,12 +13,21 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
     <!-- Alpine.js for lightweight interactive components -->
-    <style>[x-cloak] { display: none !important; }</style>
+    <style>
+        [x-cloak] { display: none !important; }
+        html, body {
+            overflow-x: hidden !important;
+            max-width: 100vw !important;
+            width: 100% !important;
+            box-sizing: border-box;
+            position: relative;
+        }
+    </style>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="antialiased flex flex-col min-h-screen bg-[#f7faf8] pb-14 lg:pb-0" x-data="{ mobileMenuOpen: false, searchOpen: false, scrolled: false }">
+<body class="antialiased flex flex-col min-h-screen bg-[#f7faf8] pb-16 lg:pb-0 overflow-x-hidden w-full max-w-full" x-data="{ mobileMenuOpen: false, searchOpen: false, scrolled: false }">
 
     <!-- MEDICAL ECG HEARTBEAT PRELOADER -->
     <div id="medicare-preloader">
@@ -89,9 +98,17 @@
                 <span class="text-[#159b5a]/60">|</span>
 
                 <!-- CLICKABLE IGD NUMBER -->
-                <a href="tel:02678454999" class="inline-flex items-center gap-1.5 font-bold text-yellow-300 hover:text-yellow-200 transition-colors shrink-0 text-[11px] sm:text-xs">
+                <a href="tel:081287075555" class="inline-flex items-center gap-1.5 font-bold text-yellow-300 hover:text-yellow-200 transition-colors shrink-0 text-[11px] sm:text-xs">
                     <i class="fa-solid fa-phone-volume text-red-300 animate-pulse text-xs"></i>
-                    <span>{{ __('IGD 24 Jam') }}: <span class="underline decoration-yellow-300/50">(0267) 8454999</span></span>
+                    <span>{{ __('IGD 24 Jam') }}: <span class="underline decoration-yellow-300/50">0812 8707 5555</span></span>
+                </a>
+
+                <span class="text-[#159b5a]/60">|</span>
+
+                <!-- CLICKABLE CALL CENTER NUMBER -->
+                <a href="tel:082280749999" class="inline-flex items-center gap-1.5 font-bold text-white hover:text-yellow-200 transition-colors shrink-0 text-[11px] sm:text-xs">
+                    <i class="fa-solid fa-headset text-yellow-300 text-xs"></i>
+                    <span>{{ __('Call Center') }}: <span class="underline decoration-white/50">0822 8074 9999</span></span>
                 </a>
 
                 <span class="hidden sm:inline-block text-[#159b5a]/60">|</span>
@@ -524,8 +541,8 @@
                         <i class="fa-solid fa-phone-volume text-xl"></i>
                     </div>
                     <div>
-                        <a href="tel:02678454123" class="text-base sm:text-lg font-bold tracking-wide hover:text-yellow-300 transition-colors block text-white leading-tight">
-                            (0267) 8454123
+                        <a href="tel:082280749999" class="text-base sm:text-lg font-bold tracking-wide hover:text-yellow-300 transition-colors block text-white leading-tight">
+                            0822 8074 9999
                         </a>
                         <span class="text-xs text-emerald-100 font-normal">
                             {{ app()->getLocale() == 'en' ? 'Have a question? call us now' : 'Ada pertanyaan? Hubungi kami sekarang' }}
@@ -539,8 +556,8 @@
                         <i class="fa-regular fa-envelope text-xl"></i>
                     </div>
                     <div>
-                        <a href="mailto:info@rsufikrimedika.com" class="text-base sm:text-lg font-bold tracking-wide hover:text-yellow-300 transition-colors block text-white leading-tight">
-                            info@rsufikrimedika.com
+                        <a href="mailto:fikri.medika@gmail.com" class="text-base sm:text-lg font-bold tracking-wide hover:text-yellow-300 transition-colors block text-white leading-tight">
+                            fikri.medika@gmail.com
                         </a>
                         <span class="text-xs text-emerald-100 font-normal">
                             {{ app()->getLocale() == 'en' ? 'Need support? Drop us an email' : 'Butuh bantuan? Kirimkan pesan email' }}
@@ -709,7 +726,7 @@
                             </a>
                         </li>
                         <li>
-                            <a href="mailto:info@rsufikrimedika.com" class="flex items-center gap-3 text-gray-800 hover:text-[#0e7c47] transition-colors group">
+                            <a href="mailto:fikri.medika@gmail.com" class="flex items-center gap-3 text-gray-800 hover:text-[#0e7c47] transition-colors group">
                                 <i class="fa-solid fa-envelope text-[#0284c7] text-base w-4 text-center"></i>
                                 <span>Email</span>
                             </a>

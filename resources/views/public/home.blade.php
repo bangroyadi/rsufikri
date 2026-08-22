@@ -225,17 +225,17 @@
     <div class="bg-white rounded-2xl sm:rounded-3xl shadow-xl border border-gray-100/90">
         
         <!-- CARD TOP TAB -->
-        <div class="border-b border-gray-100 px-6 sm:px-8 pt-2">
-            <div class="inline-flex items-center gap-2 px-6 py-3 rounded-t-xl bg-[#e6f4f1] text-[#0e7c47] font-extrabold text-xs sm:text-sm border-b-2 border-[#0e7c47]">
+        <div class="border-b border-gray-100 px-4 sm:px-8 pt-2">
+            <div class="inline-flex items-center gap-2 px-5 sm:px-6 py-2.5 sm:py-3 rounded-t-xl bg-[#e6f4f1] text-[#0e7c47] font-extrabold text-xs sm:text-sm border-b-2 border-[#0e7c47]">
                 <i class="fa-solid fa-user-doctor text-amber-500 text-xs"></i>
                 <span>Cari Dokter</span>
             </div>
         </div>
 
         <!-- CARD FORM CONTENT -->
-        <div class="p-6 sm:p-8">
+        <div class="p-4 sm:p-8">
             <form action="{{ route('jadwal.dokter') }}" method="GET" class="space-y-6" id="cariDokterForm">
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
                     
                     <!-- 1. Nama Dokter -->
                     <div>
@@ -246,17 +246,6 @@
                                    name="q" 
                                    placeholder="Nama Dokter" 
                                    class="w-full pl-9 pr-4 py-2.5 rounded-xl border border-gray-200 focus:border-[#0e7c47] focus:ring-1 focus:ring-[#0e7c47] text-xs sm:text-sm text-gray-800 placeholder-gray-400 outline-none transition-all">
-                        </div>
-                    </div>
-
-                    <!-- 2. Rumah Sakit -->
-                    <div>
-                        <label class="block text-xs font-bold text-gray-800 mb-2">Rumah Sakit</label>
-                        <div class="relative">
-                            <select name="rs" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:border-[#0e7c47] focus:ring-1 focus:ring-[#0e7c47] text-xs sm:text-sm text-gray-700 bg-white outline-none appearance-none cursor-pointer">
-                                <option value="rsufikri" selected>RSU Fikri Medika Karawang</option>
-                            </select>
-                            <i class="fa-solid fa-chevron-down absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-[10px] pointer-events-none"></i>
                         </div>
                     </div>
 
@@ -382,15 +371,11 @@
 
                 </div>
 
-                <!-- BOTTOM ACTION BUTTONS -->
-                <div class="flex items-center justify-end gap-3 pt-2">
-                    <button type="button" 
-                            @click="document.getElementById('cariDokterForm').reset(); window.dispatchEvent(new CustomEvent('reset-form'));" 
-                            class="px-7 py-2.5 rounded-xl border border-[#0e7c47] text-[#0e7c47] hover:bg-emerald-50 text-xs sm:text-sm font-bold transition-all duration-200 cursor-pointer">
-                        Reset
-                    </button>
-                    <button type="submit" style="background-color: #0e7c47; color: #ffffff;" class="px-7 py-2.5 rounded-xl bg-[#0e7c47] hover:bg-[#096237] text-white text-xs sm:text-sm font-bold shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer">
-                        Cari Dokter
+                <!-- BOTTOM ACTION BUTTON (CENTERED) -->
+                <div class="flex items-center justify-center pt-2">
+                    <button type="submit" style="background-color: #0e7c47; color: #ffffff;" class="w-36 sm:w-40 py-2 sm:py-2.5 rounded-xl bg-[#0e7c47] hover:bg-[#096237] text-white text-xs sm:text-sm font-bold shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer inline-flex items-center justify-center gap-1.5">
+                        <i class="fa-solid fa-magnifying-glass text-xs"></i>
+                        <span>Cari Dokter</span>
                     </button>
                 </div>
             </form>
@@ -400,7 +385,7 @@
 </section>
 
 <!-- SECTION: LAYANAN SPESIALIS KAMI (MATCHING REFERENCE DESIGN WITH GREEN & YELLOW THEME) -->
-<section id="layanan-spesialis" class="py-16 lg:py-20 bg-white border-t border-gray-100 relative overflow-hidden" x-data="{ showAllSpesialis: false }">
+<section id="layanan-spesialis" class="py-16 lg:py-20 bg-white border-t border-gray-100 relative overflow-hidden" x-data="poliSpesialisHomeApp()">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         
         <!-- HEADER -->
@@ -408,13 +393,15 @@
             <h2 class="text-lg sm:text-xl md:text-2xl font-bold text-[#0e7c47] tracking-tight">
                 Poliklinik & Spesialisasi
             </h2>
+            <p class="text-xs text-gray-500 font-medium mt-1">Klik ikon poliklinik di bawah untuk melihat Galeri Foto atau Jadwal Dokter Spesialis</p>
         </div>
 
         <!-- SPECIALIST SERVICES GRID: ROW 1 (DEFAULT 6 ITEMS) -->
         <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-y-10 sm:gap-y-12 gap-x-4 sm:gap-x-6 lg:gap-x-8">
             
             <!-- 1. Penyakit Dalam -->
-            <a href="{{ route('jadwal.dokter') }}?spesialis=Penyakit+Dalam" class="group flex flex-col items-center text-center p-2 rounded-2xl transition-all duration-300 hover:-translate-y-1.5">
+            <div @click="openPoliMenu('Poli Penyakit Dalam', 'Pelayanan diagnostik dan penanganan medis komprehensif penyakit organ dalam dewasa (diabetes, hipertensi, lambung, ginjal, hati).', ['{{ asset('gedung1_web.jpg') }}', '{{ asset('banner-igd.png') }}'])" 
+                 class="group flex flex-col items-center text-center p-2 rounded-2xl transition-all duration-300 hover:-translate-y-1.5 cursor-pointer">
                 <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-gradient-to-b from-emerald-50 to-teal-50/70 border-2 border-emerald-100/90 group-hover:border-[#0e7c47] group-hover:from-emerald-100/80 group-hover:to-teal-100/80 group-hover:shadow-md group-hover:shadow-emerald-900/10 flex items-center justify-center mb-3.5 transition-all duration-300 relative group-hover:scale-105">
                     <svg class="w-10 h-10 sm:w-11 sm:h-11 transition-transform duration-300 group-hover:scale-110 drop-shadow-xs" viewBox="0 0 64 64" fill="none">
                         <defs>
@@ -436,10 +423,11 @@
                 <span class="text-xs sm:text-sm font-bold text-[#0e7c47] group-hover:text-amber-600 transition-colors leading-snug">
                     Penyakit Dalam
                 </span>
-            </a>
+            </div>
 
             <!-- 2. Anak -->
-            <a href="{{ route('jadwal.dokter') }}?spesialis=Anak" class="group flex flex-col items-center text-center p-2 rounded-2xl transition-all duration-300 hover:-translate-y-1.5">
+            <div @click="openPoliMenu('Poli Anak', 'Pelayanan kesehatan anak komprehensif, imunisasi, pemantauan tumbuh kembang, dan infeksi pediatrik.', ['{{ asset('gedung1_web.jpg') }}', '{{ asset('banner-igd.png') }}'])" 
+                 class="group flex flex-col items-center text-center p-2 rounded-2xl transition-all duration-300 hover:-translate-y-1.5 cursor-pointer">
                 <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-gradient-to-b from-emerald-50 to-teal-50/70 border-2 border-emerald-100/90 group-hover:border-[#0e7c47] group-hover:from-emerald-100/80 group-hover:to-teal-100/80 group-hover:shadow-md group-hover:shadow-emerald-900/10 flex items-center justify-center mb-3.5 transition-all duration-300 relative group-hover:scale-105">
                     <svg class="w-10 h-10 sm:w-11 sm:h-11 transition-transform duration-300 group-hover:scale-110 drop-shadow-xs" viewBox="0 0 64 64" fill="none">
                         <defs>
@@ -467,10 +455,11 @@
                 <span class="text-xs sm:text-sm font-bold text-[#0e7c47] group-hover:text-amber-600 transition-colors leading-snug">
                     Anak
                 </span>
-            </a>
+            </div>
 
             <!-- 3. Obgyn (Kandungan) -->
-            <a href="{{ route('jadwal.dokter') }}?spesialis=Kandungan" class="group flex flex-col items-center text-center p-2 rounded-2xl transition-all duration-300 hover:-translate-y-1.5">
+            <div @click="openPoliMenu('Poli Obgyn (Kandungan)', 'Pemeriksaan kehamilan, USG 4D HD Live, persalinan metode ERACS, dan kesehatan reproduksi wanita.', ['{{ asset('gedung1_web.jpg') }}', '{{ asset('banner-igd.png') }}'])" 
+                 class="group flex flex-col items-center text-center p-2 rounded-2xl transition-all duration-300 hover:-translate-y-1.5 cursor-pointer">
                 <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-gradient-to-b from-emerald-50 to-teal-50/70 border-2 border-emerald-100/90 group-hover:border-[#0e7c47] group-hover:from-emerald-100/80 group-hover:to-teal-100/80 group-hover:shadow-md group-hover:shadow-emerald-900/10 flex items-center justify-center mb-3.5 transition-all duration-300 relative group-hover:scale-105">
                     <svg class="w-10 h-10 sm:w-11 sm:h-11 transition-transform duration-300 group-hover:scale-110 drop-shadow-xs" viewBox="0 0 64 64" fill="none">
                         <circle cx="28" cy="14" r="6" fill="#fecdd3" stroke="#e11d48" stroke-width="2"/>
@@ -485,10 +474,11 @@
                 <span class="text-xs sm:text-sm font-bold text-[#0e7c47] group-hover:text-amber-600 transition-colors leading-snug">
                     Obgyn (Kandungan)
                 </span>
-            </a>
+            </div>
 
             <!-- 4. Bedah -->
-            <a href="{{ route('jadwal.dokter') }}?spesialis=Bedah" class="group flex flex-col items-center text-center p-2 rounded-2xl transition-all duration-300 hover:-translate-y-1.5">
+            <div @click="openPoliMenu('Poli Bedah', 'Konsultasi dan tindakan pembedahan umum, appendicitis, hernia, tumor jinak, dan perawatan luka modern.', ['{{ asset('trauma-center.png') }}', '{{ asset('gedung2_web.jpg') }}'])" 
+                 class="group flex flex-col items-center text-center p-2 rounded-2xl transition-all duration-300 hover:-translate-y-1.5 cursor-pointer">
                 <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-gradient-to-b from-emerald-50 to-teal-50/70 border-2 border-emerald-100/90 group-hover:border-[#0e7c47] group-hover:from-emerald-100/80 group-hover:to-teal-100/80 group-hover:shadow-md group-hover:shadow-emerald-900/10 flex items-center justify-center mb-3.5 transition-all duration-300 relative group-hover:scale-105">
                     <svg class="w-10 h-10 sm:w-11 sm:h-11 transition-transform duration-300 group-hover:scale-110 drop-shadow-xs" viewBox="0 0 64 64" fill="none">
                         <defs>
@@ -512,10 +502,11 @@
                 <span class="text-xs sm:text-sm font-bold text-[#0e7c47] group-hover:text-amber-600 transition-colors leading-snug">
                     Bedah
                 </span>
-            </a>
+            </div>
 
             <!-- 5. Mata -->
-            <a href="{{ route('jadwal.dokter') }}?spesialis=Mata" class="group flex flex-col items-center text-center p-2 rounded-2xl transition-all duration-300 hover:-translate-y-1.5">
+            <div @click="openPoliMenu('Poli Mata', 'Poli Spesialis Mata & Refraksi Katarak (Metode Phacoemulsification modern tanpa jahitan).', ['{{ asset('spesialis-mata.png') }}', '{{ asset('gedung1_web.jpg') }}'])" 
+                 class="group flex flex-col items-center text-center p-2 rounded-2xl transition-all duration-300 hover:-translate-y-1.5 cursor-pointer">
                 <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-gradient-to-b from-emerald-50 to-teal-50/70 border-2 border-emerald-100/90 group-hover:border-[#0e7c47] group-hover:from-emerald-100/80 group-hover:to-teal-100/80 group-hover:shadow-md group-hover:shadow-emerald-900/10 flex items-center justify-center mb-3.5 transition-all duration-300 relative group-hover:scale-105">
                     <svg class="w-10 h-10 sm:w-11 sm:h-11 transition-transform duration-300 group-hover:scale-110 drop-shadow-xs" viewBox="0 0 64 64" fill="none">
                         <defs>
@@ -541,10 +532,11 @@
                 <span class="text-xs sm:text-sm font-bold text-[#0e7c47] group-hover:text-amber-600 transition-colors leading-snug">
                     Mata
                 </span>
-            </a>
+            </div>
 
             <!-- 6. Jantung -->
-            <a href="{{ route('jadwal.dokter') }}?spesialis=Jantung" class="group flex flex-col items-center text-center p-2 rounded-2xl transition-all duration-300 hover:-translate-y-1.5">
+            <div @click="openPoliMenu('Poli Jantung', 'Poli Spesialis Jantung & Pembuluh Darah (Kardiologi) dengan EKG, Treadmill, dan Echocardiography.', ['{{ asset('gedung1_web.jpg') }}', '{{ asset('banner-igd.png') }}'])" 
+                 class="group flex flex-col items-center text-center p-2 rounded-2xl transition-all duration-300 hover:-translate-y-1.5 cursor-pointer">
                 <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-gradient-to-b from-emerald-50 to-teal-50/70 border-2 border-emerald-100/90 group-hover:border-[#0e7c47] group-hover:from-emerald-100/80 group-hover:to-teal-100/80 group-hover:shadow-md group-hover:shadow-emerald-900/10 flex items-center justify-center mb-3.5 transition-all duration-300 relative group-hover:scale-105">
                     <svg class="w-10 h-10 sm:w-11 sm:h-11 transition-transform duration-300 group-hover:scale-110 drop-shadow-xs" viewBox="0 0 64 64" fill="none">
                         <defs>
@@ -568,7 +560,7 @@
                 <span class="text-xs sm:text-sm font-bold text-[#0e7c47] group-hover:text-amber-600 transition-colors leading-snug">
                     Jantung
                 </span>
-            </a>
+            </div>
 
         </div>
 
@@ -585,7 +577,8 @@
             <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-y-10 sm:gap-y-12 gap-x-4 sm:gap-x-6 lg:gap-x-8">
 
                 <!-- 7. Paru -->
-                <a href="{{ route('jadwal.dokter') }}?spesialis=Paru" class="group flex flex-col items-center text-center p-2 rounded-2xl transition-all duration-300 hover:-translate-y-1.5">
+                <div @click="openPoliMenu('Poli Paru', 'Poli Spesialis Paru & Pulmonologi untuk asma, PPOK, TBC, bronkitis, dan gangguan pernapasan.', ['{{ asset('gedung1_web.jpg') }}', '{{ asset('banner-igd.png') }}'])" 
+                     class="group flex flex-col items-center text-center p-2 rounded-2xl transition-all duration-300 hover:-translate-y-1.5 cursor-pointer">
                     <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-gradient-to-b from-emerald-50 to-teal-50/70 border-2 border-emerald-100/90 group-hover:border-[#0e7c47] group-hover:from-emerald-100/80 group-hover:to-teal-100/80 group-hover:shadow-md group-hover:shadow-emerald-900/10 flex items-center justify-center mb-3.5 transition-all duration-300 relative group-hover:scale-105">
                         <svg class="w-10 h-10 sm:w-11 sm:h-11 transition-transform duration-300 group-hover:scale-110 drop-shadow-xs" viewBox="0 0 64 64" fill="none">
                             <defs>
@@ -611,10 +604,11 @@
                     <span class="text-xs sm:text-sm font-bold text-[#0e7c47] group-hover:text-amber-600 transition-colors leading-snug">
                         Paru
                     </span>
-                </a>
+                </div>
 
                 <!-- 8. Orthopedi -->
-                <a href="{{ route('jadwal.dokter') }}?spesialis=Orthopedi" class="group flex flex-col items-center text-center p-2 rounded-2xl transition-all duration-300 hover:-translate-y-1.5">
+                <div @click="openPoliMenu('Poli Orthopedi', 'Penanganan cedera patah tulang, dislokasi sendi, trauma kecelakaan, dan bedah ortopedi.', ['{{ asset('trauma-center.png') }}', '{{ asset('gedung2_web.jpg') }}'])" 
+                     class="group flex flex-col items-center text-center p-2 rounded-2xl transition-all duration-300 hover:-translate-y-1.5 cursor-pointer">
                     <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-gradient-to-b from-emerald-50 to-teal-50/70 border-2 border-emerald-100/90 group-hover:border-[#0e7c47] group-hover:from-emerald-100/80 group-hover:to-teal-100/80 group-hover:shadow-md group-hover:shadow-emerald-900/10 flex items-center justify-center mb-3.5 transition-all duration-300 relative group-hover:scale-105">
                         <svg class="w-10 h-10 sm:w-11 sm:h-11 transition-transform duration-300 group-hover:scale-110 drop-shadow-xs" viewBox="0 0 64 64" fill="none">
                             <defs>
@@ -634,10 +628,11 @@
                     <span class="text-xs sm:text-sm font-bold text-[#0e7c47] group-hover:text-amber-600 transition-colors leading-snug">
                         Orthopedi
                     </span>
-                </a>
+                </div>
 
                 <!-- 9. Urologi -->
-                <a href="{{ route('jadwal.dokter') }}?spesialis=Urologi" class="group flex flex-col items-center text-center p-2 rounded-2xl transition-all duration-300 hover:-translate-y-1.5">
+                <div @click="openPoliMenu('Poli Urologi', 'Penanganan kelainan sistem saluran kemih, batu ginjal, kandung kemih, dan prostat.', ['{{ asset('gedung1_web.jpg') }}', '{{ asset('banner-igd.png') }}'])" 
+                     class="group flex flex-col items-center text-center p-2 rounded-2xl transition-all duration-300 hover:-translate-y-1.5 cursor-pointer">
                     <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-gradient-to-b from-emerald-50 to-teal-50/70 border-2 border-emerald-100/90 group-hover:border-[#0e7c47] group-hover:from-emerald-100/80 group-hover:to-teal-100/80 group-hover:shadow-md group-hover:shadow-emerald-900/10 flex items-center justify-center mb-3.5 transition-all duration-300 relative group-hover:scale-105">
                         <svg class="w-10 h-10 sm:w-11 sm:h-11 transition-transform duration-300 group-hover:scale-110 drop-shadow-xs" viewBox="0 0 64 64" fill="none">
                             <defs>
@@ -660,10 +655,11 @@
                     <span class="text-xs sm:text-sm font-bold text-[#0e7c47] group-hover:text-amber-600 transition-colors leading-snug">
                         Urologi
                     </span>
-                </a>
+                </div>
 
                 <!-- 10. THT – KL -->
-                <a href="{{ route('jadwal.dokter') }}?spesialis=THT" class="group flex flex-col items-center text-center p-2 rounded-2xl transition-all duration-300 hover:-translate-y-1.5">
+                <div @click="openPoliMenu('Poli THT – KL', 'Pemeriksaan telinga, hidung, tenggorokan, serta bedah kepala dan leher (sinusitis, amandel, polip).', ['{{ asset('gedung1_web.jpg') }}', '{{ asset('banner-igd.png') }}'])" 
+                     class="group flex flex-col items-center text-center p-2 rounded-2xl transition-all duration-300 hover:-translate-y-1.5 cursor-pointer">
                     <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-gradient-to-b from-emerald-50 to-teal-50/70 border-2 border-emerald-100/90 group-hover:border-[#0e7c47] group-hover:from-emerald-100/80 group-hover:to-teal-100/80 group-hover:shadow-md group-hover:shadow-emerald-900/10 flex items-center justify-center mb-3.5 transition-all duration-300 relative group-hover:scale-105">
                         <svg class="w-10 h-10 sm:w-11 sm:h-11 transition-transform duration-300 group-hover:scale-110 drop-shadow-xs" viewBox="0 0 64 64" fill="none">
                             <defs>
@@ -683,10 +679,11 @@
                     <span class="text-xs sm:text-sm font-bold text-[#0e7c47] group-hover:text-amber-600 transition-colors leading-snug">
                         THT – KL
                     </span>
-                </a>
+                </div>
 
                 <!-- 11. Neurologi (Saraf) -->
-                <a href="{{ route('jadwal.dokter') }}?spesialis=Saraf" class="group flex flex-col items-center text-center p-2 rounded-2xl transition-all duration-300 hover:-translate-y-1.5">
+                <div @click="openPoliMenu('Poli Neurologi (Saraf)', 'Penanganan stroke, vertigo, migrain, epilepsi, nyeri saraf, dan saraf terjepit (HNP).', ['{{ asset('gedung1_web.jpg') }}', '{{ asset('banner-igd.png') }}'])" 
+                     class="group flex flex-col items-center text-center p-2 rounded-2xl transition-all duration-300 hover:-translate-y-1.5 cursor-pointer">
                     <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-gradient-to-b from-emerald-50 to-teal-50/70 border-2 border-emerald-100/90 group-hover:border-[#0e7c47] group-hover:from-emerald-100/80 group-hover:to-teal-100/80 group-hover:shadow-md group-hover:shadow-emerald-900/10 flex items-center justify-center mb-3.5 transition-all duration-300 relative group-hover:scale-105">
                         <svg class="w-10 h-10 sm:w-11 sm:h-11 transition-transform duration-300 group-hover:scale-110 drop-shadow-xs" viewBox="0 0 64 64" fill="none">
                             <defs>
@@ -709,10 +706,11 @@
                     <span class="text-xs sm:text-sm font-bold text-[#0e7c47] group-hover:text-amber-600 transition-colors leading-snug">
                         Neurologi (Saraf)
                     </span>
-                </a>
+                </div>
 
                 <!-- 12. Bedah Saraf -->
-                <a href="{{ route('jadwal.dokter') }}?spesialis=Bedah+Saraf" class="group flex flex-col items-center text-center p-2 rounded-2xl transition-all duration-300 hover:-translate-y-1.5">
+                <div @click="openPoliMenu('Poli Bedah Saraf', 'Tindakan operasi otak, saraf pusat, tumor saraf, dan trauma kepala.', ['{{ asset('gedung2_web.jpg') }}', '{{ asset('trauma-center.png') }}'])" 
+                     class="group flex flex-col items-center text-center p-2 rounded-2xl transition-all duration-300 hover:-translate-y-1.5 cursor-pointer">
                     <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-gradient-to-b from-emerald-50 to-teal-50/70 border-2 border-emerald-100/90 group-hover:border-[#0e7c47] group-hover:from-emerald-100/80 group-hover:to-teal-100/80 group-hover:shadow-md group-hover:shadow-emerald-900/10 flex items-center justify-center mb-3.5 transition-all duration-300 relative group-hover:scale-105">
                         <svg class="w-10 h-10 sm:w-11 sm:h-11 transition-transform duration-300 group-hover:scale-110 drop-shadow-xs" viewBox="0 0 64 64" fill="none">
                             <defs>
@@ -731,10 +729,11 @@
                     <span class="text-xs sm:text-sm font-bold text-[#0e7c47] group-hover:text-amber-600 transition-colors leading-snug">
                         Bedah Saraf
                     </span>
-                </a>
+                </div>
 
                 <!-- 13. Jiwa -->
-                <a href="{{ route('jadwal.dokter') }}?spesialis=Jiwa" class="group flex flex-col items-center text-center p-2 rounded-2xl transition-all duration-300 hover:-translate-y-1.5">
+                <div @click="openPoliMenu('Poli Jiwa', 'Konsultasi dan terapi psikiatri, kesehatan mental, gangguan kecemasan, depresi, dan insomnia.', ['{{ asset('gedung1_web.jpg') }}', '{{ asset('banner-igd.png') }}'])" 
+                     class="group flex flex-col items-center text-center p-2 rounded-2xl transition-all duration-300 hover:-translate-y-1.5 cursor-pointer">
                     <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-gradient-to-b from-emerald-50 to-teal-50/70 border-2 border-emerald-100/90 group-hover:border-[#0e7c47] group-hover:from-emerald-100/80 group-hover:to-teal-100/80 group-hover:shadow-md group-hover:shadow-emerald-900/10 flex items-center justify-center mb-3.5 transition-all duration-300 relative group-hover:scale-105">
                         <svg class="w-10 h-10 sm:w-11 sm:h-11 transition-transform duration-300 group-hover:scale-110 drop-shadow-xs" viewBox="0 0 64 64" fill="none">
                             <defs>
@@ -753,10 +752,11 @@
                     <span class="text-xs sm:text-sm font-bold text-[#0e7c47] group-hover:text-amber-600 transition-colors leading-snug">
                         Jiwa
                     </span>
-                </a>
+                </div>
 
                 <!-- 14. Kulit dan Kelamin -->
-                <a href="{{ route('jadwal.dokter') }}?spesialis=Kulit" class="group flex flex-col items-center text-center p-2 rounded-2xl transition-all duration-300 hover:-translate-y-1.5">
+                <div @click="openPoliMenu('Poli Kulit dan Kelamin', 'Perawatan masalah kulit (jerawat, alergi, eksim, infeksi) dan kesehatan organ reproduksi.', ['{{ asset('gedung1_web.jpg') }}', '{{ asset('banner-igd.png') }}'])" 
+                     class="group flex flex-col items-center text-center p-2 rounded-2xl transition-all duration-300 hover:-translate-y-1.5 cursor-pointer">
                     <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-gradient-to-b from-emerald-50 to-teal-50/70 border-2 border-emerald-100/90 group-hover:border-[#0e7c47] group-hover:from-emerald-100/80 group-hover:to-teal-100/80 group-hover:shadow-md group-hover:shadow-emerald-900/10 flex items-center justify-center mb-3.5 transition-all duration-300 relative group-hover:scale-105">
                         <svg class="w-10 h-10 sm:w-11 sm:h-11 transition-transform duration-300 group-hover:scale-110 drop-shadow-xs" viewBox="0 0 64 64" fill="none">
                             <defs>
@@ -774,10 +774,11 @@
                     <span class="text-xs sm:text-sm font-bold text-[#0e7c47] group-hover:text-amber-600 transition-colors leading-snug">
                         Kulit dan Kelamin
                     </span>
-                </a>
+                </div>
 
                 <!-- 15. Rehab Medik -->
-                <a href="{{ route('jadwal.dokter') }}?spesialis=Rehab+Medik" class="group flex flex-col items-center text-center p-2 rounded-2xl transition-all duration-300 hover:-translate-y-1.5">
+                <div @click="openPoliMenu('Poli Rehab Medik', 'Fisioterapi, okupasi terapi, dan rehabilitasi medis pasca stroke/operasi/cedera.', ['{{ asset('gedung1_web.jpg') }}', '{{ asset('banner-igd.png') }}'])" 
+                     class="group flex flex-col items-center text-center p-2 rounded-2xl transition-all duration-300 hover:-translate-y-1.5 cursor-pointer">
                     <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-gradient-to-b from-emerald-50 to-teal-50/70 border-2 border-emerald-100/90 group-hover:border-[#0e7c47] group-hover:from-emerald-100/80 group-hover:to-teal-100/80 group-hover:shadow-md group-hover:shadow-emerald-900/10 flex items-center justify-center mb-3.5 transition-all duration-300 relative group-hover:scale-105">
                         <svg class="w-10 h-10 sm:w-11 sm:h-11 transition-transform duration-300 group-hover:scale-110 drop-shadow-xs" viewBox="0 0 64 64" fill="none">
                             <circle cx="32" cy="14" r="5" fill="#38bdf8" stroke="#0284c7" stroke-width="2"/>
@@ -789,10 +790,11 @@
                     <span class="text-xs sm:text-sm font-bold text-[#0e7c47] group-hover:text-amber-600 transition-colors leading-snug">
                         Rehab Medik
                     </span>
-                </a>
+                </div>
 
                 <!-- 16. Spesialis Gigi (Periodonti) -->
-                <a href="{{ route('jadwal.dokter') }}?spesialis=Gigi" class="group flex flex-col items-center text-center p-2 rounded-2xl transition-all duration-300 hover:-translate-y-1.5">
+                <div @click="openPoliMenu('Poli Spesialis Gigi (Periodonti)', 'Perawatan khusus jaringan penyangga gigi, gusi berdarah, periodontitis, dan pembersihan karang mendalam.', ['{{ asset('gedung1_web.jpg') }}', '{{ asset('banner-igd.png') }}'])" 
+                     class="group flex flex-col items-center text-center p-2 rounded-2xl transition-all duration-300 hover:-translate-y-1.5 cursor-pointer">
                     <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-gradient-to-b from-emerald-50 to-teal-50/70 border-2 border-emerald-100/90 group-hover:border-[#0e7c47] group-hover:from-emerald-100/80 group-hover:to-teal-100/80 group-hover:shadow-md group-hover:shadow-emerald-900/10 flex items-center justify-center mb-3.5 transition-all duration-300 relative group-hover:scale-105">
                         <svg class="w-10 h-10 sm:w-11 sm:h-11 transition-transform duration-300 group-hover:scale-110 drop-shadow-xs" viewBox="0 0 64 64" fill="none">
                             <defs>
@@ -810,10 +812,11 @@
                     <span class="text-xs sm:text-sm font-bold text-[#0e7c47] group-hover:text-amber-600 transition-colors leading-snug">
                         Spesialis Gigi<br>(Periodonti)
                     </span>
-                </a>
+                </div>
 
                 <!-- 17. Bedah Mulut -->
-                <a href="{{ route('jadwal.dokter') }}?spesialis=Bedah+Mulut" class="group flex flex-col items-center text-center p-2 rounded-2xl transition-all duration-300 hover:-translate-y-1.5">
+                <div @click="openPoliMenu('Poli Bedah Mulut', 'Operasi gigi bungsu (odontektomi), kista rongga mulut, fraktur rahang, dan bedah maksilofasial.', ['{{ asset('gedung2_web.jpg') }}', '{{ asset('trauma-center.png') }}'])" 
+                     class="group flex flex-col items-center text-center p-2 rounded-2xl transition-all duration-300 hover:-translate-y-1.5 cursor-pointer">
                     <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-gradient-to-b from-emerald-50 to-teal-50/70 border-2 border-emerald-100/90 group-hover:border-[#0e7c47] group-hover:from-emerald-100/80 group-hover:to-teal-100/80 group-hover:shadow-md group-hover:shadow-emerald-900/10 flex items-center justify-center mb-3.5 transition-all duration-300 relative group-hover:scale-105">
                         <svg class="w-10 h-10 sm:w-11 sm:h-11 transition-transform duration-300 group-hover:scale-110 drop-shadow-xs" viewBox="0 0 64 64" fill="none">
                             <path d="M12 28c0-10 9-16 20-16s20 6 20 16c0 8-6 16-12 22-5 5-11 5-16 0-6-6-12-14-12-22z" fill="#f8fafc" stroke="#0e7c47" stroke-width="2"/>
@@ -826,10 +829,11 @@
                     <span class="text-xs sm:text-sm font-bold text-[#0e7c47] group-hover:text-amber-600 transition-colors leading-snug">
                         Bedah Mulut
                     </span>
-                </a>
+                </div>
 
                 <!-- 18. Gigi -->
-                <a href="{{ route('jadwal.dokter') }}?spesialis=Gigi" class="group flex flex-col items-center text-center p-2 rounded-2xl transition-all duration-300 hover:-translate-y-1.5">
+                <div @click="openPoliMenu('Poli Gigi', 'Kesehatan gigi umum, tambal gigi estetik, pencabutan gigi, pembersihan karang gigi (scaling), dan perawatan saluran akar.', ['{{ asset('gedung1_web.jpg') }}', '{{ asset('banner-igd.png') }}'])" 
+                     class="group flex flex-col items-center text-center p-2 rounded-2xl transition-all duration-300 hover:-translate-y-1.5 cursor-pointer">
                     <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-gradient-to-b from-emerald-50 to-teal-50/70 border-2 border-emerald-100/90 group-hover:border-[#0e7c47] group-hover:from-emerald-100/80 group-hover:to-teal-100/80 group-hover:shadow-md group-hover:shadow-emerald-900/10 flex items-center justify-center mb-3.5 transition-all duration-300 relative group-hover:scale-105">
                         <svg class="w-10 h-10 sm:w-11 sm:h-11 transition-transform duration-300 group-hover:scale-110 drop-shadow-xs" viewBox="0 0 64 64" fill="none">
                             <defs>
@@ -848,10 +852,11 @@
                     <span class="text-xs sm:text-sm font-bold text-[#0e7c47] group-hover:text-amber-600 transition-colors leading-snug">
                         Gigi
                     </span>
-                </a>
+                </div>
 
                 <!-- 19. Radiologi -->
-                <a href="{{ route('jadwal.dokter') }}?spesialis=Radiologi" class="group flex flex-col items-center text-center p-2 rounded-2xl transition-all duration-300 hover:-translate-y-1.5">
+                <div @click="openPoliMenu('Poli Radiologi', 'Pemeriksaan radiologi digital X-Ray (Rontgen), USG Doppler, Panoramic Dental, dan imaging diagnostik.', ['{{ asset('gedung1_web.jpg') }}', '{{ asset('banner-igd.png') }}'])" 
+                     class="group flex flex-col items-center text-center p-2 rounded-2xl transition-all duration-300 hover:-translate-y-1.5 cursor-pointer">
                     <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-gradient-to-b from-emerald-50 to-teal-50/70 border-2 border-emerald-100/90 group-hover:border-[#0e7c47] group-hover:from-emerald-100/80 group-hover:to-teal-100/80 group-hover:shadow-md group-hover:shadow-emerald-900/10 flex items-center justify-center mb-3.5 transition-all duration-300 relative group-hover:scale-105">
                         <svg class="w-10 h-10 sm:w-11 sm:h-11 transition-transform duration-300 group-hover:scale-110 drop-shadow-xs" viewBox="0 0 64 64" fill="none">
                             <rect x="12" y="10" width="40" height="44" rx="4" fill="#0f172a" stroke="#38bdf8" stroke-width="2"/>
@@ -864,24 +869,184 @@
                     <span class="text-xs sm:text-sm font-bold text-[#0e7c47] group-hover:text-amber-600 transition-colors leading-snug">
                         Radiologi
                     </span>
-                </a>
+                </div>
 
             </div>
         </div>
 
         <!-- SEE ALL BUTTON (TOGGLE) -->
-        <div class="mt-12 text-center">
+        <div class="mt-8 sm:mt-12 text-center px-4">
             <button @click="showAllSpesialis = !showAllSpesialis" 
                     type="button"
                     style="background-color: #0e7c47; color: #ffffff;"
-                    class="inline-flex items-center justify-center px-10 sm:px-12 py-2.5 rounded-full bg-[#0e7c47] hover:bg-[#096237] text-white font-bold text-sm tracking-tight shadow-sm hover:shadow-md active:scale-95 transition-all duration-200 cursor-pointer gap-2">
+                    class="w-full max-w-xs sm:w-auto inline-flex items-center justify-center px-4 sm:px-12 py-2.5 rounded-full bg-[#0e7c47] hover:bg-[#096237] text-white font-bold text-xs sm:text-sm tracking-tight shadow-sm hover:shadow-md active:scale-95 transition-all duration-200 cursor-pointer gap-2">
                 <span x-text="showAllSpesialis ? 'Tutup Daftar Spesialisasi' : 'Lihat Seluruh Poliklinik (19 Poli)'">Lihat Seluruh Poliklinik (19 Poli)</span>
                 <i class="fa-solid text-xs transition-transform duration-300" :class="showAllSpesialis ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
             </button>
         </div>
 
     </div>
+
+    <!-- CHOICE MODAL WHEN CIRCULAR ICON LOGO IS CLICKED (ALPINE.JS) -->
+    <div x-show="activePoliChoiceModal" 
+         x-transition:enter="transition ease-out duration-300"
+         x-transition:enter-start="opacity-0"
+         x-transition:enter-end="opacity-100"
+         x-transition:leave="transition ease-in duration-200"
+         x-transition:leave-start="opacity-100"
+         x-transition:leave-end="opacity-0"
+         class="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/80 backdrop-blur-xs" 
+         style="display: none;">
+        
+        <div @click.away="activePoliChoiceModal = false" 
+             class="bg-white w-full max-w-md rounded-2xl sm:rounded-3xl shadow-2xl p-5 sm:p-8 space-y-4 sm:space-y-6 relative max-h-[90vh] overflow-y-auto">
+            
+            <button @click="activePoliChoiceModal = false" class="absolute right-4 sm:right-6 top-4 sm:top-6 w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-gray-100 text-slate-500 hover:bg-gray-200 flex items-center justify-center transition-colors">
+                <i class="fa-solid fa-xmark text-sm sm:text-base"></i>
+            </button>
+
+            <div class="space-y-1 pr-6">
+                <span class="text-xs font-bold text-[#0e7c47] uppercase tracking-wider">Poliklinik Spesialis</span>
+                <h3 class="text-lg sm:text-xl font-black text-slate-900 leading-tight" x-text="selectedPoliTitle"></h3>
+                <p class="text-xs text-slate-500 font-medium" x-text="selectedPoliDesc"></p>
+            </div>
+
+            <!-- DUAL CHOICE ACTION BUTTONS -->
+            <div class="space-y-2.5 sm:space-y-3 pt-1">
+                <button @click="activePoliChoiceModal = false; openGallery(selectedPoliTitle, selectedPoliDesc, selectedPoliImages)" 
+                        class="w-full p-3.5 sm:p-4 rounded-2xl bg-emerald-50 hover:bg-[#0e7c47] text-[#0e7c47] hover:text-white transition-all text-left flex items-center gap-3 sm:gap-3.5 group shadow-xs">
+                    <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-white text-[#0e7c47] flex items-center justify-center text-base sm:text-lg font-bold shadow-xs shrink-0">
+                        <i class="fa-solid fa-images"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-extrabold text-xs sm:text-sm leading-tight">1. Lihat Galeri Foto Poliklinik</h4>
+                        <p class="text-[10px] sm:text-[11px] opacity-80 font-medium">Visualisasi ruangan & fasilitas poliklinik</p>
+                    </div>
+                </button>
+
+                <a href="{{ url('/jadwal-dokter') }}" 
+                   class="w-full p-3.5 sm:p-4 rounded-2xl bg-slate-50 hover:bg-emerald-50 text-slate-800 hover:text-[#0e7c47] transition-all text-left flex items-center gap-3 sm:gap-3.5 group shadow-xs block">
+                    <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-white text-[#0e7c47] flex items-center justify-center text-base sm:text-lg font-bold shadow-xs shrink-0">
+                        <i class="fa-solid fa-user-doctor"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-extrabold text-xs sm:text-sm leading-tight">2. Lihat Jadwal Dokter Spesialis</h4>
+                        <p class="text-[10px] sm:text-[11px] text-gray-500 font-medium">Cek jam praktek & nama dokter spesialis</p>
+                    </div>
+                </a>
+            </div>
+
+            <div class="pt-2 border-t border-gray-100 flex items-center justify-between gap-2">
+                <a href="{{ url('/buat-janji') }}" class="px-4 sm:px-5 py-2.5 rounded-xl bg-[#0e7c47] hover:bg-emerald-700 text-white font-bold text-xs transition-colors shadow-xs text-center">
+                    <i class="fa-solid fa-calendar-plus mr-1"></i> Buat Janji Online
+                </a>
+                <button @click="activePoliChoiceModal = false" class="px-3.5 sm:px-4 py-2.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-slate-700 font-bold text-xs">
+                    Batal
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- GALLERY LIGHTBOX / MODAL POPUP (ALPINE.JS) -->
+    <div x-show="activeModalGallery" 
+         x-transition:enter="transition ease-out duration-300"
+         x-transition:enter-start="opacity-0"
+         x-transition:enter-end="opacity-100"
+         x-transition:leave="transition ease-in duration-200"
+         x-transition:leave-start="opacity-100"
+         x-transition:leave-end="opacity-0"
+         class="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/80 backdrop-blur-xs" 
+         style="display: none;">
+        
+        <div @click.away="closeGallery()" 
+             class="bg-white w-full max-w-2xl rounded-2xl sm:rounded-3xl shadow-2xl p-5 sm:p-8 space-y-4 sm:space-y-5 relative max-h-[90vh] overflow-y-auto">
+            
+            <button @click="closeGallery()" class="absolute right-6 top-6 w-9 h-9 rounded-full bg-gray-100 text-slate-500 hover:bg-gray-200 flex items-center justify-center transition-colors">
+                <i class="fa-solid fa-xmark text-base"></i>
+            </button>
+
+            <div class="space-y-1">
+                <span class="text-xs font-bold text-[#0e7c47] uppercase tracking-wider">Galeri Foto RSU Fikri Medika</span>
+                <h3 class="text-xl font-black text-slate-900" x-text="galleryTitle"></h3>
+                <p class="text-xs text-slate-500 font-medium" x-text="galleryDescription"></p>
+            </div>
+
+            <!-- IMAGE DISPLAY -->
+            <div class="relative w-full h-72 sm:h-80 rounded-2xl overflow-hidden bg-slate-900">
+                <template x-for="(img, idx) in galleryImages" :key="idx">
+                    <img x-show="activeImageIndex === idx" 
+                         :src="img" 
+                         class="w-full h-full object-cover">
+                </template>
+
+                <!-- PREV / NEXT NAVIGATION IF MULTIPLE IMAGES -->
+                <template x-if="galleryImages.length > 1">
+                    <div class="absolute inset-0 flex items-center justify-between p-4 pointer-events-none">
+                        <button @click="activeImageIndex = (activeImageIndex === 0 ? galleryImages.length - 1 : activeImageIndex - 1)" 
+                                class="w-10 h-10 rounded-full bg-slate-950/60 text-white hover:bg-slate-950 flex items-center justify-center pointer-events-auto transition-colors">
+                            <i class="fa-solid fa-chevron-left text-xs"></i>
+                        </button>
+                        <button @click="activeImageIndex = (activeImageIndex === galleryImages.length - 1 ? 0 : activeImageIndex + 1)" 
+                                class="w-10 h-10 rounded-full bg-slate-950/60 text-white hover:bg-slate-950 flex items-center justify-center pointer-events-auto transition-colors">
+                            <i class="fa-solid fa-chevron-right text-xs"></i>
+                        </button>
+                    </div>
+                </template>
+            </div>
+
+            <!-- FOOTER MODAL -->
+            <div class="pt-3 border-t border-gray-100 flex items-center justify-between">
+                <a href="{{ url('/buat-janji') }}" class="px-5 py-2.5 rounded-xl bg-[#0e7c47] hover:bg-emerald-700 text-white font-bold text-xs transition-colors shadow-xs">
+                    <i class="fa-solid fa-calendar-plus mr-1.5"></i> Buat Janji Berobat
+                </a>
+                <button @click="closeGallery()" class="px-5 py-2.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-slate-700 font-bold text-xs">
+                    Tutup
+                </button>
+            </div>
+
+        </div>
+    </div>
+
 </section>
+
+<!-- ALPINE.JS SCRIPT FOR POLI SPESIALIS HOME -->
+<script>
+function poliSpesialisHomeApp() {
+    return {
+        showAllSpesialis: false,
+        activePoliChoiceModal: false,
+        selectedPoliTitle: '',
+        selectedPoliDesc: '',
+        selectedPoliImages: [],
+
+        activeModalGallery: false,
+        galleryTitle: '',
+        galleryDescription: '',
+        galleryImages: [],
+        activeImageIndex: 0,
+
+        openPoliMenu(title, desc, images) {
+            this.selectedPoliTitle = title;
+            this.selectedPoliDesc = desc;
+            this.selectedPoliImages = images;
+            this.activePoliChoiceModal = true;
+        },
+
+        openGallery(title, description, images) {
+            this.galleryTitle = title;
+            this.galleryDescription = description;
+            this.galleryImages = images && images.length ? images : ['{{ asset("gedung1_web.jpg") }}'];
+            this.activeImageIndex = 0;
+            this.activeModalGallery = true;
+        },
+
+        closeGallery() {
+            this.activeModalGallery = false;
+        }
+    };
+}
+</script>
 
 <!-- SECTION: CENTER OF EXCELLENCE / LAYANAN UNGGULAN (MATCHING REFERENCE DESIGN) -->
 <section id="layanan" class="py-16 lg:py-24 bg-white border-t border-gray-100 relative overflow-hidden" x-data="{
@@ -928,21 +1093,21 @@
         <!-- SLIDER CONTAINER WITH FLOATING ARROWS -->
         <div class="relative group/slider">
             
-            <!-- LEFT FLOATING ARROW BUTTON -->
+            <!-- LEFT FLOATING ARROW BUTTON (HIDDEN ON MOBILE, TOUCH SWIPE NATURAL) -->
             <button @click="scrollSlider(-1)" 
                     x-show="canScrollLeft" 
                     x-cloak
                     type="button" 
                     aria-label="Previous Slide" 
-                    class="absolute left-2 sm:-left-5 top-1/2 -translate-y-1/2 z-30 w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-[#005f59]/90 hover:bg-[#005f59] text-white flex items-center justify-center shadow-xl hover:scale-110 active:scale-95 transition-all duration-200 cursor-pointer">
+                    class="absolute left-2 sm:-left-5 top-1/2 -translate-y-1/2 z-30 w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-[#005f59]/90 hover:bg-[#005f59] text-white hidden sm:flex items-center justify-center shadow-xl hover:scale-110 active:scale-95 transition-all duration-200 cursor-pointer">
                 <i class="fa-solid fa-chevron-left text-sm sm:text-base"></i>
             </button>
 
-            <!-- RIGHT FLOATING ARROW BUTTON (MATCHING REFERENCE DESIGN) -->
+            <!-- RIGHT FLOATING ARROW BUTTON (HIDDEN ON MOBILE, TOUCH SWIPE NATURAL) -->
             <button @click="scrollSlider(1)" 
                     type="button" 
                     aria-label="Next Slide" 
-                    class="absolute right-2 sm:-right-5 top-1/2 -translate-y-1/2 z-30 w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-[#005f59] hover:bg-[#004743] text-white flex items-center justify-center shadow-xl hover:scale-110 active:scale-95 transition-all duration-200 cursor-pointer">
+                    class="absolute right-2 sm:-right-5 top-1/2 -translate-y-1/2 z-30 w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-[#005f59] hover:bg-[#004743] text-white hidden sm:flex items-center justify-center shadow-xl hover:scale-110 active:scale-95 transition-all duration-200 cursor-pointer">
                 <i class="fa-solid fa-chevron-right text-sm sm:text-base"></i>
             </button>
 
@@ -950,14 +1115,14 @@
             <div x-ref="slider"
                  @scroll.passive="checkScroll()"
                  style="scrollbar-width: none; -ms-overflow-style: none; -webkit-overflow-scrolling: touch;"
-                 class="flex gap-6 overflow-x-auto scroll-smooth snap-x snap-mandatory py-2 cursor-grab active:cursor-grabbing select-none [::-webkit-scrollbar]:hidden">
+                 class="flex gap-4 sm:gap-6 overflow-x-auto scroll-smooth snap-x snap-mandatory py-2 cursor-grab active:cursor-grabbing select-none [::-webkit-scrollbar]:hidden">
                 
                 @foreach($featuredServices as $service)
                 @php
                     $featImg = !empty($service->image) ? (\Illuminate\Support\Str::startsWith($service->image, ['http://', 'https://']) ? $service->image : asset($service->image)) : 'https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&w=800&q=80';
                 @endphp
                 <a href="{{ url('/layanan/' . ($service->slug ?: \Illuminate\Support\Str::slug($service->tr('name')))) }}" 
-                   class="service-card w-[88%] sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)] shrink-0 snap-start rounded-2xl sm:rounded-3xl overflow-hidden relative h-80 sm:h-96 lg:h-[420px] shadow-lg hover:shadow-2xl transition-all duration-300 group block">
+                   class="service-card w-[82vw] sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)] shrink-0 snap-start rounded-2xl sm:rounded-3xl overflow-hidden relative h-72 sm:h-96 lg:h-[420px] shadow-lg hover:shadow-2xl transition-all duration-300 group block">
                     
                     <!-- FULL COVER BACKGROUND IMAGE -->
                     <img src="{{ $featImg }}" 
@@ -1380,4 +1545,193 @@ $youtubeVideos = [
     </div>
 </section>
 
+<!-- SECTION: TIKTOK FEED (OFFICIAL TIKTOK EMBEDDED PLAYER V1) -->
+@php
+if (!isset($tiktokPosts) || (is_countable($tiktokPosts) && count($tiktokPosts) === 0)) {
+    $tiktokPosts = \App\Models\TiktokPost::where('is_active', true)->orderBy('order', 'asc')->orderBy('id', 'desc')->take(6)->get();
+}
+@endphp
+
+<style>
+    .tiktok-carousel-wrap {
+        display: flex;
+        gap: 16px;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        padding: 8px 4px 16px 4px;
+    }
+    .tiktok-carousel-wrap::-webkit-scrollbar {
+        display: none;
+    }
+    .tiktok-card-item {
+        flex: 0 0 260px;
+        width: 260px;
+        height: 460px;
+        scroll-snap-align: center;
+        position: relative;
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.18);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        background-color: #000000;
+        border: 1px solid rgba(0, 0, 0, 0.08);
+    }
+    .tiktok-card-item:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 20px 35px -5px rgba(0, 0, 0, 0.28);
+    }
+    .tiktok-iframe-player {
+        width: 100%;
+        height: 100%;
+        border: 0;
+        outline: none;
+        background: #000000;
+        pointer-events: auto;
+        display: block;
+    }
+    @media (min-width: 1024px) {
+        .tiktok-carousel-wrap {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 14px;
+            overflow-x: visible;
+            padding: 8px 0;
+        }
+        .tiktok-card-item {
+            flex: none;
+            width: 100%;
+            height: 440px;
+        }
+    }
+</style>
+
+<section id="tiktok-feed" 
+         style="background: linear-gradient(180deg, #f4f8f5 0%, #e6f0eb 100%); border-top: 1px solid #d4e5dc; border-bottom: 1px solid #d4e5dc;"
+         class="py-16 sm:py-20 relative overflow-hidden select-none"
+         x-data="{
+             activeSlide: 0,
+             totalSlides: {{ count($tiktokPosts) }},
+             loadedFrames: {},
+             playerErrors: {},
+             scrollToSlide(index) {
+                 this.activeSlide = index;
+                 const container = this.$refs.tiktokSlider;
+                 if (container && container.children[index]) {
+                     container.children[index].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+                 }
+             },
+             onScroll() {
+                 const container = this.$refs.tiktokSlider;
+                 if (!container || !container.children[0]) return;
+                 const scrollLeft = container.scrollLeft;
+                 const cardWidth = container.children[0].offsetWidth || 260;
+                 const newIndex = Math.round(scrollLeft / (cardWidth + 16));
+                 this.activeSlide = Math.max(0, Math.min(this.totalSlides - 1, newIndex));
+             },
+             init() {
+                 window.addEventListener('message', (event) => {
+                     if (event.data && event.data['x-tiktok-player']) {
+                         const type = event.data.type;
+                         if (type === 'onPlayerReady') {
+                             console.log('TikTok Player Ready');
+                         }
+                     }
+                 });
+             }
+         }">
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        
+        <!-- SECTION HEADER -->
+        <div class="flex flex-col sm:flex-row sm:items-end justify-between mb-8 sm:mb-10 gap-4">
+            <div>
+                <div style="background-color: #111827; color: #ffffff;" class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full text-xs font-bold mb-2 shadow-xs">
+                    <i class="fa-brands fa-tiktok text-[#25f4ee] text-xs"></i>
+                    <span>TikTok Official</span>
+                </div>
+                <h2 style="color: #0e7c47;" class="text-2xl sm:text-3xl font-extrabold tracking-tight flex items-center gap-2.5">
+                    <span>Ikuti Kami di TikTok</span>
+                    <i class="fa-brands fa-tiktok text-xl text-black"></i>
+                </h2>
+                <p style="color: #475569;" class="text-xs sm:text-sm mt-1 max-w-2xl font-medium leading-relaxed">
+                    Dapatkan informasi kesehatan, layanan, tips kesehatan, dan kabar terbaru RSU Fikri Medika.
+                </p>
+            </div>
+            <div class="shrink-0">
+                <a href="https://www.tiktok.com/@rsu.fikrimedika" 
+                   target="_blank" 
+                   rel="noopener noreferrer"
+                   style="background-color: #111827; color: #ffffff;"
+                   class="inline-flex items-center gap-2 px-5 py-2.5 rounded-full hover:bg-black font-bold text-xs sm:text-sm shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5 group">
+                    <i class="fa-brands fa-tiktok text-sm text-[#25f4ee] group-hover:text-[#fe2c55] transition-colors"></i>
+                    <span>@rsu.fikrimedika</span>
+                    <i class="fa-solid fa-arrow-up-right-from-square text-[10px] opacity-75"></i>
+                </a>
+            </div>
+        </div>
+
+        <!-- TIKTOK CARDS CONTAINER (OFFICIAL TIKTOK EMBEDDED PLAYER V1) -->
+        <div class="relative">
+            <div x-ref="tiktokSlider"
+                 @scroll.passive="onScroll()"
+                 class="tiktok-carousel-wrap">
+                
+                @foreach($tiktokPosts as $index => $post)
+                @php
+                    $videoId   = is_object($post) ? $post->video_id : '7676297240599678216';
+                    $playerUrl = "https://www.tiktok.com/player/v1/{$videoId}";
+                    $postUrl   = is_object($post) ? ($post->tiktok_url ?: "https://www.tiktok.com/@rsu.fikrimedika/video/{$videoId}") : "https://www.tiktok.com/@rsu.fikrimedika/video/{$videoId}";
+                    $postTitle = is_object($post) ? $post->title : ($post['title'] ?? 'RSU Fikri Medika');
+                    $postTag   = is_object($post) ? $post->tag : ($post['tag'] ?? '#RSUFikriMedika');
+                @endphp
+                <div class="tiktok-card-item group">
+                    
+                    <!-- ERROR FALLBACK STATE -->
+                    <div x-show="playerErrors['{{ $index }}']"
+                         x-cloak
+                         style="position: absolute; inset: 0; background: #0f172a; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 16px; text-align: center; z-index: 25;">
+                        <i class="fa-brands fa-tiktok text-3xl text-[#fe2c55] mb-2"></i>
+                        <p class="text-xs text-white font-medium mb-3">Video tidak dapat diputar saat ini</p>
+                        <a href="{{ $postUrl }}" target="_blank" rel="noopener noreferrer" 
+                           class="px-4 py-1.5 bg-[#fe2c55] hover:bg-[#e02447] text-white text-xs font-bold rounded-full transition-colors flex items-center gap-1.5 shadow-md">
+                            <span>Lihat di TikTok</span>
+                            <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+                        </a>
+                    </div>
+
+                    <!-- OFFICIAL TIKTOK PLAYER V1 IFRAME (1-CLICK DIRECT PLAY) -->
+                    <iframe id="tiktok-player-{{ $index }}"
+                            src="{{ $playerUrl }}"
+                            title="{{ $postTitle }}"
+                            class="tiktok-iframe-player"
+                            allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture; fullscreen"
+                            allowfullscreen
+                            x-on:error="playerErrors['{{ $index }}'] = true">
+                    </iframe>
+
+                </div>
+                @endforeach
+
+            </div>
+        </div>
+
+        <!-- MOBILE PAGINATION PILLS INDICATOR -->
+        @if(count($tiktokPosts) > 1)
+        <div class="flex lg:hidden items-center justify-center gap-1.5 mt-5">
+            <template x-for="i in totalSlides" :key="i">
+                <button @click="scrollToSlide(i - 1)"
+                        type="button"
+                        :class="activeSlide === (i - 1) ? 'w-6 bg-[#0e7c47]' : 'w-2 bg-emerald-300/60 hover:bg-emerald-400'"
+                        class="h-1.5 rounded-full transition-all duration-300 cursor-pointer outline-none">
+                </button>
+            </template>
+        </div>
+        @endif
+
+    </div>
+</section>
+
 @endsection
+
