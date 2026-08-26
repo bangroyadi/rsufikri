@@ -42,6 +42,41 @@
     <div class="space-y-10 pt-2">
 
         <!-- FULL WIDE SECTION 1: DAFTAR POLIKLINIK SPESIALIS -->
+        @php
+            $getPoliData = function($slug, $fallbackName, $fallbackDesc, $fallbackImages) use ($polyclinics) {
+                $poli = isset($polyclinics) ? $polyclinics->firstWhere('slug', $slug) : null;
+                if (!$poli && isset($polyclinics)) {
+                    $poli = $polyclinics->first(function($p) use ($fallbackName) {
+                        $pName = is_array($p->name) ? ($p->name['id'] ?? '') : $p->name;
+                        return str_contains(strtolower($pName), strtolower(str_replace('Poli ', '', $fallbackName)));
+                    });
+                }
+                $name = $poli ? (is_array($poli->name) ? ($poli->name[app()->getLocale()] ?? $poli->name['id'] ?? $fallbackName) : $poli->name) : $fallbackName;
+                $desc = $poli ? (is_array($poli->description) ? ($poli->description[app()->getLocale()] ?? $poli->description['id'] ?? $fallbackDesc) : $poli->description) : $fallbackDesc;
+                
+                // Strictly respect database gallery status
+                if ($poli) {
+                    $images = $poli->gallery_images;
+                } else {
+                    $images = $fallbackImages;
+                }
+
+                return [
+                    'name' => $name,
+                    'desc' => $desc,
+                    'images' => $images,
+                    'id' => $poli?->id,
+                    'slug' => $poli?->slug ?? $slug
+                ];
+            };
+
+            $knownSlugs = ['penyakit-dalam', 'anak', 'obgyn-kandungan', 'bedah', 'mata', 'jantung', 'paru', 'orthopedi', 'urologi', 'tht-kl', 'neurologi-saraf', 'bedah-saraf', 'jiwa', 'kulit-dan-kelamin', 'rehab-medik', 'spesialis-gigi-periodonti', 'bedah-mulut', 'gigi', 'radiologi'];
+            $extraPolis = isset($polyclinics) ? $polyclinics->filter(function($p) use ($knownSlugs) {
+                return !in_array($p->slug, $knownSlugs);
+            }) : collect();
+            $totalPoliCount = isset($polyclinics) && $polyclinics->count() > 0 ? $polyclinics->count() : 19;
+        @endphp
+
         <div class="bg-white p-6 sm:p-8 rounded-3xl shadow-sm space-y-6" x-data="{ showAllPoli: false }">
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-gray-100">
                 <div>
@@ -59,7 +94,8 @@
             <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-y-10 sm:gap-y-12 gap-x-4 sm:gap-x-6 lg:gap-x-8 pt-2">
                 
                 <!-- 1. Penyakit Dalam -->
-                <div @click="openPoliMenu('Poli Penyakit Dalam', 'Pelayanan diagnostik dan penanganan medis komprehensif penyakit organ dalam dewasa (diabetes, hipertensi, lambung, ginjal, hati).', ['{{ asset('gedung1_web.jpg') }}', '{{ asset('banner-igd.png') }}'])" 
+                @php $p1 = $getPoliData('penyakit-dalam', 'Poli Penyakit Dalam', 'Pelayanan diagnostik dan penanganan medis komprehensif penyakit organ dalam dewasa (diabetes, hipertensi, lambung, ginjal, hati).', [asset('gedung1_web.jpg'), asset('banner-igd.png')]); @endphp
+                <div @click="openPoliMenu('{{ addslashes($p1['name']) }}', '{{ addslashes($p1['desc']) }}', {{ json_encode($p1['images']) }})" 
                      class="group flex flex-col items-center text-center p-2 rounded-2xl transition-all duration-300 hover:-translate-y-1.5 cursor-pointer">
                     <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-gradient-to-b from-emerald-50 to-teal-50/70 border-2 border-emerald-100/90 group-hover:border-[#0e7c47] group-hover:from-emerald-100/80 group-hover:to-teal-100/80 group-hover:shadow-md group-hover:shadow-emerald-900/10 flex items-center justify-center mb-3.5 transition-all duration-300 relative group-hover:scale-105">
                         <svg class="w-10 h-10 sm:w-11 sm:h-11 transition-transform duration-300 group-hover:scale-110 drop-shadow-xs" viewBox="0 0 64 64" fill="none">
@@ -80,12 +116,13 @@
                         <span class="absolute top-1 right-1 w-2.5 h-2.5 rounded-full bg-yellow-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300 shadow-xs"></span>
                     </div>
                     <span class="text-xs sm:text-sm font-bold text-[#0e7c47] group-hover:text-amber-600 transition-colors leading-snug">
-                        Penyakit Dalam
+                        {{ str_replace('Poli ', '', $p1['name']) }}
                     </span>
                 </div>
 
                 <!-- 2. Anak -->
-                <div @click="openPoliMenu('Poli Anak', 'Pelayanan kesehatan anak komprehensif, imunisasi, pemantauan tumbuh kembang, dan infeksi pediatrik.', ['{{ asset('gedung1_web.jpg') }}', '{{ asset('banner-igd.png') }}'])" 
+                @php $p2 = $getPoliData('anak', 'Poli Anak', 'Pelayanan kesehatan anak komprehensif, imunisasi, pemantauan tumbuh kembang, dan infeksi pediatrik.', [asset('gedung1_web.jpg'), asset('banner-igd.png')]); @endphp
+                <div @click="openPoliMenu('{{ addslashes($p2['name']) }}', '{{ addslashes($p2['desc']) }}', {{ json_encode($p2['images']) }})" 
                      class="group flex flex-col items-center text-center p-2 rounded-2xl transition-all duration-300 hover:-translate-y-1.5 cursor-pointer">
                     <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-gradient-to-b from-emerald-50 to-teal-50/70 border-2 border-emerald-100/90 group-hover:border-[#0e7c47] group-hover:from-emerald-100/80 group-hover:to-teal-100/80 group-hover:shadow-md group-hover:shadow-emerald-900/10 flex items-center justify-center mb-3.5 transition-all duration-300 relative group-hover:scale-105">
                         <svg class="w-10 h-10 sm:w-11 sm:h-11 transition-transform duration-300 group-hover:scale-110 drop-shadow-xs" viewBox="0 0 64 64" fill="none">
@@ -117,7 +154,8 @@
                 </div>
 
                 <!-- 3. Obgyn (Kandungan) -->
-                <div @click="openPoliMenu('Poli Obgyn (Kandungan)', 'Pemeriksaan kehamilan, USG 4D HD Live, persalinan metode ERACS, dan kesehatan reproduksi wanita.', ['{{ asset('gedung1_web.jpg') }}', '{{ asset('banner-igd.png') }}'])" 
+                @php $p3 = $getPoliData('obgyn-kandungan', 'Poli Obgyn (Kandungan)', 'Pemeriksaan kehamilan, USG 4D HD Live, persalinan metode ERACS, dan kesehatan reproduksi wanita.', [asset('gedung1_web.jpg'), asset('banner-igd.png')]); @endphp
+                <div @click="openPoliMenu('{{ addslashes($p3['name']) }}', '{{ addslashes($p3['desc']) }}', {{ json_encode($p3['images']) }})" 
                      class="group flex flex-col items-center text-center p-2 rounded-2xl transition-all duration-300 hover:-translate-y-1.5 cursor-pointer">
                     <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-gradient-to-b from-emerald-50 to-teal-50/70 border-2 border-emerald-100/90 group-hover:border-[#0e7c47] group-hover:from-emerald-100/80 group-hover:to-teal-100/80 group-hover:shadow-md group-hover:shadow-emerald-900/10 flex items-center justify-center mb-3.5 transition-all duration-300 relative group-hover:scale-105">
                         <svg class="w-10 h-10 sm:w-11 sm:h-11 transition-transform duration-300 group-hover:scale-110 drop-shadow-xs" viewBox="0 0 64 64" fill="none">
@@ -131,12 +169,13 @@
                         <span class="absolute top-1 right-1 w-2.5 h-2.5 rounded-full bg-yellow-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300 shadow-xs"></span>
                     </div>
                     <span class="text-xs sm:text-sm font-bold text-[#0e7c47] group-hover:text-amber-600 transition-colors leading-snug">
-                        Obgyn (Kandungan)
+                        {{ str_replace('Poli ', '', $p3['name']) }}
                     </span>
                 </div>
 
                 <!-- 4. Bedah -->
-                <div @click="openPoliMenu('Poli Bedah', 'Konsultasi dan tindakan pembedahan umum, appendicitis, hernia, tumor jinak, dan perawatan luka modern.', ['{{ asset('trauma-center.png') }}', '{{ asset('gedung2_web.jpg') }}'])" 
+                @php $p4 = $getPoliData('bedah', 'Poli Bedah', 'Konsultasi dan tindakan pembedahan umum, appendicitis, hernia, tumor jinak, dan perawatan luka modern.', [asset('trauma-center.png'), asset('gedung2_web.jpg')]); @endphp
+                <div @click="openPoliMenu('{{ addslashes($p4['name']) }}', '{{ addslashes($p4['desc']) }}', {{ json_encode($p4['images']) }})" 
                      class="group flex flex-col items-center text-center p-2 rounded-2xl transition-all duration-300 hover:-translate-y-1.5 cursor-pointer">
                     <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-gradient-to-b from-emerald-50 to-teal-50/70 border-2 border-emerald-100/90 group-hover:border-[#0e7c47] group-hover:from-emerald-100/80 group-hover:to-teal-100/80 group-hover:shadow-md group-hover:shadow-emerald-900/10 flex items-center justify-center mb-3.5 transition-all duration-300 relative group-hover:scale-105">
                         <svg class="w-10 h-10 sm:w-11 sm:h-11 transition-transform duration-300 group-hover:scale-110 drop-shadow-xs" viewBox="0 0 64 64" fill="none">
@@ -159,12 +198,13 @@
                         <span class="absolute top-1 right-1 w-2.5 h-2.5 rounded-full bg-yellow-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300 shadow-xs"></span>
                     </div>
                     <span class="text-xs sm:text-sm font-bold text-[#0e7c47] group-hover:text-amber-600 transition-colors leading-snug">
-                        Bedah
+                        {{ str_replace('Poli ', '', $p4['name']) }}
                     </span>
                 </div>
 
                 <!-- 5. Mata -->
-                <div @click="openPoliMenu('Poli Mata', 'Poli Spesialis Mata & Refraksi Katarak (Metode Phacoemulsification modern tanpa jahitan).', ['{{ asset('spesialis-mata.png') }}', '{{ asset('gedung1_web.jpg') }}'])" 
+                @php $p5 = $getPoliData('mata', 'Poli Mata', 'Poli Spesialis Mata & Refraksi Katarak (Metode Phacoemulsification modern tanpa jahitan).', [asset('spesialis-mata.png'), asset('gedung1_web.jpg')]); @endphp
+                <div @click="openPoliMenu('{{ addslashes($p5['name']) }}', '{{ addslashes($p5['desc']) }}', {{ json_encode($p5['images']) }})" 
                      class="group flex flex-col items-center text-center p-2 rounded-2xl transition-all duration-300 hover:-translate-y-1.5 cursor-pointer">
                     <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-gradient-to-b from-emerald-50 to-teal-50/70 border-2 border-emerald-100/90 group-hover:border-[#0e7c47] group-hover:from-emerald-100/80 group-hover:to-teal-100/80 group-hover:shadow-md group-hover:shadow-emerald-900/10 flex items-center justify-center mb-3.5 transition-all duration-300 relative group-hover:scale-105">
                         <svg class="w-10 h-10 sm:w-11 sm:h-11 transition-transform duration-300 group-hover:scale-110 drop-shadow-xs" viewBox="0 0 64 64" fill="none">
@@ -189,12 +229,13 @@
                         <span class="absolute top-1 right-1 w-2.5 h-2.5 rounded-full bg-yellow-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300 shadow-xs"></span>
                     </div>
                     <span class="text-xs sm:text-sm font-bold text-[#0e7c47] group-hover:text-amber-600 transition-colors leading-snug">
-                        Mata
+                        {{ str_replace('Poli ', '', $p5['name']) }}
                     </span>
                 </div>
 
                 <!-- 6. Jantung -->
-                <div @click="openPoliMenu('Poli Jantung', 'Poli Spesialis Jantung & Pembuluh Darah (Kardiologi) dengan EKG, Treadmill, dan Echocardiography.', ['{{ asset('gedung1_web.jpg') }}', '{{ asset('banner-igd.png') }}'])" 
+                @php $p6 = $getPoliData('jantung', 'Poli Jantung', 'Poli Spesialis Jantung & Pembuluh Darah (Kardiologi) dengan EKG, Treadmill, dan Echocardiography.', [asset('gedung1_web.jpg'), asset('banner-igd.png')]); @endphp
+                <div @click="openPoliMenu('{{ addslashes($p6['name']) }}', '{{ addslashes($p6['desc']) }}', {{ json_encode($p6['images']) }})" 
                      class="group flex flex-col items-center text-center p-2 rounded-2xl transition-all duration-300 hover:-translate-y-1.5 cursor-pointer">
                     <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-gradient-to-b from-emerald-50 to-teal-50/70 border-2 border-emerald-100/90 group-hover:border-[#0e7c47] group-hover:from-emerald-100/80 group-hover:to-teal-100/80 group-hover:shadow-md group-hover:shadow-emerald-900/10 flex items-center justify-center mb-3.5 transition-all duration-300 relative group-hover:scale-105">
                         <svg class="w-10 h-10 sm:w-11 sm:h-11 transition-transform duration-300 group-hover:scale-110 drop-shadow-xs" viewBox="0 0 64 64" fill="none">
@@ -217,13 +258,13 @@
                         <span class="absolute top-1 right-1 w-2.5 h-2.5 rounded-full bg-yellow-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300 shadow-xs"></span>
                     </div>
                     <span class="text-xs sm:text-sm font-bold text-[#0e7c47] group-hover:text-amber-600 transition-colors leading-snug">
-                        Jantung
+                        {{ str_replace('Poli ', '', $p6['name']) }}
                     </span>
                 </div>
 
             </div>
 
-            <!-- SPECIALIST SERVICES GRID: ROW 2 & 3 (REMAINING 13 ITEMS WITH ANIMATED EXPAND/COLLAPSE) -->
+            <!-- SPECIALIST SERVICES GRID: ROW 2 & 3 (REMAINING 13 ITEMS + EXTRA POLIS WITH ANIMATED EXPAND/COLLAPSE) -->
             <div x-show="showAllPoli" 
                  x-cloak
                  x-transition:enter="transition ease-out duration-500 transform"
@@ -236,7 +277,8 @@
                 <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-y-10 sm:gap-y-12 gap-x-4 sm:gap-x-6 lg:gap-x-8">
 
                     <!-- 7. Paru -->
-                    <div @click="openPoliMenu('Poli Paru', 'Poli Spesialis Paru & Pulmonologi untuk asma, PPOK, TBC, bronkitis, dan gangguan pernapasan.', ['{{ asset('gedung1_web.jpg') }}', '{{ asset('banner-igd.png') }}'])" 
+                    @php $p7 = $getPoliData('paru', 'Poli Paru', 'Poli Spesialis Paru & Pulmonologi untuk asma, PPOK, TBC, bronkitis, dan gangguan pernapasan.', [asset('gedung1_web.jpg'), asset('banner-igd.png')]); @endphp
+                    <div @click="openPoliMenu('{{ addslashes($p7['name']) }}', '{{ addslashes($p7['desc']) }}', {{ json_encode($p7['images']) }})" 
                          class="group flex flex-col items-center text-center p-2 rounded-2xl transition-all duration-300 hover:-translate-y-1.5 cursor-pointer">
                         <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-gradient-to-b from-emerald-50 to-teal-50/70 border-2 border-emerald-100/90 group-hover:border-[#0e7c47] group-hover:from-emerald-100/80 group-hover:to-teal-100/80 group-hover:shadow-md group-hover:shadow-emerald-900/10 flex items-center justify-center mb-3.5 transition-all duration-300 relative group-hover:scale-105">
                             <svg class="w-10 h-10 sm:w-11 sm:h-11 transition-transform duration-300 group-hover:scale-110 drop-shadow-xs" viewBox="0 0 64 64" fill="none">
@@ -261,12 +303,13 @@
                             <span class="absolute top-1 right-1 w-2.5 h-2.5 rounded-full bg-yellow-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300 shadow-xs"></span>
                         </div>
                         <span class="text-xs sm:text-sm font-bold text-[#0e7c47] group-hover:text-amber-600 transition-colors leading-snug">
-                            Paru
+                            {{ str_replace('Poli ', '', $p7['name']) }}
                         </span>
                     </div>
 
                     <!-- 8. Orthopedi -->
-                    <div @click="openPoliMenu('Poli Orthopedi', 'Penanganan cedera patah tulang, dislokasi sendi, trauma kecelakaan, dan bedah ortopedi.', ['{{ asset('trauma-center.png') }}', '{{ asset('gedung2_web.jpg') }}'])" 
+                    @php $p8 = $getPoliData('orthopedi', 'Poli Orthopedi', 'Penanganan cedera patah tulang, dislokasi sendi, trauma kecelakaan, dan bedah ortopedi.', [asset('trauma-center.png'), asset('gedung2_web.jpg')]); @endphp
+                    <div @click="openPoliMenu('{{ addslashes($p8['name']) }}', '{{ addslashes($p8['desc']) }}', {{ json_encode($p8['images']) }})" 
                          class="group flex flex-col items-center text-center p-2 rounded-2xl transition-all duration-300 hover:-translate-y-1.5 cursor-pointer">
                         <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-gradient-to-b from-emerald-50 to-teal-50/70 border-2 border-emerald-100/90 group-hover:border-[#0e7c47] group-hover:from-emerald-100/80 group-hover:to-teal-100/80 group-hover:shadow-md group-hover:shadow-emerald-900/10 flex items-center justify-center mb-3.5 transition-all duration-300 relative group-hover:scale-105">
                             <svg class="w-10 h-10 sm:w-11 sm:h-11 transition-transform duration-300 group-hover:scale-110 drop-shadow-xs" viewBox="0 0 64 64" fill="none">
@@ -285,12 +328,13 @@
                             <span class="absolute top-1 right-1 w-2.5 h-2.5 rounded-full bg-yellow-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300 shadow-xs"></span>
                         </div>
                         <span class="text-xs sm:text-sm font-bold text-[#0e7c47] group-hover:text-amber-600 transition-colors leading-snug">
-                            Orthopedi
+                            {{ str_replace('Poli ', '', $p8['name']) }}
                         </span>
                     </div>
 
                     <!-- 9. Urologi -->
-                    <div @click="openPoliMenu('Poli Urologi', 'Penanganan kelainan sistem saluran kemih, batu ginjal, kandung kemih, dan prostat.', ['{{ asset('gedung1_web.jpg') }}', '{{ asset('banner-igd.png') }}'])" 
+                    @php $p9 = $getPoliData('urologi', 'Poli Urologi', 'Penanganan kelainan sistem saluran kemih, batu ginjal, kandung kemih, dan prostat.', [asset('gedung1_web.jpg'), asset('banner-igd.png')]); @endphp
+                    <div @click="openPoliMenu('{{ addslashes($p9['name']) }}', '{{ addslashes($p9['desc']) }}', {{ json_encode($p9['images']) }})" 
                          class="group flex flex-col items-center text-center p-2 rounded-2xl transition-all duration-300 hover:-translate-y-1.5 cursor-pointer">
                         <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-gradient-to-b from-emerald-50 to-teal-50/70 border-2 border-emerald-100/90 group-hover:border-[#0e7c47] group-hover:from-emerald-100/80 group-hover:to-teal-100/80 group-hover:shadow-md group-hover:shadow-emerald-900/10 flex items-center justify-center mb-3.5 transition-all duration-300 relative group-hover:scale-105">
                             <svg class="w-10 h-10 sm:w-11 sm:h-11 transition-transform duration-300 group-hover:scale-110 drop-shadow-xs" viewBox="0 0 64 64" fill="none">
@@ -312,12 +356,13 @@
                             <span class="absolute top-1 right-1 w-2.5 h-2.5 rounded-full bg-yellow-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300 shadow-xs"></span>
                         </div>
                         <span class="text-xs sm:text-sm font-bold text-[#0e7c47] group-hover:text-amber-600 transition-colors leading-snug">
-                            Urologi
+                            {{ str_replace('Poli ', '', $p9['name']) }}
                         </span>
                     </div>
 
                     <!-- 10. THT – KL -->
-                    <div @click="openPoliMenu('Poli THT – KL', 'Pemeriksaan telinga, hidung, tenggorokan, serta bedah kepala dan leher (sinusitis, amandel, polip).', ['{{ asset('gedung1_web.jpg') }}', '{{ asset('banner-igd.png') }}'])" 
+                    @php $p10 = $getPoliData('tht-kl', 'Poli THT – KL', 'Pemeriksaan telinga, hidung, tenggorokan, serta bedah kepala dan leher (sinusitis, amandel, polip).', [asset('gedung1_web.jpg'), asset('banner-igd.png')]); @endphp
+                    <div @click="openPoliMenu('{{ addslashes($p10['name']) }}', '{{ addslashes($p10['desc']) }}', {{ json_encode($p10['images']) }})" 
                          class="group flex flex-col items-center text-center p-2 rounded-2xl transition-all duration-300 hover:-translate-y-1.5 cursor-pointer">
                         <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-gradient-to-b from-emerald-50 to-teal-50/70 border-2 border-emerald-100/90 group-hover:border-[#0e7c47] group-hover:from-emerald-100/80 group-hover:to-teal-100/80 group-hover:shadow-md group-hover:shadow-emerald-900/10 flex items-center justify-center mb-3.5 transition-all duration-300 relative group-hover:scale-105">
                             <svg class="w-10 h-10 sm:w-11 sm:h-11 transition-transform duration-300 group-hover:scale-110 drop-shadow-xs" viewBox="0 0 64 64" fill="none">
@@ -336,12 +381,13 @@
                             <span class="absolute top-1 right-1 w-2.5 h-2.5 rounded-full bg-yellow-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300 shadow-xs"></span>
                         </div>
                         <span class="text-xs sm:text-sm font-bold text-[#0e7c47] group-hover:text-amber-600 transition-colors leading-snug">
-                            THT – KL
+                            {{ str_replace('Poli ', '', $p10['name']) }}
                         </span>
                     </div>
 
                     <!-- 11. Neurologi (Saraf) -->
-                    <div @click="openPoliMenu('Poli Neurologi (Saraf)', 'Penanganan stroke, vertigo, migrain, epilepsi, nyeri saraf, dan saraf terjepit (HNP).', ['{{ asset('gedung1_web.jpg') }}', '{{ asset('banner-igd.png') }}'])" 
+                    @php $p11 = $getPoliData('neurologi-saraf', 'Poli Neurologi (Saraf)', 'Penanganan stroke, vertigo, migrain, epilepsi, nyeri saraf, dan saraf terjepit (HNP).', [asset('gedung1_web.jpg'), asset('banner-igd.png')]); @endphp
+                    <div @click="openPoliMenu('{{ addslashes($p11['name']) }}', '{{ addslashes($p11['desc']) }}', {{ json_encode($p11['images']) }})" 
                          class="group flex flex-col items-center text-center p-2 rounded-2xl transition-all duration-300 hover:-translate-y-1.5 cursor-pointer">
                         <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-gradient-to-b from-emerald-50 to-teal-50/70 border-2 border-emerald-100/90 group-hover:border-[#0e7c47] group-hover:from-emerald-100/80 group-hover:to-teal-100/80 group-hover:shadow-md group-hover:shadow-emerald-900/10 flex items-center justify-center mb-3.5 transition-all duration-300 relative group-hover:scale-105">
                             <svg class="w-10 h-10 sm:w-11 sm:h-11 transition-transform duration-300 group-hover:scale-110 drop-shadow-xs" viewBox="0 0 64 64" fill="none">
@@ -363,12 +409,13 @@
                             <span class="absolute top-1 right-1 w-2.5 h-2.5 rounded-full bg-yellow-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300 shadow-xs"></span>
                         </div>
                         <span class="text-xs sm:text-sm font-bold text-[#0e7c47] group-hover:text-amber-600 transition-colors leading-snug">
-                            Neurologi (Saraf)
+                            {{ str_replace('Poli ', '', $p11['name']) }}
                         </span>
                     </div>
 
                     <!-- 12. Bedah Saraf -->
-                    <div @click="openPoliMenu('Poli Bedah Saraf', 'Tindakan operasi otak, saraf pusat, tumor saraf, dan trauma kepala.', ['{{ asset('gedung2_web.jpg') }}', '{{ asset('trauma-center.png') }}'])" 
+                    @php $p12 = $getPoliData('bedah-saraf', 'Poli Bedah Saraf', 'Tindakan operasi otak, saraf pusat, tumor saraf, dan trauma kepala.', [asset('gedung2_web.jpg'), asset('trauma-center.png')]); @endphp
+                    <div @click="openPoliMenu('{{ addslashes($p12['name']) }}', '{{ addslashes($p12['desc']) }}', {{ json_encode($p12['images']) }})" 
                          class="group flex flex-col items-center text-center p-2 rounded-2xl transition-all duration-300 hover:-translate-y-1.5 cursor-pointer">
                         <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-gradient-to-b from-emerald-50 to-teal-50/70 border-2 border-emerald-100/90 group-hover:border-[#0e7c47] group-hover:from-emerald-100/80 group-hover:to-teal-100/80 group-hover:shadow-md group-hover:shadow-emerald-900/10 flex items-center justify-center mb-3.5 transition-all duration-300 relative group-hover:scale-105">
                             <svg class="w-10 h-10 sm:w-11 sm:h-11 transition-transform duration-300 group-hover:scale-110 drop-shadow-xs" viewBox="0 0 64 64" fill="none">
@@ -386,12 +433,13 @@
                             <span class="absolute top-1 right-1 w-2.5 h-2.5 rounded-full bg-yellow-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300 shadow-xs"></span>
                         </div>
                         <span class="text-xs sm:text-sm font-bold text-[#0e7c47] group-hover:text-amber-600 transition-colors leading-snug">
-                            Bedah Saraf
+                            {{ str_replace('Poli ', '', $p12['name']) }}
                         </span>
                     </div>
 
                     <!-- 13. Jiwa -->
-                    <div @click="openPoliMenu('Poli Jiwa', 'Konsultasi dan terapi psikiatri, kesehatan mental, gangguan kecemasan, depresi, dan insomnia.', ['{{ asset('gedung1_web.jpg') }}', '{{ asset('banner-igd.png') }}'])" 
+                    @php $p13 = $getPoliData('jiwa', 'Poli Jiwa', 'Konsultasi dan terapi psikiatri, kesehatan mental, gangguan kecemasan, depresi, dan insomnia.', [asset('gedung1_web.jpg'), asset('banner-igd.png')]); @endphp
+                    <div @click="openPoliMenu('{{ addslashes($p13['name']) }}', '{{ addslashes($p13['desc']) }}', {{ json_encode($p13['images']) }})" 
                          class="group flex flex-col items-center text-center p-2 rounded-2xl transition-all duration-300 hover:-translate-y-1.5 cursor-pointer">
                         <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-gradient-to-b from-emerald-50 to-teal-50/70 border-2 border-emerald-100/90 group-hover:border-[#0e7c47] group-hover:from-emerald-100/80 group-hover:to-teal-100/80 group-hover:shadow-md group-hover:shadow-emerald-900/10 flex items-center justify-center mb-3.5 transition-all duration-300 relative group-hover:scale-105">
                             <svg class="w-10 h-10 sm:w-11 sm:h-11 transition-transform duration-300 group-hover:scale-110 drop-shadow-xs" viewBox="0 0 64 64" fill="none">
@@ -409,12 +457,13 @@
                             <span class="absolute top-1 right-1 w-2.5 h-2.5 rounded-full bg-yellow-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300 shadow-xs"></span>
                         </div>
                         <span class="text-xs sm:text-sm font-bold text-[#0e7c47] group-hover:text-amber-600 transition-colors leading-snug">
-                            Jiwa
+                            {{ str_replace('Poli ', '', $p13['name']) }}
                         </span>
                     </div>
 
                     <!-- 14. Kulit dan Kelamin -->
-                    <div @click="openPoliMenu('Poli Kulit dan Kelamin', 'Perawatan masalah kulit (jerawat, alergi, eksim, infeksi) dan kesehatan organ reproduksi.', ['{{ asset('gedung1_web.jpg') }}', '{{ asset('banner-igd.png') }}'])" 
+                    @php $p14 = $getPoliData('kulit-dan-kelamin', 'Poli Kulit dan Kelamin', 'Perawatan masalah kulit (jerawat, alergi, eksim, infeksi) dan kesehatan organ reproduksi.', [asset('gedung1_web.jpg'), asset('banner-igd.png')]); @endphp
+                    <div @click="openPoliMenu('{{ addslashes($p14['name']) }}', '{{ addslashes($p14['desc']) }}', {{ json_encode($p14['images']) }})" 
                          class="group flex flex-col items-center text-center p-2 rounded-2xl transition-all duration-300 hover:-translate-y-1.5 cursor-pointer">
                         <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-gradient-to-b from-emerald-50 to-teal-50/70 border-2 border-emerald-100/90 group-hover:border-[#0e7c47] group-hover:from-emerald-100/80 group-hover:to-teal-100/80 group-hover:shadow-md group-hover:shadow-emerald-900/10 flex items-center justify-center mb-3.5 transition-all duration-300 relative group-hover:scale-105">
                             <svg class="w-10 h-10 sm:w-11 sm:h-11 transition-transform duration-300 group-hover:scale-110 drop-shadow-xs" viewBox="0 0 64 64" fill="none">
@@ -431,12 +480,13 @@
                             <span class="absolute top-1 right-1 w-2.5 h-2.5 rounded-full bg-yellow-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300 shadow-xs"></span>
                         </div>
                         <span class="text-xs sm:text-sm font-bold text-[#0e7c47] group-hover:text-amber-600 transition-colors leading-snug">
-                            Kulit dan Kelamin
+                            {{ str_replace('Poli ', '', $p14['name']) }}
                         </span>
                     </div>
 
                     <!-- 15. Rehab Medik -->
-                    <div @click="openPoliMenu('Poli Rehab Medik', 'Fisioterapi, okupasi terapi, dan rehabilitasi medis pasca stroke/operasi/cedera.', ['{{ asset('gedung1_web.jpg') }}', '{{ asset('banner-igd.png') }}'])" 
+                    @php $p15 = $getPoliData('rehab-medik', 'Poli Rehab Medik', 'Fisioterapi, okupasi terapi, dan rehabilitasi medis pasca stroke/operasi/cedera.', [asset('gedung1_web.jpg'), asset('banner-igd.png')]); @endphp
+                    <div @click="openPoliMenu('{{ addslashes($p15['name']) }}', '{{ addslashes($p15['desc']) }}', {{ json_encode($p15['images']) }})" 
                          class="group flex flex-col items-center text-center p-2 rounded-2xl transition-all duration-300 hover:-translate-y-1.5 cursor-pointer">
                         <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-gradient-to-b from-emerald-50 to-teal-50/70 border-2 border-emerald-100/90 group-hover:border-[#0e7c47] group-hover:from-emerald-100/80 group-hover:to-teal-100/80 group-hover:shadow-md group-hover:shadow-emerald-900/10 flex items-center justify-center mb-3.5 transition-all duration-300 relative group-hover:scale-105">
                             <svg class="w-10 h-10 sm:w-11 sm:h-11 transition-transform duration-300 group-hover:scale-110 drop-shadow-xs" viewBox="0 0 64 64" fill="none">
@@ -447,12 +497,13 @@
                             <span class="absolute top-1 right-1 w-2.5 h-2.5 rounded-full bg-yellow-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300 shadow-xs"></span>
                         </div>
                         <span class="text-xs sm:text-sm font-bold text-[#0e7c47] group-hover:text-amber-600 transition-colors leading-snug">
-                            Rehab Medik
+                            {{ str_replace('Poli ', '', $p15['name']) }}
                         </span>
                     </div>
 
                     <!-- 16. Spesialis Gigi (Periodonti) -->
-                    <div @click="openPoliMenu('Poli Spesialis Gigi (Periodonti)', 'Perawatan khusus jaringan penyangga gigi, gusi berdarah, periodontitis, dan pembersihan karang mendalam.', ['{{ asset('gedung1_web.jpg') }}', '{{ asset('banner-igd.png') }}'])" 
+                    @php $p16 = $getPoliData('spesialis-gigi-periodonti', 'Poli Spesialis Gigi (Periodonti)', 'Perawatan khusus jaringan penyangga gigi, gusi berdarah, periodontitis, dan pembersihan karang mendalam.', [asset('gedung1_web.jpg'), asset('banner-igd.png')]); @endphp
+                    <div @click="openPoliMenu('{{ addslashes($p16['name']) }}', '{{ addslashes($p16['desc']) }}', {{ json_encode($p16['images']) }})" 
                          class="group flex flex-col items-center text-center p-2 rounded-2xl transition-all duration-300 hover:-translate-y-1.5 cursor-pointer">
                         <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-gradient-to-b from-emerald-50 to-teal-50/70 border-2 border-emerald-100/90 group-hover:border-[#0e7c47] group-hover:from-emerald-100/80 group-hover:to-teal-100/80 group-hover:shadow-md group-hover:shadow-emerald-900/10 flex items-center justify-center mb-3.5 transition-all duration-300 relative group-hover:scale-105">
                             <svg class="w-10 h-10 sm:w-11 sm:h-11 transition-transform duration-300 group-hover:scale-110 drop-shadow-xs" viewBox="0 0 64 64" fill="none">
@@ -474,7 +525,8 @@
                     </div>
 
                     <!-- 17. Bedah Mulut -->
-                    <div @click="openPoliMenu('Poli Bedah Mulut', 'Operasi gigi bungsu (odontektomi), kista rongga mulut, fraktur rahang, dan bedah maksilofasial.', ['{{ asset('gedung2_web.jpg') }}', '{{ asset('trauma-center.png') }}'])" 
+                    @php $p17 = $getPoliData('bedah-mulut', 'Poli Bedah Mulut', 'Operasi gigi bungsu (odontektomi), kista rongga mulut, fraktur rahang, dan bedah maksilofasial.', [asset('gedung2_web.jpg'), asset('trauma-center.png')]); @endphp
+                    <div @click="openPoliMenu('{{ addslashes($p17['name']) }}', '{{ addslashes($p17['desc']) }}', {{ json_encode($p17['images']) }})" 
                          class="group flex flex-col items-center text-center p-2 rounded-2xl transition-all duration-300 hover:-translate-y-1.5 cursor-pointer">
                         <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-gradient-to-b from-emerald-50 to-teal-50/70 border-2 border-emerald-100/90 group-hover:border-[#0e7c47] group-hover:from-emerald-100/80 group-hover:to-teal-100/80 group-hover:shadow-md group-hover:shadow-emerald-900/10 flex items-center justify-center mb-3.5 transition-all duration-300 relative group-hover:scale-105">
                             <svg class="w-10 h-10 sm:w-11 sm:h-11 transition-transform duration-300 group-hover:scale-110 drop-shadow-xs" viewBox="0 0 64 64" fill="none">
@@ -486,12 +538,13 @@
                             <span class="absolute top-1 right-1 w-2.5 h-2.5 rounded-full bg-yellow-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300 shadow-xs"></span>
                         </div>
                         <span class="text-xs sm:text-sm font-bold text-[#0e7c47] group-hover:text-amber-600 transition-colors leading-snug">
-                            Bedah Mulut
+                            {{ str_replace('Poli ', '', $p17['name']) }}
                         </span>
                     </div>
 
                     <!-- 18. Gigi -->
-                    <div @click="openPoliMenu('Poli Gigi', 'Kesehatan gigi umum, tambal gigi estetik, pencabutan gigi, pembersihan karang gigi (scaling), dan perawatan saluran akar.', ['{{ asset('gedung1_web.jpg') }}', '{{ asset('banner-igd.png') }}'])" 
+                    @php $p18 = $getPoliData('gigi', 'Poli Gigi', 'Kesehatan gigi umum, tambal gigi estetik, pencabutan gigi, pembersihan karang gigi (scaling), dan perawatan saluran akar.', [asset('gedung1_web.jpg'), asset('banner-igd.png')]); @endphp
+                    <div @click="openPoliMenu('{{ addslashes($p18['name']) }}', '{{ addslashes($p18['desc']) }}', {{ json_encode($p18['images']) }})" 
                          class="group flex flex-col items-center text-center p-2 rounded-2xl transition-all duration-300 hover:-translate-y-1.5 cursor-pointer">
                         <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-gradient-to-b from-emerald-50 to-teal-50/70 border-2 border-emerald-100/90 group-hover:border-[#0e7c47] group-hover:from-emerald-100/80 group-hover:to-teal-100/80 group-hover:shadow-md group-hover:shadow-emerald-900/10 flex items-center justify-center mb-3.5 transition-all duration-300 relative group-hover:scale-105">
                             <svg class="w-10 h-10 sm:w-11 sm:h-11 transition-transform duration-300 group-hover:scale-110 drop-shadow-xs" viewBox="0 0 64 64" fill="none">
@@ -509,12 +562,13 @@
                             <span class="absolute top-1 right-1 w-2.5 h-2.5 rounded-full bg-yellow-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300 shadow-xs"></span>
                         </div>
                         <span class="text-xs sm:text-sm font-bold text-[#0e7c47] group-hover:text-amber-600 transition-colors leading-snug">
-                            Gigi
+                            {{ str_replace('Poli ', '', $p18['name']) }}
                         </span>
                     </div>
 
                     <!-- 19. Radiologi -->
-                    <div @click="openPoliMenu('Poli Radiologi', 'Pemeriksaan radiologi digital X-Ray (Rontgen), USG Doppler, Panoramic Dental, dan imaging diagnostik.', ['{{ asset('gedung1_web.jpg') }}', '{{ asset('banner-igd.png') }}'])" 
+                    @php $p19 = $getPoliData('radiologi', 'Poli Radiologi', 'Pemeriksaan radiologi digital X-Ray (Rontgen), USG Doppler, Panoramic Dental, dan imaging diagnostik.', [asset('gedung1_web.jpg'), asset('banner-igd.png')]); @endphp
+                    <div @click="openPoliMenu('{{ addslashes($p19['name']) }}', '{{ addslashes($p19['desc']) }}', {{ json_encode($p19['images']) }})" 
                          class="group flex flex-col items-center text-center p-2 rounded-2xl transition-all duration-300 hover:-translate-y-1.5 cursor-pointer">
                         <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-gradient-to-b from-emerald-50 to-teal-50/70 border-2 border-emerald-100/90 group-hover:border-[#0e7c47] group-hover:from-emerald-100/80 group-hover:to-teal-100/80 group-hover:shadow-md group-hover:shadow-emerald-900/10 flex items-center justify-center mb-3.5 transition-all duration-300 relative group-hover:scale-105">
                             <svg class="w-10 h-10 sm:w-11 sm:h-11 transition-transform duration-300 group-hover:scale-110 drop-shadow-xs" viewBox="0 0 64 64" fill="none">
@@ -526,9 +580,31 @@
                             <span class="absolute top-1 right-1 w-2.5 h-2.5 rounded-full bg-yellow-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300 shadow-xs"></span>
                         </div>
                         <span class="text-xs sm:text-sm font-bold text-[#0e7c47] group-hover:text-amber-600 transition-colors leading-snug">
-                            Radiologi
+                            {{ str_replace('Poli ', '', $p19['name']) }}
                         </span>
                     </div>
+
+                    <!-- DYNAMIC EXTRA POLICLINICS IF ANY -->
+                    @if(isset($extraPolis) && $extraPolis->count() > 0)
+                        @foreach($extraPolis as $exPoli)
+                        @php
+                            $exName = is_array($exPoli->name) ? ($exPoli->name[app()->getLocale()] ?? $exPoli->name['id'] ?? '') : $exPoli->name;
+                            $exDesc = is_array($exPoli->description) ? ($exPoli->description[app()->getLocale()] ?? $exPoli->description['id'] ?? '') : ($exPoli->description ?? '');
+                            $exImgs = $exPoli->gallery_images;
+                            $cleanIcon = str_replace(['fa-solid fa-', 'fa-regular fa-', 'fa-'], '', $exPoli->icon ?? 'stethoscope');
+                        @endphp
+                        <div @click="openPoliMenu('{{ addslashes($exName) }}', '{{ addslashes($exDesc) }}', {{ json_encode($exImgs) }})" 
+                             class="group flex flex-col items-center text-center p-2 rounded-2xl transition-all duration-300 hover:-translate-y-1.5 cursor-pointer">
+                            <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-gradient-to-b from-emerald-50 to-teal-50/70 border-2 border-emerald-100/90 group-hover:border-[#0e7c47] group-hover:from-emerald-100/80 group-hover:to-teal-100/80 group-hover:shadow-md group-hover:shadow-emerald-900/10 flex items-center justify-center mb-3.5 transition-all duration-300 relative group-hover:scale-105">
+                                <i class="fa-solid fa-{{ $cleanIcon }} text-2xl sm:text-3xl text-[#0e7c47] group-hover:scale-110 transition-transform"></i>
+                                <span class="absolute top-1 right-1 w-2.5 h-2.5 rounded-full bg-yellow-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300 shadow-xs"></span>
+                            </div>
+                            <span class="text-xs sm:text-sm font-bold text-[#0e7c47] group-hover:text-amber-600 transition-colors leading-snug">
+                                {{ str_replace('Poli ', '', $exName) }}
+                            </span>
+                        </div>
+                        @endforeach
+                    @endif
 
                 </div>
             </div>
@@ -539,7 +615,7 @@
                         type="button"
                         style="background-color: #0e7c47; color: #ffffff;"
                         class="inline-flex items-center justify-center px-10 sm:px-12 py-2.5 rounded-full bg-[#0e7c47] hover:bg-[#096237] text-white font-bold text-sm tracking-tight shadow-sm hover:shadow-md active:scale-95 transition-all duration-200 cursor-pointer gap-2">
-                    <span x-text="showAllPoli ? 'Tutup Daftar Spesialisasi' : 'Lihat Seluruh Poliklinik (19 Poli)'">Lihat Seluruh Poliklinik (19 Poli)</span>
+                    <span x-text="showAllPoli ? 'Tutup Daftar Spesialisasi' : 'Lihat Seluruh Poliklinik ({{ $totalPoliCount }} Poli)'">Lihat Seluruh Poliklinik ({{ $totalPoliCount }} Poli)</span>
                     <i class="fa-solid text-xs transition-transform duration-300" :class="showAllPoli ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
                 </button>
             </div>
@@ -768,24 +844,60 @@
             </div>
 
             <!-- IMAGE DISPLAY -->
-            <div class="relative w-full h-72 sm:h-80 rounded-2xl overflow-hidden bg-slate-900">
-                <template x-for="(img, idx) in galleryImages" :key="idx">
-                    <img x-show="activeImageIndex === idx" 
-                         :src="img" 
-                         class="w-full h-full object-cover">
+            <div class="space-y-3">
+                <template x-if="galleryImages && galleryImages.length > 0">
+                    <div>
+                        <div class="relative w-full h-72 sm:h-80 rounded-2xl overflow-hidden bg-slate-900 shadow-inner flex items-center justify-center">
+                            <template x-for="(img, idx) in galleryImages" :key="idx">
+                                <img x-show="activeImageIndex === idx" 
+                                     :src="img" 
+                                     class="w-full h-full object-cover">
+                            </template>
+
+                            <!-- PHOTO COUNTER BADGE -->
+                            <div class="absolute top-3 left-3 px-3 py-1 rounded-full bg-slate-950/70 text-white font-extrabold text-[11px] backdrop-blur-xs flex items-center gap-1.5 shadow-sm">
+                                <i class="fa-solid fa-camera text-emerald-400 text-xs"></i>
+                                <span x-text="galleryImages.length === 1 ? '1 Foto' : ('Foto ' + (activeImageIndex + 1) + ' dari ' + galleryImages.length)"></span>
+                            </div>
+
+                            <!-- PREV / NEXT NAVIGATION ONLY IF MULTIPLE IMAGES -->
+                            <template x-if="galleryImages.length > 1">
+                                <div class="absolute inset-0 flex items-center justify-between p-3 pointer-events-none">
+                                    <button @click="activeImageIndex = (activeImageIndex === 0 ? galleryImages.length - 1 : activeImageIndex - 1)" 
+                                            class="w-10 h-10 rounded-full bg-slate-950/60 hover:bg-slate-950 text-white flex items-center justify-center pointer-events-auto transition-all shadow-md active:scale-95 cursor-pointer">
+                                        <i class="fa-solid fa-chevron-left text-xs"></i>
+                                    </button>
+                                    <button @click="activeImageIndex = (activeImageIndex === galleryImages.length - 1 ? 0 : activeImageIndex + 1)" 
+                                            class="w-10 h-10 rounded-full bg-slate-950/60 hover:bg-slate-950 text-white flex items-center justify-center pointer-events-auto transition-all shadow-md active:scale-95 cursor-pointer">
+                                        <i class="fa-solid fa-chevron-right text-xs"></i>
+                                    </button>
+                                </div>
+                            </template>
+                        </div>
+
+                        <!-- THUMBNAIL STRIP ONLY IF MULTIPLE IMAGES -->
+                        <template x-if="galleryImages.length > 1">
+                            <div class="flex items-center gap-2 overflow-x-auto pt-3 pb-1 max-w-full">
+                                <template x-for="(img, idx) in galleryImages" :key="'thumb-'+idx">
+                                    <button @click="activeImageIndex = idx" 
+                                            class="relative w-16 h-12 rounded-xl overflow-hidden shrink-0 border-2 transition-all cursor-pointer"
+                                            :class="activeImageIndex === idx ? 'border-[#0e7c47] ring-2 ring-emerald-400/50 scale-105' : 'border-slate-200 opacity-60 hover:opacity-100'">
+                                        <img :src="img" class="w-full h-full object-cover">
+                                    </button>
+                                </template>
+                            </div>
+                        </template>
+                    </div>
                 </template>
 
-                <!-- PREV / NEXT NAVIGATION IF MULTIPLE IMAGES -->
-                <template x-if="galleryImages.length > 1">
-                    <div class="absolute inset-0 flex items-center justify-between p-4 pointer-events-none">
-                        <button @click="activeImageIndex = (activeImageIndex === 0 ? galleryImages.length - 1 : activeImageIndex - 1)" 
-                                class="w-10 h-10 rounded-full bg-slate-950/60 text-white hover:bg-slate-950 flex items-center justify-center pointer-events-auto transition-colors">
-                            <i class="fa-solid fa-chevron-left text-xs"></i>
-                        </button>
-                        <button @click="activeImageIndex = (activeImageIndex === galleryImages.length - 1 ? 0 : activeImageIndex + 1)" 
-                                class="w-10 h-10 rounded-full bg-slate-950/60 text-white hover:bg-slate-950 flex items-center justify-center pointer-events-auto transition-colors">
-                            <i class="fa-solid fa-chevron-right text-xs"></i>
-                        </button>
+                <!-- EMPTY STATE IF ALL PHOTOS DELETED -->
+                <template x-if="!galleryImages || galleryImages.length === 0">
+                    <div class="w-full h-64 sm:h-72 rounded-2xl bg-slate-50 border border-dashed border-slate-200 flex flex-col items-center justify-center p-6 text-center space-y-2">
+                        <div class="w-12 h-12 rounded-full bg-emerald-50 text-[#0e7c47] flex items-center justify-center text-xl">
+                            <i class="fa-regular fa-images"></i>
+                        </div>
+                        <h4 class="font-extrabold text-sm text-slate-800">Foto Galeri Belum Tersedia</h4>
+                        <p class="text-xs text-slate-500 max-w-sm">Foto ruangan dan fasilitas untuk poliklinik ini sedang diperbarui.</p>
                     </div>
                 </template>
             </div>
@@ -823,14 +935,14 @@ function rawatJalanApp() {
         openPoliMenu(title, desc, images) {
             this.selectedPoliTitle = title;
             this.selectedPoliDesc = desc;
-            this.selectedPoliImages = images;
+            this.selectedPoliImages = Array.isArray(images) ? images : [];
             this.activePoliChoiceModal = true;
         },
 
         openGallery(title, description, images) {
             this.galleryTitle = title;
             this.galleryDescription = description;
-            this.galleryImages = images && images.length ? images : ['{{ asset("gedung1_web.jpg") }}'];
+            this.galleryImages = Array.isArray(images) ? images : [];
             this.activeImageIndex = 0;
             this.activeModalGallery = true;
         },

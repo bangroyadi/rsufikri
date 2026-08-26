@@ -14,6 +14,8 @@ use App\Http\Controllers\Admin\AdminNewsController;
 use App\Http\Controllers\Admin\AdminArticleController;
 use App\Http\Controllers\Admin\AdminGalleryController;
 use App\Http\Controllers\Admin\AdminBannerController;
+use App\Http\Controllers\Admin\AdminPromoController;
+use App\Http\Controllers\Admin\AdminEventController;
 use App\Http\Controllers\Admin\AdminContactController;
 use App\Http\Controllers\Admin\AdminKnowledgeBaseController;
 use App\Http\Controllers\Admin\AdminTiktokPostController;
@@ -22,6 +24,17 @@ use App\Http\Controllers\AiChatController;
 // Public Routes
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/lang/{locale}', [LanguageController::class, 'switch'])->name('lang.switch');
+
+// Event & Agenda Kegiatan Routes
+Route::get('/informasi/event', [HomeController::class, 'eventPage'])->name('event.index');
+Route::get('/event', [HomeController::class, 'eventPage']);
+Route::get('/agenda', [HomeController::class, 'eventPage']);
+
+// Penawaran Khusus & Promo Routes
+Route::get('/informasi/penawaran-khusus', [HomeController::class, 'promoPage'])->name('promo.index');
+Route::get('/penawaran-khusus', [HomeController::class, 'promoPage']);
+Route::get('/promo', [HomeController::class, 'promoPage']);
+Route::get('/promo/{slug}', [HomeController::class, 'promoShow'])->name('promo.show');
 
 // Layanan & Informasi Subpage Routes
 Route::get('/layanan/{slug}', [HomeController::class, 'layananPage'])->name('layanan.show');
@@ -78,11 +91,15 @@ Route::prefix('admin')->name('admin.')->middleware('prevent-back-history')->grou
         Route::post('/polyclinics', [AdminPolyclinicController::class, 'store'])->name('polyclinics.store');
         Route::put('/polyclinics/{id}', [AdminPolyclinicController::class, 'update'])->name('polyclinics.update');
         Route::delete('/polyclinics/{id}', [AdminPolyclinicController::class, 'destroy'])->name('polyclinics.destroy');
+        Route::post('/polyclinics/{id}/gallery', [AdminPolyclinicController::class, 'uploadGallery'])->name('polyclinics.gallery.upload');
+        Route::post('/polyclinics/{id}/gallery/delete', [AdminPolyclinicController::class, 'deleteGalleryPhoto'])->name('polyclinics.gallery.delete');
 
         Route::get('/services', [AdminServiceController::class, 'index'])->name('services.index');
         Route::post('/services', [AdminServiceController::class, 'store'])->name('services.store');
         Route::put('/services/{id}', [AdminServiceController::class, 'update'])->name('services.update');
         Route::delete('/services/{id}', [AdminServiceController::class, 'destroy'])->name('services.destroy');
+        Route::post('/services/{id}/gallery', [AdminServiceController::class, 'uploadGallery'])->name('services.gallery.upload');
+        Route::match(['get', 'post', 'delete'], '/services/{id}/gallery/delete', [AdminServiceController::class, 'deleteGalleryPhoto'])->name('services.gallery.delete');
 
         Route::get('/news', [AdminNewsController::class, 'index'])->name('news.index');
         Route::post('/news', [AdminNewsController::class, 'store'])->name('news.store');
@@ -103,6 +120,20 @@ Route::prefix('admin')->name('admin.')->middleware('prevent-back-history')->grou
         Route::post('/banners', [AdminBannerController::class, 'store'])->name('banners.store');
         Route::put('/banners/{id}', [AdminBannerController::class, 'update'])->name('banners.update');
         Route::delete('/banners/{id}', [AdminBannerController::class, 'destroy'])->name('banners.destroy');
+
+        // Promos & Penawaran Khusus Routes
+        Route::get('/promos', [AdminPromoController::class, 'index'])->name('promos.index');
+        Route::post('/promos', [AdminPromoController::class, 'store'])->name('promos.store');
+        Route::put('/promos/{id}', [AdminPromoController::class, 'update'])->name('promos.update');
+        Route::delete('/promos/{id}', [AdminPromoController::class, 'destroy'])->name('promos.destroy');
+        Route::post('/promos/{id}/toggle-active', [AdminPromoController::class, 'toggleActive'])->name('promos.toggle_active');
+
+        // Hospital Events & Agenda Routes
+        Route::get('/events', [AdminEventController::class, 'index'])->name('events.index');
+        Route::post('/events', [AdminEventController::class, 'store'])->name('events.store');
+        Route::put('/events/{id}', [AdminEventController::class, 'update'])->name('events.update');
+        Route::delete('/events/{id}', [AdminEventController::class, 'destroy'])->name('events.destroy');
+        Route::post('/events/{id}/toggle-active', [AdminEventController::class, 'toggleActive'])->name('events.toggleActive');
 
         // TikTok Posts Routes
         Route::get('/tiktok', [AdminTiktokPostController::class, 'index'])->name('tiktok.index');

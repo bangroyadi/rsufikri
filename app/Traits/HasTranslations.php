@@ -41,4 +41,12 @@ trait HasTranslations
 
         return (string) $value;
     }
+
+    /**
+     * Alias for tr()
+     */
+    public function getTranslation(string $field, ?string $locale = null): string
+    {
+        return $this->tr($field, $locale);
+    }
 }

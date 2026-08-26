@@ -1013,13 +1013,19 @@
            @click="sidebarOpen = false"
            class="sb-item {{ request()->routeIs('admin.polyclinics.*') ? 'active' : '' }}">
             <span class="sb-item-icon"><i class="fa-solid fa-clinic-medical"></i></span>
-            Poli / Departemen
+            Poliklinik & Galeri
         </a>
         <a href="{{ route('admin.services.index') }}"
            @click="sidebarOpen = false"
            class="sb-item {{ request()->routeIs('admin.services.*') ? 'active' : '' }}">
             <span class="sb-item-icon"><i class="fa-solid fa-briefcase-medical"></i></span>
             Fasilitas & Layanan
+        </a>
+        <a href="{{ route('admin.promos.index') }}"
+           @click="sidebarOpen = false"
+           class="sb-item {{ request()->routeIs('admin.promos.*') ? 'active' : '' }}">
+            <span class="sb-item-icon"><i class="fa-solid fa-tags"></i></span>
+            Penawaran & Promo
         </a>
 
         <div class="sb-group">Media & Publikasi</div>
@@ -1035,6 +1041,12 @@
            class="sb-item {{ request()->routeIs('admin.articles.*') ? 'active' : '' }}">
             <span class="sb-item-icon"><i class="fa-solid fa-file-medical"></i></span>
             Artikel Kesehatan
+        </a>
+        <a href="{{ route('admin.events.index') }}"
+           @click="sidebarOpen = false"
+           class="sb-item {{ request()->routeIs('admin.events.*') ? 'active' : '' }}">
+            <span class="sb-item-icon"><i class="fa-solid fa-calendar-days"></i></span>
+            Agenda & Event RS
         </a>
         <a href="{{ route('admin.galleries.index') }}"
            @click="sidebarOpen = false"

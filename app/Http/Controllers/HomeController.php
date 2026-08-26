@@ -13,6 +13,8 @@ use App\Models\DoctorSchedule;
 use App\Models\News;
 use App\Models\Article;
 use App\Models\TiktokPost;
+use App\Models\Promo;
+use App\Models\HospitalEvent;
 
 class HomeController extends Controller
 {
@@ -121,18 +123,28 @@ class HomeController extends Controller
             return $this->artikelIndex($request);
         }
 
+        if ($slug === 'penawaran-khusus' || $slug === 'promo') {
+            return $this->promoPage($request);
+        }
+
+        if ($slug === 'event' || $slug === 'agenda') {
+            return $this->eventPage($request);
+        }
+
         // Check if slug matches an article
         $article = Article::where('slug', $slug)->where('is_published', true)->first();
         if ($article) {
             return $this->artikelShow($slug);
         }
 
+        if ($slug === 'aduan-layanan' || $slug === 'ikm') {
+            abort(404);
+        }
+
         $informasiTitles = [
             'artikel-kesehatan' => 'Artikel Kesehatan',
             'event' => 'Event & Kegiatan Hospital',
             'penawaran-khusus' => 'Penawaran Khusus & Paket Promo',
-            'aduan-layanan' => 'Aduan & Layanan Pelanggan',
-            'ikm' => 'Indeks Kepuasan Masyarakat (IKM)',
         ];
 
         $title = $informasiTitles[$slug] ?? ucwords(str_replace('-', ' ', $slug));
@@ -142,6 +154,95 @@ class HomeController extends Controller
         $news = News::where('is_published', true)->orderBy('published_at', 'desc')->get();
 
         return view('public.page', compact('title', 'category', 'slug', 'profile', 'articles', 'news'));
+    }
+
+    public function eventPage(Request $request)
+    {
+        $profile = HospitalProfile::first();
+        $category = $request->query('kategori', 'all');
+        $query = $request->query('q');
+
+        $eventsQuery = HospitalEvent::where('is_active', true)->orderBy('order', 'asc')->orderBy('event_date', 'asc');
+
+        if (!empty($category) && $category !== 'all') {
+            $eventsQuery->where('category', $category);
+        }
+
+        if (!empty($query)) {
+            $eventsQuery->where(function($q) use ($query) {
+                $q->where('title', 'like', "%{$query}%")
+                  ->orWhere('category', 'like', "%{$query}%")
+                  ->orWhere('location', 'like', "%{$query}%")
+                  ->orWhere('short_description', 'like', "%{$query}%");
+            });
+        }
+
+        $events = $eventsQuery->get();
+
+        // Featured spotlight event (first active featured or first upcoming event)
+        $featuredEvent = HospitalEvent::where('is_active', true)
+            ->where('is_featured', true)
+            ->where('status', '!=', 'completed')
+            ->orderBy('event_date', 'asc')
+            ->first();
+
+        if (!$featuredEvent) {
+            $featuredEvent = HospitalEvent::where('is_active', true)
+                ->where('status', 'upcoming')
+                ->orderBy('event_date', 'asc')
+                ->first();
+        }
+
+        $categories = HospitalEvent::where('is_active', true)->pluck('category')->unique()->values();
+
+        return view('public.event.index', compact('events', 'featuredEvent', 'categories', 'profile', 'category', 'query'));
+    }
+
+    public function promoPage(Request $request)
+    {
+        $profile = HospitalProfile::first();
+        $category = $request->query('kategori', 'all');
+        $query = $request->query('q');
+
+        $promosQuery = Promo::where('is_active', true)->orderBy('order', 'asc')->orderBy('created_at', 'desc');
+
+        if (!empty($category) && $category !== 'all') {
+            $promosQuery->where('category', $category);
+        }
+
+        if (!empty($query)) {
+            $promosQuery->where(function($q) use ($query) {
+                $q->where('title->id', 'like', "%{$query}%")
+                  ->orWhere('title->en', 'like', "%{$query}%")
+                  ->orWhere('short_description->id', 'like', "%{$query}%")
+                  ->orWhere('description->id', 'like', "%{$query}%")
+                  ->orWhere('category', 'like', "%{$query}%");
+            });
+        }
+
+        $promos = $promosQuery->get();
+        $featuredPromos = Promo::where('is_active', true)->where('is_featured', true)->orderBy('order', 'asc')->get();
+        $categories = Promo::where('is_active', true)->distinct()->pluck('category')->filter()->values();
+
+        return view('public.promo.index', compact('promos', 'featuredPromos', 'categories', 'profile', 'category', 'query'));
+    }
+
+    public function promoShow($slug)
+    {
+        $profile = HospitalProfile::first();
+        $promo = Promo::where('slug', $slug)->where('is_active', true)->firstOrFail();
+        $otherPromos = Promo::where('is_active', true)->where('id', '!=', $promo->id)->take(3)->get();
+
+        return view('public.promo.index', [
+            'promos' => Promo::where('is_active', true)->orderBy('order', 'asc')->get(),
+            'featuredPromos' => Promo::where('is_active', true)->where('is_featured', true)->get(),
+            'categories' => Promo::where('is_active', true)->distinct()->pluck('category')->filter()->values(),
+            'profile' => $profile,
+            'category' => 'all',
+            'query' => '',
+            'activePromoSlug' => $slug,
+            'selectedPromo' => $promo,
+        ]);
     }
 
     public function artikelIndex(Request $request)

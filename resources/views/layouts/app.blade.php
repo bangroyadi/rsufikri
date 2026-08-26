@@ -296,9 +296,7 @@
                              style="display: none;">
                             <a href="{{ url('/informasi/artikel-kesehatan') }}" class="block px-4 py-3 hover:bg-emerald-50 hover:text-[#0e7c47] transition-colors border-b border-gray-100 {{ request()->is('informasi/artikel-kesehatan') ? 'text-[#0e7c47] font-bold bg-emerald-50' : '' }}">{{ __('Artikel Kesehatan') }}</a>
                             <a href="{{ url('/informasi/event') }}" class="block px-4 py-3 hover:bg-emerald-50 hover:text-[#0e7c47] transition-colors border-b border-gray-100 {{ request()->is('informasi/event') ? 'text-[#0e7c47] font-bold bg-emerald-50' : '' }}">{{ __('Event') }}</a>
-                            <a href="{{ url('/informasi/penawaran-khusus') }}" class="block px-4 py-3 hover:bg-emerald-50 hover:text-[#0e7c47] transition-colors border-b border-gray-100 {{ request()->is('informasi/penawaran-khusus') ? 'text-[#0e7c47] font-bold bg-emerald-50' : '' }}">{{ __('Penawaran Khusus') }}</a>
-                            <a href="{{ url('/informasi/aduan-layanan') }}" class="block px-4 py-3 hover:bg-emerald-50 hover:text-[#0e7c47] transition-colors border-b border-gray-100 {{ request()->is('informasi/aduan-layanan') ? 'text-[#0e7c47] font-bold bg-emerald-50' : '' }}">{{ __('Aduan Layanan') }}</a>
-                            <a href="{{ url('/informasi/ikm') }}" class="block px-4 py-3 hover:bg-emerald-50 hover:text-[#0e7c47] transition-colors {{ request()->is('informasi/ikm') ? 'text-[#0e7c47] font-bold bg-emerald-50' : '' }}">{{ __('Indeks Kepuasan Masyarakat') }}</a>
+                            <a href="{{ url('/informasi/penawaran-khusus') }}" class="block px-4 py-3 hover:bg-emerald-50 hover:text-[#0e7c47] transition-colors {{ request()->is('informasi/penawaran-khusus') ? 'text-[#0e7c47] font-bold bg-emerald-50' : '' }}">{{ __('Penawaran Khusus') }}</a>
                         </div>
                     </div>
 
@@ -453,8 +451,6 @@
                     <a href="{{ url('/informasi/artikel-kesehatan') }}" @click="mobileMenuOpen = false" class="block py-2.5 px-2 hover:text-[#0e7c47]">{{ __('Artikel Kesehatan') }}</a>
                     <a href="{{ url('/informasi/event') }}" @click="mobileMenuOpen = false" class="block py-2.5 px-2 hover:text-[#0e7c47]">{{ __('Event') }}</a>
                     <a href="{{ url('/informasi/penawaran-khusus') }}" @click="mobileMenuOpen = false" class="block py-2.5 px-2 hover:text-[#0e7c47]">{{ __('Penawaran Khusus') }}</a>
-                    <a href="{{ url('/informasi/aduan-layanan') }}" @click="mobileMenuOpen = false" class="block py-2.5 px-2 hover:text-[#0e7c47]">{{ __('Aduan Layanan') }}</a>
-                    <a href="{{ url('/informasi/ikm') }}" @click="mobileMenuOpen = false" class="block py-2.5 px-2 hover:text-[#0e7c47]">{{ __('Indeks Kepuasan Masyarakat') }}</a>
                 </div>
             </div>
 
