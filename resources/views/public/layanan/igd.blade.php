@@ -2,8 +2,32 @@
 
 @section('content')
 
+@php
+    $galleryImages = isset($service) ? $service->gallery_images : [];
+    $hasCustomGallery = isset($service) && is_array($service->gallery) && count($service->gallery) > 0;
+
+    if ($hasCustomGallery && !empty($galleryImages) && count($galleryImages) > 0) {
+        $displayGallery = array_map(function($url, $idx) {
+            return [
+                'img' => $url,
+                'badge' => 'Fasilitas ' . ($idx + 1),
+                'title' => 'Instalasi Gawat Darurat - Foto ' . ($idx + 1),
+            ];
+        }, $galleryImages, array_keys($galleryImages));
+        $lightboxImages = $galleryImages;
+    } else {
+        $displayGallery = [
+            ['img' => asset('banner-igd.png'), 'badge' => 'Layanan 24h', 'title' => 'Area Penanganan IGD'],
+            ['img' => asset('trauma-center.png'), 'badge' => 'Trauma Center', 'title' => 'Unit Penanganan Kecelakaan'],
+            ['img' => asset('gedung2_web.jpg'), 'badge' => 'Akses Masuk', 'title' => 'Gedung Utama IGD'],
+            ['img' => asset('gedung1_web.jpg'), 'badge' => 'Evakuasi', 'title' => 'Armada Ambulans 24h'],
+        ];
+        $lightboxImages = array_column($displayGallery, 'img');
+    }
+@endphp
+
 <!-- MAIN CONTENT SECTION (WIDE CONTAINER STANDAR APLIKASI WEB MODERN) -->
-<section class="py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-10">
+<section class="py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-10" x-data="igdPageGalleryApp({{ json_encode($lightboxImages) }})">
 
 
 
@@ -95,58 +119,53 @@
             </div>
         </div>
 
-        <!-- FULL WIDE SECTION 2: GALERI FASILITAS IGD (4-COLS PHOTO GRID) -->
+        <!-- FULL WIDE SECTION 2: GALERI FASILITAS IGD (DYNAMIC PHOTO GRID) -->
         <div class="bg-white p-6 sm:p-8 rounded-3xl shadow-sm space-y-6">
-            <div class="flex items-center gap-3 pb-4 border-b border-gray-100">
-                <div class="w-10 h-10 rounded-xl bg-emerald-50 text-[#0e7c47] flex items-center justify-center text-lg font-bold">
-                    <i class="fa-solid fa-images"></i>
+            <div class="flex items-center justify-between gap-3 pb-4 border-b border-gray-100 flex-wrap">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-emerald-50 text-[#0e7c47] flex items-center justify-center text-lg font-bold">
+                        <i class="fa-solid fa-images"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-extrabold text-gray-900 text-lg">Galeri Fasilitas & Sarana IGD</h3>
+                        <p class="text-xs text-gray-500 font-medium">Visualisasi ruangan medis & sarana penanganan darurat RSU Fikri Medika</p>
+                    </div>
                 </div>
-                <div>
-                    <h3 class="font-extrabold text-gray-900 text-lg">Galeri Fasilitas & Sarana IGD</h3>
-                    <p class="text-xs text-gray-500 font-medium">Visualisasi ruangan medis & sarana penanganan darurat RSU Fikri Medika</p>
+                @if(count($displayGallery) > 0)
+                <div class="text-xs font-bold text-emerald-800 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-100">
+                    <span>{{ count($displayGallery) }} Foto</span>
                 </div>
+                @endif
             </div>
 
-            <!-- PHOTO GRID 4 COLS -->
+            <!-- PHOTO GRID -->
+            @if(count($displayGallery) > 0)
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-                
-                <div class="relative rounded-2xl overflow-hidden shadow-xs group h-52 border border-gray-100">
-                    <img src="{{ asset('banner-igd.png') }}" alt="Area Penanganan IGD 24 Jam" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                @foreach($displayGallery as $idx => $gPhoto)
+                <div @click="openLightbox({{ $idx }})"
+                     class="relative rounded-2xl overflow-hidden shadow-xs group h-56 border border-gray-100 cursor-pointer transition-all duration-300 hover:shadow-md hover:-translate-y-1 bg-slate-900">
+                    <img src="{{ $gPhoto['img'] }}" alt="{{ $gPhoto['title'] }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
                     <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/20 to-transparent"></div>
+                    
+                    <!-- ZOOM HOVER ICON -->
+                    <div class="absolute inset-0 bg-slate-950/25 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                        <div class="w-9 h-9 rounded-full bg-white/95 text-slate-800 flex items-center justify-center shadow-md text-sm font-bold">
+                            <i class="fa-solid fa-magnifying-glass-plus text-[#0e7c47]"></i>
+                        </div>
+                    </div>
+
                     <div class="absolute bottom-3 left-3 right-3 text-white">
-                        <span class="text-[10px] font-extrabold px-2 py-0.5 rounded bg-[#0e7c47] uppercase tracking-wider mb-1 inline-block">Layanan 24h</span>
-                        <h4 class="text-xs font-bold">Area Penanganan IGD</h4>
+                        <span class="text-[10px] font-extrabold px-2 py-0.5 rounded bg-[#0e7c47] uppercase tracking-wider mb-1 inline-block">{{ $gPhoto['badge'] }}</span>
+                        <h4 class="text-xs font-bold truncate">{{ $gPhoto['title'] }}</h4>
                     </div>
                 </div>
-
-                <div class="relative rounded-2xl overflow-hidden shadow-xs group h-52 border border-gray-100">
-                    <img src="{{ asset('trauma-center.png') }}" alt="Unit Trauma Center" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
-                    <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/20 to-transparent"></div>
-                    <div class="absolute bottom-3 left-3 right-3 text-white">
-                        <span class="text-[10px] font-extrabold px-2 py-0.5 rounded bg-[#0e7c47] uppercase tracking-wider mb-1 inline-block">Trauma Center</span>
-                        <h4 class="text-xs font-bold">Unit Penanganan Kecelakaan</h4>
-                    </div>
-                </div>
-
-                <div class="relative rounded-2xl overflow-hidden shadow-xs group h-52 border border-gray-100">
-                    <img src="{{ asset('gedung2_web.jpg') }}" alt="Gedung Utama RSU Fikri Medika" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
-                    <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/20 to-transparent"></div>
-                    <div class="absolute bottom-3 left-3 right-3 text-white">
-                        <span class="text-[10px] font-extrabold px-2 py-0.5 rounded bg-[#0e7c47] uppercase tracking-wider mb-1 inline-block">Akses Masuk</span>
-                        <h4 class="text-xs font-bold">Gedung Utama IGD</h4>
-                    </div>
-                </div>
-
-                <div class="relative rounded-2xl overflow-hidden shadow-xs group h-52 border border-gray-100">
-                    <img src="{{ asset('antar-jemput.png') }}" alt="Ambulans Gawat Darurat" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
-                    <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/20 to-transparent"></div>
-                    <div class="absolute bottom-3 left-3 right-3 text-white">
-                        <span class="text-[10px] font-extrabold px-2 py-0.5 rounded bg-yellow-400 text-slate-950 uppercase tracking-wider mb-1 inline-block">Evakuasi</span>
-                        <h4 class="text-xs font-bold">Armada Ambulans 24h</h4>
-                    </div>
-                </div>
-
+                @endforeach
             </div>
+            @else
+            <div class="p-8 text-center bg-slate-50 rounded-2xl border border-dashed border-slate-200">
+                <p class="text-xs text-slate-500 font-medium">Foto galeri belum tersedia untuk layanan ini.</p>
+            </div>
+            @endif
         </div>
 
         <!-- FULL WIDE SECTION 3: TRIAGE SYSTEM EDUCATIONAL CARD -->
@@ -440,6 +459,63 @@
 
     </div>
 
+    {{-- LIGHTBOX MODAL --}}
+    <div x-show="lightboxOpen"
+         x-cloak
+         @keydown.escape.window="closeLightbox()"
+         class="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4 backdrop-blur-sm"
+         style="display: none;">
+        <button @click="closeLightbox()"
+                class="absolute top-4 right-4 text-white text-3xl hover:text-gray-300 z-50 p-2 cursor-pointer transition">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+        <button @click="prevImage()"
+                class="absolute left-4 top-1/2 -translate-y-1/2 text-white text-2xl hover:text-gray-300 z-50 p-3 bg-white/10 hover:bg-white/20 rounded-full cursor-pointer transition">
+            <i class="fa-solid fa-chevron-left"></i>
+        </button>
+        <button @click="nextImage()"
+                class="absolute right-4 top-1/2 -translate-y-1/2 text-white text-2xl hover:text-gray-300 z-50 p-3 bg-white/10 hover:bg-white/20 rounded-full cursor-pointer transition">
+            <i class="fa-solid fa-chevron-right"></i>
+        </button>
+        <div class="relative max-w-5xl max-h-[85vh] flex flex-col items-center justify-center">
+            <img :src="images[activeImageIndex]"
+                 alt="Instalasi Gawat Darurat"
+                 class="max-w-full max-h-[80vh] object-contain rounded-xl shadow-2xl">
+            <div class="text-white text-center text-xs mt-3 bg-slate-900/80 px-4 py-1.5 rounded-full border border-white/10">
+                <span x-text="activeImageIndex + 1"></span> / <span x-text="images.length"></span>
+            </div>
+        </div>
+    </div>
+
 </section>
+
+<script>
+function igdPageGalleryApp(initialImages) {
+    return {
+        images: initialImages || [],
+        lightboxOpen: false,
+        activeImageIndex: 0,
+        openLightbox(index) {
+            this.activeImageIndex = index;
+            this.lightboxOpen = true;
+            document.body.style.overflow = 'hidden';
+        },
+        closeLightbox() {
+            this.lightboxOpen = false;
+            document.body.style.overflow = 'auto';
+        },
+        nextImage() {
+            if (this.images.length > 0) {
+                this.activeImageIndex = (this.activeImageIndex + 1) % this.images.length;
+            }
+        },
+        prevImage() {
+            if (this.images.length > 0) {
+                this.activeImageIndex = (this.activeImageIndex - 1 + this.images.length) % this.images.length;
+            }
+        }
+    }
+}
+</script>
 
 @endsection
