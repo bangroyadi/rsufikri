@@ -974,6 +974,7 @@
     {{-- Navigation --}}
     <nav class="sb-nav">
 
+        @if(Auth::user()?->isAdmin())
         <div class="sb-group">Utama</div>
 
         <a href="{{ route('admin.dashboard') }}"
@@ -1027,7 +1028,31 @@
             <span class="sb-item-icon"><i class="fa-solid fa-tags"></i></span>
             Penawaran & Promo
         </a>
+        @endif
 
+        {{-- SDM & REKRUTMEN (TAMPIL UNTUK ADMIN & HRD) --}}
+        <div class="sb-group">SDM & Rekrutmen (HRD)</div>
+
+        <a href="{{ route('admin.careers.index') }}"
+           @click="sidebarOpen = false"
+           class="sb-item {{ request()->routeIs('admin.careers.*') ? 'active' : '' }}">
+            <span class="sb-item-icon"><i class="fa-solid fa-briefcase"></i></span>
+            Lowongan Karir
+        </a>
+        <a href="{{ route('admin.applications.index') }}"
+           @click="sidebarOpen = false"
+           class="sb-item {{ request()->routeIs('admin.applications.*') ? 'active' : '' }}">
+            <span class="sb-item-icon"><i class="fa-solid fa-users"></i></span>
+            Pelamar & Berkas CV
+            @php
+                $pendingAppsCount = \App\Models\JobApplication::where('status', 'pending')->count();
+            @endphp
+            @if($pendingAppsCount > 0)
+            <span class="ml-auto px-1.5 py-0.5 rounded-full bg-emerald-600 text-white font-black text-[9px]">{{ $pendingAppsCount }}</span>
+            @endif
+        </a>
+
+        @if(Auth::user()?->isAdmin())
         <div class="sb-group">Media & Publikasi</div>
 
         <a href="{{ route('admin.news.index') }}"
@@ -1075,6 +1100,7 @@
             <span class="sb-item-icon"><i class="fa-solid fa-brain"></i></span>
             Knowledge Base (AI)
         </a>
+        @endif
 
     </nav>
 

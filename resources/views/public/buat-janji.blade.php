@@ -162,34 +162,113 @@
 
                     <!-- POLIKLINIK & DOKTER SELECTION -->
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 pt-1">
-                        <!-- POLIKLINIK -->
-                        <div>
+                        <!-- POLIKLINIK (CUSTOM DROPDOWN) -->
+                        <div x-data="{ openPoli: false, searchPoli: '' }" @click.outside="openPoli = false" class="relative">
                             <label class="block text-xs sm:text-sm font-bold text-gray-900 mb-1.5 flex items-center gap-1.5">
                                 <i class="fa-solid fa-hospital-user text-[#0e7c47] text-xs"></i>
                                 <span>{{ __('Poliklinik Tujuan (Opsional)') }}</span>
                             </label>
-                            <select x-model="form.poliklinik_id" @change="onPoliChange()"
-                                    class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:border-[#0e7c47] focus:ring-2 focus:ring-[#0e7c47]/20 text-xs sm:text-sm font-medium text-gray-900 bg-white transition-all shadow-xs">
-                                <option value="">-- {{ __('Pilih Poliklinik') }} --</option>
-                                @foreach($polyclinics as $poli)
-                                    <option value="{{ $poli->id }}">{{ $poli->tr('name') }}</option>
-                                @endforeach
-                            </select>
+                            
+                            <!-- Trigger Button -->
+                            <button type="button" 
+                                    @click="openPoli = !openPoli" 
+                                    class="w-full pl-9 pr-8 py-2.5 rounded-xl border border-gray-200 focus:border-[#0e7c47] focus:ring-1 focus:ring-[#0e7c47] text-xs sm:text-sm text-left bg-white outline-none transition-all flex items-center justify-between cursor-pointer relative"
+                                    :class="form.poliklinik_id ? 'text-gray-900 font-semibold border-emerald-300' : 'text-gray-600'">
+                                <i class="fa-solid fa-clinic-medical absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-xs pointer-events-none"></i>
+                                <span class="truncate pr-2" x-text="selectedPoliName || '-- Pilih Poliklinik --'"></span>
+                                <i class="fa-solid fa-chevron-down absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-[10px] transition-transform duration-200" :class="openPoli ? 'rotate-180 text-[#0e7c47]' : ''"></i>
+                            </button>
+
+                            <!-- Dropdown Menu List -->
+                            <div x-show="openPoli" 
+                                 x-cloak
+                                 x-transition:enter="transition ease-out duration-150 transform"
+                                 x-transition:enter-start="opacity-0 -translate-y-2 scale-95"
+                                 x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+                                 x-transition:leave="transition ease-in duration-100 transform"
+                                 x-transition:leave-start="opacity-100 translate-y-0 scale-100"
+                                 x-transition:leave-end="opacity-0 -translate-y-2 scale-95"
+                                 class="absolute left-0 right-0 top-full mt-1.5 z-50 bg-white rounded-2xl shadow-2xl border border-emerald-100 p-2 max-h-60 overflow-y-auto w-full">
+                                
+                                <div class="px-1 pb-1.5 mb-1 border-b border-gray-100">
+                                    <input type="text" 
+                                           x-model="searchPoli" 
+                                           placeholder="Cari poliklinik..." 
+                                           @click.stop
+                                           class="w-full px-2.5 py-1.5 text-xs rounded-lg bg-gray-50 border border-gray-200 outline-none focus:border-[#0e7c47] focus:bg-white text-gray-800 placeholder-gray-400">
+                                </div>
+
+                                <div @click="form.poliklinik_id = ''; onPoliChange(); openPoli = false" 
+                                     x-show="!searchPoli || 'semua poliklinik'.includes(searchPoli.toLowerCase())"
+                                     class="px-3 py-2 rounded-xl text-xs font-semibold cursor-pointer transition-colors flex items-center justify-between"
+                                     :class="!form.poliklinik_id ? 'bg-emerald-50 text-[#0e7c47]' : 'text-gray-700 hover:bg-gray-50'">
+                                    <span>-- Tanpa Pilihan Poliklinik --</span>
+                                    <i x-show="!form.poliklinik_id" class="fa-solid fa-check text-xs text-[#0e7c47]"></i>
+                                </div>
+
+                                <template x-for="poli in polyclinicsList.filter(p => !searchPoli || getPoliName(p).toLowerCase().includes(searchPoli.toLowerCase()))" :key="poli.id">
+                                    <div @click="form.poliklinik_id = poli.id; onPoliChange(); openPoli = false" 
+                                         class="px-3 py-2 rounded-xl text-xs font-semibold cursor-pointer transition-colors flex items-center justify-between"
+                                         :class="form.poliklinik_id == poli.id ? 'bg-emerald-50 text-[#0e7c47]' : 'text-gray-700 hover:bg-gray-50'">
+                                        <span class="truncate" x-text="getPoliName(poli)"></span>
+                                        <i x-show="form.poliklinik_id == poli.id" class="fa-solid fa-check text-xs text-[#0e7c47]"></i>
+                                    </div>
+                                </template>
+                            </div>
                         </div>
 
-                        <!-- DOKTER SPESIALIS -->
-                        <div>
+                        <!-- DOKTER SPESIALIS (CUSTOM DROPDOWN) -->
+                        <div x-data="{ openDoc: false, searchDoc: '' }" @click.outside="openDoc = false" class="relative">
                             <label class="block text-xs sm:text-sm font-bold text-gray-900 mb-1.5 flex items-center gap-1.5">
                                 <i class="fa-solid fa-user-doctor text-[#0e7c47] text-xs"></i>
                                 <span>{{ __('Dokter Spesialis (Opsional)') }}</span>
                             </label>
-                            <select x-model="form.dokter_id" 
-                                    class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:border-[#0e7c47] focus:ring-2 focus:ring-[#0e7c47]/20 text-xs sm:text-sm font-medium text-gray-900 bg-white transition-all shadow-xs">
-                                <option value="">-- {{ __('Pilih Dokter Spesialis') }} --</option>
-                                <template x-for="doc in filteredDoctors" :key="doc.id">
-                                    <option :value="doc.id" x-text="doc.name + ((doc.title_degree || doc.degree) ? ', ' + (doc.title_degree || doc.degree) : '')"></option>
+
+                            <!-- Trigger Button -->
+                            <button type="button" 
+                                    @click="openDoc = !openDoc" 
+                                    class="w-full pl-9 pr-8 py-2.5 rounded-xl border border-gray-200 focus:border-[#0e7c47] focus:ring-1 focus:ring-[#0e7c47] text-xs sm:text-sm text-left bg-white outline-none transition-all flex items-center justify-between cursor-pointer relative"
+                                    :class="form.dokter_id ? 'text-gray-900 font-semibold border-emerald-300' : 'text-gray-600'">
+                                <i class="fa-solid fa-user-md absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-xs pointer-events-none"></i>
+                                <span class="truncate pr-2" x-text="selectedDoctorName || '-- Pilih Dokter Spesialis --'"></span>
+                                <i class="fa-solid fa-chevron-down absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-[10px] transition-transform duration-200" :class="openDoc ? 'rotate-180 text-[#0e7c47]' : ''"></i>
+                            </button>
+
+                            <!-- Dropdown Menu List -->
+                            <div x-show="openDoc" 
+                                 x-cloak
+                                 x-transition:enter="transition ease-out duration-150 transform"
+                                 x-transition:enter-start="opacity-0 -translate-y-2 scale-95"
+                                 x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+                                 x-transition:leave="transition ease-in duration-100 transform"
+                                 x-transition:leave-start="opacity-100 translate-y-0 scale-100"
+                                 x-transition:leave-end="opacity-0 -translate-y-2 scale-95"
+                                 class="absolute left-0 right-0 top-full mt-1.5 z-50 bg-white rounded-2xl shadow-2xl border border-emerald-100 p-2 max-h-60 overflow-y-auto w-full">
+                                
+                                <div class="px-1 pb-1.5 mb-1 border-b border-gray-100">
+                                    <input type="text" 
+                                           x-model="searchDoc" 
+                                           placeholder="Cari dokter..." 
+                                           @click.stop
+                                           class="w-full px-2.5 py-1.5 text-xs rounded-lg bg-gray-50 border border-gray-200 outline-none focus:border-[#0e7c47] focus:bg-white text-gray-800 placeholder-gray-400">
+                                </div>
+
+                                <div @click="form.dokter_id = ''; openDoc = false" 
+                                     class="px-3 py-2 rounded-xl text-xs font-semibold cursor-pointer transition-colors flex items-center justify-between"
+                                     :class="!form.dokter_id ? 'bg-emerald-50 text-[#0e7c47]' : 'text-gray-700 hover:bg-gray-50'">
+                                    <span>-- Tanpa Pilihan Dokter --</span>
+                                    <i x-show="!form.dokter_id" class="fa-solid fa-check text-xs text-[#0e7c47]"></i>
+                                </div>
+
+                                <template x-for="doc in filteredDoctors.filter(d => !searchDoc || (d.name + ' ' + (d.title_degree || '')).toLowerCase().includes(searchDoc.toLowerCase()))" :key="doc.id">
+                                    <div @click="form.dokter_id = doc.id; if(doc.polyclinic_id) form.poliklinik_id = doc.polyclinic_id; openDoc = false" 
+                                         class="px-3 py-2 rounded-xl text-xs font-semibold cursor-pointer transition-colors flex items-center justify-between"
+                                         :class="form.dokter_id == doc.id ? 'bg-emerald-50 text-[#0e7c47]' : 'text-gray-700 hover:bg-gray-50'">
+                                        <span class="truncate" x-text="doc.name + ((doc.title_degree || doc.degree) ? ', ' + (doc.title_degree || doc.degree) : '')"></span>
+                                        <i x-show="form.dokter_id == doc.id" class="fa-solid fa-check text-xs text-[#0e7c47]"></i>
+                                    </div>
                                 </template>
-                            </select>
+                            </div>
                         </div>
                     </div>
 

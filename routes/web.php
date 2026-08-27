@@ -16,6 +16,8 @@ use App\Http\Controllers\Admin\AdminGalleryController;
 use App\Http\Controllers\Admin\AdminBannerController;
 use App\Http\Controllers\Admin\AdminPromoController;
 use App\Http\Controllers\Admin\AdminEventController;
+use App\Http\Controllers\Admin\AdminCareerController;
+use App\Http\Controllers\Admin\AdminJobApplicationController;
 use App\Http\Controllers\Admin\AdminContactController;
 use App\Http\Controllers\Admin\AdminKnowledgeBaseController;
 use App\Http\Controllers\Admin\AdminTiktokPostController;
@@ -56,6 +58,8 @@ Route::get('/lokasi', [HomeController::class, 'lokasiPage'])->name('lokasi');
 Route::get('/map', [HomeController::class, 'lokasiPage'])->name('map');
 Route::get('/kontak', [HomeController::class, 'lokasiPage'])->name('kontak');
 Route::get('/karir', [HomeController::class, 'karirPage'])->name('karir');
+Route::get('/karir/{slug}', [HomeController::class, 'karirShow'])->name('karir.show');
+Route::post('/karir/{slug}/apply', [HomeController::class, 'karirApply'])->name('karir.apply');
 Route::get('/buat-janji', [HomeController::class, 'buatJanjiPage'])->name('buat.janji');
 
 // Tanya Kakak Fikri - Intelligent AI Chatbot Routes
@@ -138,6 +142,19 @@ Route::prefix('admin')->name('admin.')->middleware('prevent-back-history')->grou
         Route::post('/events/{id}/toggle-active', [AdminEventController::class, 'toggleActive'])->name('events.toggleActive');
         Route::post('/events/{id}/gallery', [AdminEventController::class, 'uploadGallery'])->name('events.gallery.upload');
         Route::match(['get', 'post', 'delete'], '/events/{id}/gallery/delete', [AdminEventController::class, 'deleteGalleryPhoto'])->name('events.gallery.delete');
+
+        // Careers & Rekrutmen HRD Routes
+        Route::get('/careers', [AdminCareerController::class, 'index'])->name('careers.index');
+        Route::post('/careers', [AdminCareerController::class, 'store'])->name('careers.store');
+        Route::put('/careers/{id}', [AdminCareerController::class, 'update'])->name('careers.update');
+        Route::delete('/careers/{id}', [AdminCareerController::class, 'destroy'])->name('careers.destroy');
+        Route::post('/careers/{id}/toggle-active', [AdminCareerController::class, 'toggleActive'])->name('careers.toggleActive');
+        Route::post('/careers/{id}/toggle-status', [AdminCareerController::class, 'toggleStatus'])->name('careers.toggleStatus');
+
+        // Job Applications & Pelamar CV Routes
+        Route::get('/applications', [AdminJobApplicationController::class, 'index'])->name('applications.index');
+        Route::post('/applications/{id}/status', [AdminJobApplicationController::class, 'updateStatus'])->name('applications.update_status');
+        Route::delete('/applications/{id}', [AdminJobApplicationController::class, 'destroy'])->name('applications.destroy');
 
         // TikTok Posts Routes
         Route::get('/tiktok', [AdminTiktokPostController::class, 'index'])->name('tiktok.index');

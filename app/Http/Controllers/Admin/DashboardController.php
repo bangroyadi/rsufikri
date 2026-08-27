@@ -15,6 +15,10 @@ class DashboardController extends Controller
 {
     public function index()
     {
+        if (\Illuminate\Support\Facades\Auth::user()?->isHrd()) {
+            return redirect()->route('admin.careers.index');
+        }
+
         $totalDoctors = Doctor::count();
         $totalSchedules = DoctorSchedule::count();
         $totalServices = Service::count();

@@ -15,6 +15,9 @@ use App\Models\Article;
 use App\Models\TiktokPost;
 use App\Models\Promo;
 use App\Models\HospitalEvent;
+use App\Models\Career;
+use App\Models\JobApplication;
+use Illuminate\Support\Facades\Storage;
 
 class HomeController extends Controller
 {
@@ -112,6 +115,21 @@ class HomeController extends Controller
         if ($slug === 'rawat-jalan') {
             $polyclinics = \App\Models\Polyclinic::where('is_active', true)->with('doctors')->get();
             return view('public.layanan.rawat-jalan', compact('title', 'category', 'slug', 'profile', 'services', 'polyclinics', 'service'));
+        }
+
+        // Layanan Unggulan (Trauma Center, Kemilau Cinta, Spesialis Mata, Antar Jemput Pasien, dll)
+        $isFeatured = ($service && $service->is_featured) || in_array($slug, [
+            'trauma-center',
+            'kemilau-cinta',
+            'kemilau-cinta-layanan-ibu-anak',
+            'layanan-spesialis-mata',
+            'spesialis-mata',
+            'layanan-antar-jemput-pasien',
+            'antar-jemput-pasien'
+        ]);
+
+        if ($isFeatured) {
+            return view('public.layanan.unggulan-detail', compact('title', 'category', 'slug', 'profile', 'services', 'service'));
         }
 
         return view('public.page', compact('title', 'category', 'slug', 'profile', 'services', 'service'));
@@ -342,13 +360,111 @@ class HomeController extends Controller
         return $this->lokasiPage();
     }
 
-    public function karirPage()
+    public function karirPage(Request $request)
     {
-        $title = 'Karir & Rekrutmen';
-        $category = 'Karir';
-        $slug = 'karir';
         $profile = HospitalProfile::first();
-        return view('public.page', compact('title', 'category', 'slug', 'profile'));
+        $department = $request->query('dept', 'all');
+        $type = $request->query('type', 'all');
+        $query = $request->query('q');
+
+        $careersQuery = Career::where('is_active', true)
+            ->orderBy('created_at', 'desc')
+            ->orderBy('id', 'desc');
+
+        if (!empty($department) && $department !== 'all') {
+            $careersQuery->where('department', $department);
+        }
+
+        if (!empty($type) && $type !== 'all') {
+            $careersQuery->where('employment_type', $type);
+        }
+
+        if (!empty($query)) {
+            $careersQuery->where(function($q) use ($query) {
+                $q->where('title', 'like', "%{$query}%")
+                  ->orWhere('department', 'like', "%{$query}%")
+                  ->orWhere('location', 'like', "%{$query}%")
+                  ->orWhere('education_level', 'like', "%{$query}%")
+                  ->orWhere('short_description', 'like', "%{$query}%");
+            });
+        }
+
+        $careers = $careersQuery->get();
+        $departments = Career::where('is_active', true)->pluck('department')->unique()->values();
+        $types = Career::where('is_active', true)->pluck('employment_type')->unique()->values();
+
+        return view('public.karir.index', compact('careers', 'departments', 'types', 'profile', 'department', 'type', 'query'));
+    }
+
+    public function karirShow($slug)
+    {
+        $career = Career::where('slug', $slug)->where('is_active', true)->firstOrFail();
+        $profile = HospitalProfile::first();
+
+        // Other open vacancies
+        $otherCareers = Career::where('is_active', true)
+            ->where('id', '!=', $career->id)
+            ->where('status', 'open')
+            ->orderBy('order', 'asc')
+            ->limit(3)
+            ->get();
+
+        return view('public.karir.show', compact('career', 'profile', 'otherCareers'));
+    }
+
+    public function karirApply(Request $request, $slug)
+    {
+        $career = Career::where('slug', $slug)->where('is_active', true)->firstOrFail();
+
+        if (!$career->is_open) {
+            return back()->withErrors(['msg' => 'Mohon maaf, lowongan posisi ini sudah ditutup.'])->withInput();
+        }
+
+        $validated = $request->validate([
+            'full_name' => 'required|string|max:255',
+            'email' => 'required|email|max:255',
+            'phone' => 'required|string|max:50',
+            'last_education' => 'required|string|max:100',
+            'experience_years' => 'nullable|string|max:100',
+            'str_number' => 'nullable|string|max:100',
+            'portfolio_url' => 'nullable|string|max:500',
+            'cover_letter' => 'nullable|string|max:3000',
+            'cv_file' => 'required|file|mimes:pdf,doc,docx,jpg,jpeg,png|max:15360', // Maks 15MB
+        ], [
+            'full_name.required' => 'Nama lengkap wajib diisi.',
+            'email.required' => 'Alamat email aktif wajib diisi.',
+            'email.email' => 'Format email tidak valid.',
+            'phone.required' => 'Nomor WhatsApp / HP wajib diisi.',
+            'last_education.required' => 'Pendidikan terakhir wajib dipilih.',
+            'cv_file.required' => 'Berkas CV / Resume wajib diunggah.',
+            'cv_file.mimes' => 'Format file CV harus berupa PDF, DOC, atau DOCX.',
+            'cv_file.max' => 'Ukuran file CV maksimal adalah 15 MB.',
+        ]);
+
+        $cvPath = null;
+        if ($request->hasFile('cv_file') && $request->file('cv_file')->isValid()) {
+            $file = $request->file('cv_file');
+            $filename = 'CV_' . Str::slug($validated['full_name']) . '_' . time() . '.' . $file->getClientOriginalExtension();
+            $path = $file->storeAs('applications/cv', $filename, 'public');
+            $cvPath = 'storage/' . $path;
+        }
+
+        JobApplication::create([
+            'career_id' => $career->id,
+            'full_name' => $validated['full_name'],
+            'email' => $validated['email'],
+            'phone' => $validated['phone'],
+            'last_education' => $validated['last_education'],
+            'experience_years' => $validated['experience_years'] ?? 'Fresh Graduate',
+            'str_number' => $validated['str_number'] ?? null,
+            'cv_file' => $cvPath,
+            'portfolio_url' => $validated['portfolio_url'] ?? null,
+            'cover_letter' => $validated['cover_letter'] ?? null,
+            'status' => 'pending',
+        ]);
+
+        return redirect()->route('karir.show', $career->slug)
+            ->with('apply_success', 'Lamaran Anda untuk posisi ' . $career->tr('title') . ' berhasil dikirimkan! Tim HRD RSU Fikri Medika akan meninjau berkas Anda.');
     }
 
     public function buatJanjiPage(Request $request)
