@@ -304,10 +304,11 @@
         <div class="mitra-container">
             <div class="mitra-overlap-row">
                 
-                <!-- LEFT: DOCTOR EXAMINING CHILD PHOTO -->
+                <!-- LEFT: VISI MISI PHOTO -->
                 <div class="mitra-img-floating">
-                    <img src="https://images.unsplash.com/photo-1576765608535-5f04d1e3f289?auto=format&fit=crop&w=1000&q=80" 
-                         alt="Pelayanan Medis RSU Fikri Medika">
+                    <img src="{{ asset('visi.jpeg') }}" 
+                         alt="Visi & Misi RSU Fikri Medika"
+                         loading="lazy">
                 </div>
 
                 <!-- RIGHT: FLOATING WHITE CARD -->

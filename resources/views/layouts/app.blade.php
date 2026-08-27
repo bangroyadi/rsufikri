@@ -16,7 +16,7 @@
     <style>
         [x-cloak] { display: none !important; }
         html, body {
-            overflow-x: hidden !important;
+            overflow-x: clip !important;
             max-width: 100vw !important;
             width: 100% !important;
             box-sizing: border-box;
@@ -27,7 +27,7 @@
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="antialiased flex flex-col min-h-screen bg-[#f7faf8] pb-16 lg:pb-0 overflow-x-hidden w-full max-w-full" x-data="{ mobileMenuOpen: false, searchOpen: false, scrolled: false }">
+<body class="antialiased flex flex-col min-h-screen bg-[#f7faf8] pb-16 lg:pb-0 w-full max-w-full" style="overflow-x: clip;" x-data="{ mobileMenuOpen: false, searchOpen: false, scrolled: false }">
 
     <!-- MEDICAL ECG HEARTBEAT PRELOADER -->
     <div id="medicare-preloader">
@@ -68,18 +68,22 @@
                         if (preloader && preloader.parentNode) {
                             preloader.parentNode.removeChild(preloader);
                         }
-                    }, 600);
+                    }, 400);
                 }
             }
 
-            if (document.readyState === 'complete') {
-                setTimeout(hidePreloader, 400);
+            // Instantly hide preloader as soon as DOM is interactive
+            if (document.readyState === 'interactive' || document.readyState === 'complete') {
+                setTimeout(hidePreloader, 150);
             } else {
-                window.addEventListener('load', function() {
-                    setTimeout(hidePreloader, 400);
+                document.addEventListener('DOMContentLoaded', function() {
+                    setTimeout(hidePreloader, 150);
                 });
-                // Fallback max 3.5s in case of slow network/trackers
-                setTimeout(hidePreloader, 3500);
+                window.addEventListener('load', function() {
+                    hidePreloader();
+                });
+                // Absolute fallback max 1s
+                setTimeout(hidePreloader, 1000);
             }
         })();
     </script>
@@ -146,9 +150,10 @@
         </div>
     </div>
 
-    <!-- MAIN NAVBAR HEADER -->
+    <!-- MAIN NAVBAR HEADER (STICKY HEADER) -->
     <header @scroll.window="scrolled = (window.pageYOffset > 20)" 
-            class="sticky top-0 z-40 bg-white/95 backdrop-blur-md shadow-sm transition-all duration-300 border-b border-gray-100">
+            class="sticky top-0 z-50 bg-white/95 backdrop-blur-md transition-all duration-300 border-b border-gray-100"
+            :class="scrolled ? 'shadow-md bg-white' : 'shadow-xs bg-white/95'">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-14 sm:h-16">
                 <!-- OFFICIAL HORIZONTAL LOGO -->

@@ -1723,6 +1723,7 @@ if (!isset($tiktokPosts) || (is_countable($tiktokPosts) && count($tiktokPosts) =
          x-data="{
              activeSlide: 0,
              totalSlides: {{ count($tiktokPosts) }},
+             inView: false,
              loadedFrames: {},
              playerErrors: {},
              scrollToSlide(index) {
@@ -1741,6 +1742,20 @@ if (!isset($tiktokPosts) || (is_countable($tiktokPosts) && count($tiktokPosts) =
                  this.activeSlide = Math.max(0, Math.min(this.totalSlides - 1, newIndex));
              },
              init() {
+                 // Intersection Observer for on-demand lazy loading of TikTok iframes
+                 const observer = new IntersectionObserver((entries) => {
+                     entries.forEach(entry => {
+                         if (entry.isIntersecting) {
+                             this.inView = true;
+                             observer.disconnect();
+                         }
+                     });
+                 }, { rootMargin: '350px 0px' });
+
+                 if (this.$el) {
+                     observer.observe(this.$el);
+                 }
+
                  window.addEventListener('message', (event) => {
                      if (event.data && event.data['x-tiktok-player']) {
                          const type = event.data.type;
@@ -1772,7 +1787,7 @@ if (!isset($tiktokPosts) || (is_countable($tiktokPosts) && count($tiktokPosts) =
             <div class="shrink-0">
                 <a href="https://www.tiktok.com/@rsu.fikrimedika" 
                    target="_blank" 
-                   rel="noopener noreferrer"
+                   rel="noopener noreferrer" 
                    style="background-color: #111827; color: #ffffff;"
                    class="inline-flex items-center gap-2 px-5 py-2.5 rounded-full hover:bg-black font-bold text-xs sm:text-sm shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5 group">
                     <i class="fa-brands fa-tiktok text-sm text-[#25f4ee] group-hover:text-[#fe2c55] transition-colors"></i>
@@ -1782,7 +1797,7 @@ if (!isset($tiktokPosts) || (is_countable($tiktokPosts) && count($tiktokPosts) =
             </div>
         </div>
 
-        <!-- TIKTOK CARDS CONTAINER (OFFICIAL TIKTOK EMBEDDED PLAYER V1) -->
+        <!-- TIKTOK CARDS CONTAINER (LAZY LOADED ON-DEMAND) -->
         <div class="relative">
             <div x-ref="tiktokSlider"
                  @scroll.passive="onScroll()"
@@ -1798,6 +1813,15 @@ if (!isset($tiktokPosts) || (is_countable($tiktokPosts) && count($tiktokPosts) =
                 @endphp
                 <div class="tiktok-card-item group">
                     
+                    <!-- SKELETON PLACEHOLDER BEFORE VIEWPORT SCROLL -->
+                    <template x-if="!inView">
+                        <div class="w-full h-full bg-slate-900 flex flex-col items-center justify-center p-6 text-center animate-pulse">
+                            <i class="fa-brands fa-tiktok text-4xl text-slate-700 mb-3"></i>
+                            <div class="w-24 h-3 bg-slate-800 rounded-full mb-2"></div>
+                            <div class="w-16 h-2.5 bg-slate-800/60 rounded-full"></div>
+                        </div>
+                    </template>
+
                     <!-- ERROR FALLBACK STATE -->
                     <div x-show="playerErrors['{{ $index }}']"
                          x-cloak
@@ -1811,15 +1835,18 @@ if (!isset($tiktokPosts) || (is_countable($tiktokPosts) && count($tiktokPosts) =
                         </a>
                     </div>
 
-                    <!-- OFFICIAL TIKTOK PLAYER V1 IFRAME (1-CLICK DIRECT PLAY) -->
-                    <iframe id="tiktok-player-{{ $index }}"
-                            src="{{ $playerUrl }}"
-                            title="{{ $postTitle }}"
-                            class="tiktok-iframe-player"
-                            allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture; fullscreen"
-                            allowfullscreen
-                            x-on:error="playerErrors['{{ $index }}'] = true">
-                    </iframe>
+                    <!-- OFFICIAL TIKTOK PLAYER V1 IFRAME (LOADED WHEN SCROLLED INTO VIEW) -->
+                    <template x-if="inView">
+                        <iframe id="tiktok-player-{{ $index }}"
+                                src="{{ $playerUrl }}"
+                                title="{{ $postTitle }}"
+                                class="tiktok-iframe-player"
+                                loading="lazy"
+                                allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture; fullscreen"
+                                allowfullscreen
+                                x-on:error="playerErrors['{{ $index }}'] = true">
+                        </iframe>
+                    </template>
 
                 </div>
                 @endforeach
