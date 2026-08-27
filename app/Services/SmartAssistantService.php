@@ -820,9 +820,53 @@ class SmartAssistantService
                 ['label' => '👁️ Jadwal Dokter Spesialis Mata', 'query' => 'Dokter spesialis mata'],
                 ['label' => '📝 Buat Janji Spesialis Mata', 'url' => '/buat-janji?poli=mata'],
             ],
+            'service_mata' => [
+                ['label' => '👁️ Detail Layanan Spesialis Mata', 'url' => '/layanan/layanan-spesialis-mata'],
+                ['label' => '📝 Buat Janji Periksa Mata', 'url' => '/buat-janji'],
+            ],
             'kemilau_cinta' => [
                 ['label' => '👶 Halaman Kemilau Cinta', 'url' => '/layanan/kemilau-cinta-layanan-ibu-anak'],
                 ['label' => '🤰 Jadwal Dokter Kandungan (Sp.OG)', 'query' => 'Dokter kandungan'],
+            ],
+            'service_kemilau_cinta' => [
+                ['label' => '👶 Detail Layanan Kemilau Cinta', 'url' => '/layanan/kemilau-cinta-layanan-ibu-anak'],
+                ['label' => '🤰 Konsultasi Dokter Kandungan', 'query' => 'Dokter kandungan'],
+            ],
+            'service_trauma_center' => [
+                ['label' => '🏥 Detail Layanan Trauma Center', 'url' => '/layanan/trauma-center'],
+                ['label' => '🚨 Emergency IGD 24 Jam', 'url' => 'tel:081287075555'],
+            ],
+            'service_rawat_inap' => [
+                ['label' => '🛏️ Fasilitas Kamar Rawat Inap', 'url' => '/layanan/rawat-inap'],
+                ['label' => '💬 Ketersediaan Bed Kamar', 'url' => 'https://wa.me/6282280749999'],
+            ],
+            'service_rehab_medik' => [
+                ['label' => '🚶‍♂️ Fasilitas Fisioterapi', 'url' => '/layanan/rehabilitasi-medik'],
+                ['label' => '📝 Buat Janji Fisioterapi', 'url' => '/buat-janji'],
+            ],
+            'service_radiologi_lab' => [
+                ['label' => '🔬 Detail Penunjang Medis', 'url' => '/layanan/penunjang-medis'],
+                ['label' => '🩻 Layanan Radiologi 24 Jam', 'url' => '/layanan/radiologi-24-jam'],
+            ],
+            'service_farmasi_24h' => [
+                ['label' => '💊 Layanan Farmasi 24 Jam', 'url' => '/layanan/farmasi-24-jam'],
+                ['label' => '💬 Konsultasi Obat Apoteker', 'url' => 'https://wa.me/6282280749999'],
+            ],
+            'career_vacancies' => [
+                ['label' => '💼 Buka Halaman Karir', 'url' => '/karir'],
+                ['label' => '📝 Cara Melamar Kerja', 'query' => 'Cara melamar pekerjaan di RS Fikri Medika'],
+            ],
+            'career_apply_process' => [
+                ['label' => '📄 Lihat Lowongan & Lamar', 'url' => '/karir'],
+                ['label' => '💼 Posisi Lowongan yang Dibuka', 'query' => 'Posisi lowongan kerja yang tersedia'],
+            ],
+            'hospital_events' => [
+                ['label' => '📸 Lihat Dokumentasi Event', 'url' => '/informasi/event'],
+                ['label' => '📰 Baca Artikel Kesehatan', 'url' => '/informasi/artikel'],
+            ],
+            'hospital_vision_mission' => [
+                ['label' => '🏥 Profil Lengkap RS', 'url' => '/profil'],
+                ['label' => '💚 Motto Rumah Sakit', 'query' => 'Motto RSU Fikri Medika'],
             ],
         ];
 
@@ -840,10 +884,23 @@ class SmartAssistantService
     {
         $map = [
             'greeting' => [
+                ['label' => '💼 Ada lowongan kerja?', 'query' => 'Informasi lowongan kerja terbaru'],
                 ['label' => '👁️ Ada dokter mata?', 'query' => 'Ada dokter mata?'],
                 ['label' => '🕒 Jam buka rumah sakit?', 'query' => 'Jam buka rumah sakit?'],
-                ['label' => '📋 Cara daftar online?', 'query' => 'Bagaimana cara daftar online?'],
                 ['label' => '💳 Bisa berobat pakai BPJS?', 'query' => 'Apakah menerima pasien BPJS?'],
+            ],
+            'career_vacancies' => [
+                ['label' => '📝 Bagaimana cara melamar?', 'query' => 'Cara melamar pekerjaan di RS Fikri Medika'],
+                ['label' => '📄 Syarat berkas CV & STR', 'query' => 'Syarat berkas lamaran nakes'],
+                ['label' => '📞 Kontak HRD RS', 'query' => 'Kontak HRD RSU Fikri Medika'],
+            ],
+            'hospital_events' => [
+                ['label' => '🏥 Layanan Unggulan RS', 'query' => 'Apa saja layanan unggulan?'],
+                ['label' => '📰 Artikel Kesehatan', 'query' => 'Artikel kesehatan terbaru'],
+            ],
+            'service_trauma_center' => [
+                ['label' => '🦴 Jadwal Dokter Orthopedi (Tulang)', 'query' => 'Dokter spesialis tulang'],
+                ['label' => '🚨 Emergency Call IGD', 'query' => 'Nomor darurat IGD'],
             ],
             'hospital_hours' => [
                 ['label' => '👨‍⚕️ Jadwal dokter hari ini?', 'query' => 'Jadwal dokter hari ini'],
