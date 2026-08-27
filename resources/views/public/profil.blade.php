@@ -255,9 +255,9 @@
 
             <!-- FULL WIDTH BANNER IMAGE -->
             <div style="width: 100%; height: 420px; border-radius: 28px; overflow: hidden; box-shadow: 0 15px 35px rgba(0, 85, 150, 0.08); background: #FFFFFF;">
-                <img src="{{ asset('gedung1_web.jpg') }}" 
+                <img src="{{ asset('mm.jpeg') }}" 
                      alt="Gedung RSU Fikri Medika" 
-                     style="width: 100%; height: 100%; object-fit: cover; object-position: center; display: block;">
+                     style="width: 100%; height: 100%; object-fit: cover; object-position: top; display: block;">
             </div>
 
         </div>
@@ -289,8 +289,8 @@
 
                 <!-- RIGHT: RECEPTIONIST PHOTO -->
                 <div class="mitra-img-floating">
-                    <img src="https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&w=1000&q=80" 
-                         alt="Pelayanan Ramah RSU Fikri Medika">
+                    <img src="{{ asset('gedung_profile.jpg') }}" 
+                         alt="Gedung RSU Fikri Medika">
                 </div>
 
             </div>

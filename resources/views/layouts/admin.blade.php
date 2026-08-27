@@ -1045,8 +1045,8 @@
         <a href="{{ route('admin.events.index') }}"
            @click="sidebarOpen = false"
            class="sb-item {{ request()->routeIs('admin.events.*') ? 'active' : '' }}">
-            <span class="sb-item-icon"><i class="fa-solid fa-calendar-days"></i></span>
-            Agenda & Event RS
+            <span class="sb-item-icon"><i class="fa-solid fa-photo-film"></i></span>
+            Dokumentasi Event
         </a>
         <a href="{{ route('admin.galleries.index') }}"
            @click="sidebarOpen = false"

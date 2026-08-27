@@ -33,6 +33,8 @@ class AdminEventController extends Controller
             'benefits_text' => 'nullable|string',
             'image' => 'nullable|string|max:500',
             'image_file' => 'nullable|file|mimes:jpeg,png,jpg,gif,webp,svg|max:30720',
+            'gallery_files' => 'nullable|array',
+            'gallery_files.*' => 'nullable|file|mimes:jpeg,png,jpg,gif,webp,svg|max:30720',
             'short_description_id' => 'nullable|string|max:500',
             'description_id' => 'nullable|string',
             'registration_link' => 'nullable|string|max:500',
@@ -41,7 +43,7 @@ class AdminEventController extends Controller
             'is_featured' => 'nullable|boolean',
             'is_active' => 'nullable|boolean',
         ], [
-            'title_id.required' => 'Judul agenda event wajib diisi.',
+            'title_id.required' => 'Judul kegiatan event wajib diisi.',
             'category.required' => 'Kategori event wajib dipilih.',
             'event_date.required' => 'Tanggal pelaksanaan event wajib diisi.',
             'location.required' => 'Lokasi pelaksanaan event wajib diisi.',
@@ -52,6 +54,17 @@ class AdminEventController extends Controller
         if ($request->hasFile('image_file') && $request->file('image_file')->isValid()) {
             $path = ImageOptimizer::optimizeAndStore($request->file('image_file'), 'events', 1200, 85);
             $imageUrl = 'storage/' . $path;
+        }
+
+        // Upload gallery photos if present
+        $galleryPhotos = [];
+        if ($request->hasFile('gallery_files')) {
+            foreach ($request->file('gallery_files') as $file) {
+                if ($file && $file->isValid()) {
+                    $gPath = ImageOptimizer::optimizeAndStore($file, 'events/gallery', 1200, 85);
+                    $galleryPhotos[] = 'storage/' . $gPath;
+                }
+            }
         }
 
         // Parse speakers from lines "Nama | Spesialisasi" or simple names
@@ -114,10 +127,11 @@ class AdminEventController extends Controller
             'location' => $validated['location'],
             'speakers' => $speakers,
             'quota' => $validated['quota'] ?? null,
-            'price_type' => $validated['price_type'] ?: 'Gratis / Free',
+            'price_type' => $validated['price_type'] ?? 'Gratis / Free',
             'price' => $validated['price'] ?? null,
             'benefits' => $benefits,
             'image' => $imageUrl,
+            'gallery_photos' => $galleryPhotos,
             'short_description' => [
                 'id' => $validated['short_description_id'] ?? '',
                 'en' => $request->short_description_en ?? '',
@@ -128,13 +142,13 @@ class AdminEventController extends Controller
             ],
             'registration_link' => $validated['registration_link'] ?? null,
             'whatsapp_contact' => $validated['whatsapp_contact'] ?? '089678211575',
-            'status' => $validated['status'] ?? 'upcoming',
+            'status' => $validated['status'] ?? 'completed',
             'is_featured' => $request->boolean('is_featured'),
             'is_active' => $request->boolean('is_active', true),
             'order' => $maxOrder + 1,
         ]);
 
-        return redirect()->route('admin.events.index')->with('success', 'Agenda Event berhasil ditambahkan!');
+        return redirect()->route('admin.events.index')->with('success', 'Dokumentasi Event berhasil ditambahkan!');
     }
 
     public function update(Request $request, $id)
@@ -155,6 +169,8 @@ class AdminEventController extends Controller
             'benefits_text' => 'nullable|string',
             'image' => 'nullable|string|max:500',
             'image_file' => 'nullable|file|mimes:jpeg,png,jpg,gif,webp,svg|max:30720',
+            'gallery_files' => 'nullable|array',
+            'gallery_files.*' => 'nullable|file|mimes:jpeg,png,jpg,gif,webp,svg|max:30720',
             'short_description_id' => 'nullable|string|max:500',
             'description_id' => 'nullable|string',
             'registration_link' => 'nullable|string|max:500',
@@ -172,6 +188,17 @@ class AdminEventController extends Controller
             }
             $path = ImageOptimizer::optimizeAndStore($request->file('image_file'), 'events', 1200, 85);
             $imageUrl = 'storage/' . $path;
+        }
+
+        // Handle gallery photo additions
+        $galleryPhotos = is_array($event->gallery_photos) ? $event->gallery_photos : [];
+        if ($request->hasFile('gallery_files')) {
+            foreach ($request->file('gallery_files') as $file) {
+                if ($file && $file->isValid()) {
+                    $gPath = ImageOptimizer::optimizeAndStore($file, 'events/gallery', 1200, 85);
+                    $galleryPhotos[] = 'storage/' . $gPath;
+                }
+            }
         }
 
         // Parse speakers
@@ -221,10 +248,11 @@ class AdminEventController extends Controller
             'location' => $validated['location'],
             'speakers' => $speakers,
             'quota' => $validated['quota'] ?? null,
-            'price_type' => $validated['price_type'] ?: 'Gratis / Free',
+            'price_type' => $validated['price_type'] ?? 'Gratis / Free',
             'price' => $validated['price'] ?? null,
             'benefits' => $benefits,
             'image' => $imageUrl,
+            'gallery_photos' => $galleryPhotos,
             'short_description' => [
                 'id' => $validated['short_description_id'] ?? '',
                 'en' => $request->short_description_en ?? ($event->getTranslation('short_description', 'en') ?? ''),
@@ -235,12 +263,101 @@ class AdminEventController extends Controller
             ],
             'registration_link' => $validated['registration_link'] ?? null,
             'whatsapp_contact' => $validated['whatsapp_contact'] ?? '089678211575',
-            'status' => $validated['status'] ?? 'upcoming',
+            'status' => $validated['status'] ?? 'completed',
             'is_featured' => $request->boolean('is_featured'),
             'is_active' => $request->boolean('is_active', true),
         ]);
 
-        return redirect()->route('admin.events.index')->with('success', 'Agenda Event berhasil diperbarui!');
+        return redirect()->route('admin.events.index')->with('success', 'Dokumentasi Event berhasil diperbarui!');
+    }
+
+    public function uploadGallery(Request $request, $id)
+    {
+        $event = HospitalEvent::findOrFail($id);
+
+        $request->validate([
+            'gallery_files' => 'nullable|array',
+            'gallery_files.*' => 'nullable|image|mimes:jpeg,png,jpg,webp,gif|max:30720',
+        ]);
+
+        $photos = is_array($event->gallery_photos) ? $event->gallery_photos : [];
+
+        if ($request->hasFile('gallery_files')) {
+            foreach ($request->file('gallery_files') as $file) {
+                if ($file && $file->isValid()) {
+                    $path = ImageOptimizer::optimizeAndStore($file, 'events/gallery', 1200, 85);
+                    $photos[] = 'storage/' . $path;
+                }
+            }
+        }
+
+        $event->gallery_photos = $photos;
+        $event->save();
+
+        return back()->with('success', 'Foto dokumentasi kegiatan berhasil diunggah!');
+    }
+
+    public function deleteGalleryPhoto(Request $request, $id)
+    {
+        $event = HospitalEvent::findOrFail($id);
+
+        $photos = is_array($event->gallery_photos) ? $event->gallery_photos : (json_decode($event->gallery_photos, true) ?? []);
+        if (!is_array($photos)) {
+            $photos = [];
+        }
+
+        $idx = $request->input('photo_index');
+        $targetUrl = $request->input('photo_url');
+        $deleted = false;
+
+        // Priority 1: Match by index
+        if ($idx !== null && is_numeric($idx) && isset($photos[(int)$idx])) {
+            $item = $photos[(int)$idx];
+            array_splice($photos, (int)$idx, 1);
+            $deleted = true;
+
+            $relPath = ltrim(str_replace(['storage/', asset('storage/')], '', $item), '/');
+            if (!empty($relPath) && Storage::disk('public')->exists($relPath)) {
+                Storage::disk('public')->delete($relPath);
+            }
+        } 
+        // Priority 2: Match by URL or relative path
+        elseif (!empty($targetUrl)) {
+            $newPhotos = [];
+            foreach ($photos as $item) {
+                $itemFullUrl = str_starts_with($item, 'http') ? $item : asset($item);
+                $isMatch = ($item === $targetUrl) || 
+                           ($itemFullUrl === $targetUrl) || 
+                           (basename($item) === basename($targetUrl)) ||
+                           (ltrim(str_replace(['storage/', asset('storage/')], '', $item), '/') === ltrim(str_replace(['storage/', asset('storage/')], '', $targetUrl), '/'));
+
+                if ($isMatch && !$deleted) {
+                    $deleted = true;
+                    $relPath = ltrim(str_replace(['storage/', asset('storage/')], '', $item), '/');
+                    if (!empty($relPath) && Storage::disk('public')->exists($relPath)) {
+                        Storage::disk('public')->delete($relPath);
+                    }
+                } else {
+                    $newPhotos[] = $item;
+                }
+            }
+            if ($deleted) {
+                $photos = $newPhotos;
+            }
+        }
+
+        $event->gallery_photos = array_values($photos);
+        $event->save();
+
+        if ($request->wantsJson() || $request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Foto dokumentasi kegiatan berhasil dihapus!',
+                'gallery' => array_map(fn($p) => str_starts_with($p, 'http') ? $p : asset('storage/' . ltrim(str_replace('storage/', '', $p), '/')), $event->gallery_photos),
+            ]);
+        }
+
+        return back()->with('success', 'Foto dokumentasi kegiatan berhasil dihapus!');
     }
 
     public function destroy($id)
@@ -250,9 +367,19 @@ class AdminEventController extends Controller
             $oldPath = substr($event->image, 8);
             Storage::disk('public')->delete($oldPath);
         }
+
+        if (!empty($event->gallery_photos) && is_array($event->gallery_photos)) {
+            foreach ($event->gallery_photos as $gp) {
+                if (str_starts_with($gp, 'storage/')) {
+                    $gpPath = substr($gp, 8);
+                    Storage::disk('public')->delete($gpPath);
+                }
+            }
+        }
+
         $event->delete();
 
-        return redirect()->route('admin.events.index')->with('success', 'Agenda Event berhasil dihapus!');
+        return redirect()->route('admin.events.index')->with('success', 'Dokumentasi Event berhasil dihapus!');
     }
 
     public function toggleActive($id)

@@ -27,7 +27,9 @@ Route::get('/lang/{locale}', [LanguageController::class, 'switch'])->name('lang.
 
 // Event & Agenda Kegiatan Routes
 Route::get('/informasi/event', [HomeController::class, 'eventPage'])->name('event.index');
+Route::get('/informasi/event/{slug}', [HomeController::class, 'eventShow'])->name('event.show');
 Route::get('/event', [HomeController::class, 'eventPage']);
+Route::get('/event/{slug}', [HomeController::class, 'eventShow']);
 Route::get('/agenda', [HomeController::class, 'eventPage']);
 
 // Penawaran Khusus & Promo Routes
@@ -134,6 +136,8 @@ Route::prefix('admin')->name('admin.')->middleware('prevent-back-history')->grou
         Route::put('/events/{id}', [AdminEventController::class, 'update'])->name('events.update');
         Route::delete('/events/{id}', [AdminEventController::class, 'destroy'])->name('events.destroy');
         Route::post('/events/{id}/toggle-active', [AdminEventController::class, 'toggleActive'])->name('events.toggleActive');
+        Route::post('/events/{id}/gallery', [AdminEventController::class, 'uploadGallery'])->name('events.gallery.upload');
+        Route::match(['get', 'post', 'delete'], '/events/{id}/gallery/delete', [AdminEventController::class, 'deleteGalleryPhoto'])->name('events.gallery.delete');
 
         // TikTok Posts Routes
         Route::get('/tiktok', [AdminTiktokPostController::class, 'index'])->name('tiktok.index');

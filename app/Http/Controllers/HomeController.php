@@ -162,7 +162,7 @@ class HomeController extends Controller
         $category = $request->query('kategori', 'all');
         $query = $request->query('q');
 
-        $eventsQuery = HospitalEvent::where('is_active', true)->orderBy('order', 'asc')->orderBy('event_date', 'asc');
+        $eventsQuery = HospitalEvent::where('is_active', true)->orderBy('event_date', 'desc')->orderBy('order', 'asc');
 
         if (!empty($category) && $category !== 'all') {
             $eventsQuery->where('category', $category);
@@ -179,23 +179,36 @@ class HomeController extends Controller
 
         $events = $eventsQuery->get();
 
-        // Featured spotlight event (first active featured or first upcoming event)
+        // Featured spotlight event: prioritas is_featured, lalu event terbaru (pasca event)
         $featuredEvent = HospitalEvent::where('is_active', true)
             ->where('is_featured', true)
-            ->where('status', '!=', 'completed')
-            ->orderBy('event_date', 'asc')
+            ->orderBy('event_date', 'desc')
             ->first();
 
         if (!$featuredEvent) {
             $featuredEvent = HospitalEvent::where('is_active', true)
-                ->where('status', 'upcoming')
-                ->orderBy('event_date', 'asc')
+                ->orderBy('event_date', 'desc')
                 ->first();
         }
 
         $categories = HospitalEvent::where('is_active', true)->pluck('category')->unique()->values();
 
         return view('public.event.index', compact('events', 'featuredEvent', 'categories', 'profile', 'category', 'query'));
+    }
+
+    public function eventShow($slug)
+    {
+        $event = HospitalEvent::where('slug', $slug)->where('is_active', true)->firstOrFail();
+        $profile = HospitalProfile::first();
+
+        // Event lainnya (exclude current, ambil 3 terbaru)
+        $relatedEvents = HospitalEvent::where('is_active', true)
+            ->where('id', '!=', $event->id)
+            ->orderBy('event_date', 'desc')
+            ->limit(3)
+            ->get();
+
+        return view('public.event.show', compact('event', 'profile', 'relatedEvents'));
     }
 
     public function promoPage(Request $request)
