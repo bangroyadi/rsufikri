@@ -1,8 +1,19 @@
 @extends('layouts.app')
 
-@section('title', 'Penawaran Khusus & Paket Promo Kesehatan - RSU Fikri Medika')
+@section('title', 'Penawaran Khusus & Paket Promo Kesehatan | RSU Fikri Medika Karawang')
+@section('meta_description', 'Dapatkan penawaran khusus, diskon pemeriksaan, paket MCU, promo bersalin, dan paket kesehatan hemat di RSU Fikri Medika Karawang.')
+
+@section('schema_jsonld')
+<script type="application/ld+json">
+{!! json_encode(app(\App\Services\SeoService::class)->generateBreadcrumbSchema([
+    'Beranda' => url('/'),
+    'Penawaran Khusus & Promo' => url('/informasi/penawaran-khusus')
+]), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}
+</script>
+@endsection
 
 @section('content')
+<h1 class="sr-only">Penawaran Khusus & Paket Promo Kesehatan RSU Fikri Medika Karawang</h1>
 <div x-data="{ 
     selectedCategory: 'all',
     search: '{{ addslashes($query ?? '') }}'

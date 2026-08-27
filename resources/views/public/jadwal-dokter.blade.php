@@ -1,13 +1,14 @@
 @extends('layouts.app')
 
-@section('content')
-
 @php
     $initPoliId = request()->get('poli') ?? '';
     $initPoliName = '-- ' . __('Semua Poli') . ' --';
+    $activePoliModel = null;
+
     if ($initPoliId && isset($polyclinics)) {
         $matched = $polyclinics->firstWhere('id', $initPoliId);
         if ($matched) {
+            $activePoliModel = $matched;
             $initPoliName = is_array($matched->name) ? ($matched->name[app()->getLocale()] ?? $matched->name['id'] ?? '') : $matched->name;
         }
     } elseif (request()->get('spesialis') && isset($polyclinics)) {
@@ -17,13 +18,59 @@
             return str_contains(strtolower($nameStr), $spesParam) || str_contains(strtolower($p->slug), $spesParam);
         });
         if ($matched) {
+            $activePoliModel = $matched;
             $initPoliId = $matched->id;
             $initPoliName = is_array($matched->name) ? ($matched->name[app()->getLocale()] ?? $matched->name['id'] ?? '') : $matched->name;
         }
     }
     $initDay = request()->get('hari') ?? '';
     $initDayName = $initDay ? $initDay : '-- ' . __('Semua Hari') . ' --';
+
+    $seoService = app(\App\Services\SeoService::class);
+    if ($activePoliModel) {
+        $cleanPoliName = is_array($activePoliModel->name) ? ($activePoliModel->name['id'] ?? $activePoliModel->name['en'] ?? '') : $activePoliModel->name;
+        $pageTitle = "Rekomendasi Dokter {$cleanPoliName} di Karawang | Jadwal Praktek RSU Fikri Medika";
+        $pageDescription = "Cari rekomendasi dokter {$cleanPoliName} terbaik di Karawang? Lihat daftar dokter spesialis, jadwal praktik harian, profil, dan buat janji temu online di RSU Fikri Medika Karawang.";
+        $pageH1 = "Rekomendasi Dokter {$cleanPoliName} di Karawang";
+        $canonicalUrl = url('/jadwal-dokter' . (request('spesialis') ? '?spesialis=' . request('spesialis') : (request('poli') ? '?poli=' . request('poli') : '')));
+    } else {
+        $pageTitle = "Rekomendasi Dokter Spesialis di Karawang | Jadwal Dokter RSU Fikri Medika";
+        $pageDescription = "Rekomendasi dokter spesialis terbaik di Karawang terlengkap: dokter anak, kandungan, penyakit dalam, bedah, saraf, mata, THT, & gigi. Cek jadwal dan buat janji online di RSU Fikri Medika.";
+        $pageH1 = "Rekomendasi Dokter Spesialis & Jadwal Praktik di Karawang";
+        $canonicalUrl = url('/jadwal-dokter');
+    }
+
+    // Build Physician Schemas for filtered or active doctors
+    $physicianSchemas = [];
+    $targetDoctors = $activePoliModel ? $doctors->where('polyclinic_id', $activePoliModel->id) : $doctors->take(10);
+    foreach ($targetDoctors as $d) {
+        $physicianSchemas[] = $seoService->generatePhysicianSchema($d);
+    }
 @endphp
+
+@section('title', $pageTitle)
+@section('meta_description', $pageDescription)
+@section('canonical_url', $canonicalUrl)
+
+@section('schema_jsonld')
+<script type="application/ld+json">
+{!! json_encode($seoService->generateBreadcrumbSchema([
+    'Beranda' => url('/'),
+    'Jadwal Dokter' => url('/jadwal-dokter'),
+    ($activePoliModel ? $pageH1 : 'Semua Dokter Spesialis') => $canonicalUrl
+]), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}
+</script>
+@if(!empty($physicianSchemas))
+@foreach($physicianSchemas as $pSchema)
+<script type="application/ld+json">
+{!! json_encode($pSchema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}
+</script>
+@endforeach
+@endif
+@endsection
+
+@section('content')
+<h1 class="sr-only">{{ $pageH1 }}</h1>
 
 <!-- MAIN CONTENT & INTERACTIVE PAGINATED TABLE (MATCHING DATABASE STRUCTURE) -->
 <section class="py-12 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto" x-data="{

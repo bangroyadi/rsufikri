@@ -1,6 +1,31 @@
 @extends('layouts.app')
 
-@section('title', $article->tr('title') . ' - RSU Fikri Medika')
+@php
+    $seoService = app(\App\Services\SeoService::class);
+    $artTitle = $article->tr('title');
+    $artExcerpt = $seoService->sanitizeText($article->tr('excerpt') ?: $article->tr('content'), 160);
+    $artImage = $seoService->formatImageUrl($article->thumbnail);
+    $artCanonical = route('artikel.show', $article->slug);
+@endphp
+
+@section('title', $artTitle . ' | RSU Fikri Medika Karawang')
+@section('meta_description', $artExcerpt)
+@section('canonical_url', $artCanonical)
+@section('og_type', 'article')
+@section('og_image', $artImage)
+
+@section('schema_jsonld')
+<script type="application/ld+json">
+{!! json_encode($seoService->generateArticleSchema($article), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}
+</script>
+<script type="application/ld+json">
+{!! json_encode($seoService->generateBreadcrumbSchema([
+    'Beranda' => url('/'),
+    'Artikel Kesehatan' => url('/artikel'),
+    $artTitle => $artCanonical
+]), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}
+</script>
+@endsection
 
 @section('content')
 <!-- MAIN ARTICLE SECTION -->

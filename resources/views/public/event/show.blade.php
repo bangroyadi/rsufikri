@@ -1,17 +1,38 @@
 @extends('layouts.app')
 
-@section('title', $event->tr('title') . ' - RSU Fikri Medika')
-
-@section('content')
 @php
+    $seoService = app(\App\Services\SeoService::class);
     $title      = $event->tr('title');
-    $shortDesc  = $event->tr('short_description');
+    $shortDesc  = $seoService->sanitizeText($event->tr('short_description') ?: $event->tr('description'), 160);
     $desc       = $event->tr('description');
     $speakers   = is_array($event->speakers) ? $event->speakers : [];
     $benefits   = is_array($event->benefits) ? $event->benefits : [];
     $gallery    = is_array($event->gallery_photos) ? $event->gallery_photos : [];
     $waText     = urlencode("Halo RSU Fikri Medika, saya ingin bertanya mengenai kegiatan: " . $title);
+    $eventUrl   = route('event.show', $event->slug);
+    $eventImg   = $event->image_url;
 @endphp
+
+@section('title', $title . ' | RSU Fikri Medika Karawang')
+@section('meta_description', $shortDesc)
+@section('canonical_url', $eventUrl)
+@section('og_type', 'article')
+@section('og_image', $eventImg)
+
+@section('schema_jsonld')
+<script type="application/ld+json">
+{!! json_encode($seoService->generateEventSchema($event), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}
+</script>
+<script type="application/ld+json">
+{!! json_encode($seoService->generateBreadcrumbSchema([
+    'Beranda' => url('/'),
+    'Event & Kegiatan' => url('/informasi/event'),
+    $title => $eventUrl
+]), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}
+</script>
+@endsection
+
+@section('content')
 
 <div class="bg-slate-50 min-h-screen" x-data="{ lightbox: false, activeImg: 0, imgs: {{ json_encode(array_map(fn($p) => str_starts_with($p, 'http') ? $p : asset('storage/' . ltrim(str_replace('storage/', '', $p), '/')), $gallery)) }} }">
     <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10 space-y-8">

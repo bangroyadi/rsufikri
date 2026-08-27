@@ -22,9 +22,11 @@ use App\Http\Controllers\Admin\AdminContactController;
 use App\Http\Controllers\Admin\AdminKnowledgeBaseController;
 use App\Http\Controllers\Admin\AdminTiktokPostController;
 use App\Http\Controllers\AiChatController;
+use App\Http\Controllers\SitemapController;
 
 // Public Routes
 Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
 Route::get('/lang/{locale}', [LanguageController::class, 'switch'])->name('lang.switch');
 
 // Event & Agenda Kegiatan Routes

@@ -1,8 +1,19 @@
 @extends('layouts.app')
 
-@section('title', 'Dokumentasi Kegiatan & Galeri Event - RSU Fikri Medika')
+@section('title', 'Agenda, Event & Kegiatan | RSU Fikri Medika Karawang')
+@section('meta_description', 'Ikuti berbagai agenda kesehatan, seminar medis, donor darah, senam sehat, dan kegiatan sosial resmi RSU Fikri Medika Karawang.')
+
+@section('schema_jsonld')
+<script type="application/ld+json">
+{!! json_encode(app(\App\Services\SeoService::class)->generateBreadcrumbSchema([
+    'Beranda' => url('/'),
+    'Event & Kegiatan' => url('/informasi/event')
+]), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}
+</script>
+@endsection
 
 @section('content')
+<h1 class="sr-only">Agenda, Event & Kegiatan RSU Fikri Medika Karawang</h1>
 <div x-data="{
     selectedCategory: 'all',
     search: '{{ addslashes($query ?? '') }}'

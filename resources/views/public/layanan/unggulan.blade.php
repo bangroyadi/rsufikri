@@ -1,6 +1,16 @@
 @extends('layouts.app')
 
-@section('title', 'Layanan Unggulan - RSU Fikri Medika')
+@section('title', 'Layanan Unggulan Medis & Fasilitas Modern | RSU Fikri Medika Karawang')
+@section('meta_description', 'Fasilitas layanan medis unggulan RSU Fikri Medika Karawang meliputi Trauma Center, Layanan Ibu & Anak Kemilau Cinta, Spesialis Mata, dan Layanan Antar Jemput Pasien.')
+
+@section('schema_jsonld')
+<script type="application/ld+json">
+{!! json_encode(app(\App\Services\SeoService::class)->generateBreadcrumbSchema([
+    'Beranda' => url('/'),
+    'Layanan Unggulan' => url('/layanan/unggulan')
+]), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}
+</script>
+@endsection
 
 @section('content')
 <div class="bg-slate-50 min-h-screen">

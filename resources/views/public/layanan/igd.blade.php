@@ -1,6 +1,20 @@
 @extends('layouts.app')
 
+@section('title', 'Instalasi Gawat Darurat (IGD 24 Jam) | RSU Fikri Medika Karawang')
+@section('meta_description', 'Layanan IGD 24 Jam RSU Fikri Medika Karawang siap siaga menangani kasus gawat darurat medis dengan tim dokter emergency, ambulans, dan trauma center.')
+
+@section('schema_jsonld')
+<script type="application/ld+json">
+{!! json_encode(app(\App\Services\SeoService::class)->generateBreadcrumbSchema([
+    'Beranda' => url('/'),
+    'Layanan' => url('/layanan/rawat-inap'),
+    'IGD 24 Jam' => url('/layanan/igd')
+]), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}
+</script>
+@endsection
+
 @section('content')
+<h1 class="sr-only">Instalasi Gawat Darurat (IGD 24 Jam) RSU Fikri Medika Karawang</h1>
 
 @php
     $galleryImages = isset($service) ? $service->gallery_images : [];

@@ -1,8 +1,19 @@
 @extends('layouts.app')
 
-@section('title', __('Tentang Kami') . ' - RSU Fikri Medika')
+@section('title', 'Profil & Sejarah RSU Fikri Medika Karawang | Rumah Sakit Umum')
+@section('meta_description', 'Profil dan sejarah berdirinya RSU Fikri Medika Karawang. Rumah sakit umum modern berorientasi Islami dengan visi misi pelayanan kesehatan prima bagi masyarakat Karawang.')
+
+@section('schema_jsonld')
+<script type="application/ld+json">
+{!! json_encode(app(\App\Services\SeoService::class)->generateBreadcrumbSchema([
+    'Beranda' => url('/'),
+    'Tentang Kami' => url('/profil')
+]), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}
+</script>
+@endsection
 
 @section('content')
+<h1 class="sr-only">Profil & Sejarah RSU Fikri Medika Karawang</h1>
 
 <!-- EXPLICIT SELF-CONTAINED CSS (100% INDEPENDENT OF TAILWIND COMPILATION) -->
 <style>

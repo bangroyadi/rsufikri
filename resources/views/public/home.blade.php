@@ -1,6 +1,10 @@
 @extends('layouts.app')
 
+@section('title', 'RSU Fikri Medika Karawang | Rumah Sakit Umum & Layanan Kesehatan Terpercaya')
+@section('meta_description', 'RSU Fikri Medika Karawang menyediakan layanan kesehatan terpadu 24 jam, IGD Emergency, dokter spesialis, poliklinik rawat jalan, rawat inap, dan trauma center modern berkarakter Islami.')
+
 @section('content')
+<h1 class="sr-only">RSU Fikri Medika Karawang - Rumah Sakit Umum Terpercaya Berorientasi Islami & Modern</h1>
 
 <!-- HERO BANNER SECTION (FULL-WIDTH IMAGE SLIDER) -->
 <section class="relative w-full overflow-hidden bg-slate-900"

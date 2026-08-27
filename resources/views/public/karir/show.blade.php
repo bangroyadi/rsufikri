@@ -1,17 +1,66 @@
 @extends('layouts.app')
 
-@section('title', $career->tr('title') . ' - Karir RSU Fikri Medika')
-
-@section('content')
 @php
+    $seoService = app(\App\Services\SeoService::class);
     $title      = $career->tr('title');
-    $shortDesc  = $career->tr('short_description');
+    $shortDesc  = $seoService->sanitizeText($career->tr('short_description') ?: $career->tr('description'), 160);
     $desc       = $career->tr('description');
     $reqs       = is_array($career->requirements) ? $career->requirements : [];
     $resps      = is_array($career->responsibilities) ? $career->responsibilities : [];
     $bens       = is_array($career->benefits) ? $career->benefits : [];
     $badgeTheme = $career->department_badge;
+    $careerUrl  = route('karir.show', $career->slug);
 @endphp
+
+@section('title', 'Lowongan Kerja ' . $title . ' | Karir RSU Fikri Medika Karawang')
+@section('meta_description', $shortDesc)
+@section('canonical_url', $careerUrl)
+@section('og_type', 'article')
+
+@section('schema_jsonld')
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org/",
+    "@type": "JobPosting",
+    "title": "{{ addslashes($title) }}",
+    "description": "{{ addslashes($shortDesc) }}",
+    "identifier": {
+        "@type": "PropertyValue",
+        "name": "RSU Fikri Medika",
+        "value": "{{ $career->id }}"
+    },
+    "datePosted": "{{ $career->created_at->format('Y-m-d') }}",
+    "validThrough": "{{ $career->deadline ? $career->deadline->format('Y-m-d') : date('Y-12-31') }}",
+    "employmentType": "{{ $career->employment_type === 'Full Time' ? 'FULL_TIME' : ($career->employment_type === 'Part Time' ? 'PART_TIME' : 'CONTRACTOR') }}",
+    "hiringOrganization": {
+        "@type": "Hospital",
+        "name": "RSU Fikri Medika Karawang",
+        "sameAs": "{{ url('/') }}",
+        "logo": "{{ asset('logodasboard.png') }}"
+    },
+    "jobLocation": {
+        "@type": "Place",
+        "address": {
+            "@type": "PostalAddress",
+            "streetAddress": "Jl. Raya Kosambi - Telagasari, Klari",
+            "addressLocality": "Karawang",
+            "addressRegion": "Jawa Barat",
+            "postalCode": "41371",
+            "addressCountry": "ID"
+        }
+    }
+}
+</script>
+<script type="application/ld+json">
+{!! json_encode($seoService->generateBreadcrumbSchema([
+    'Beranda' => url('/'),
+    'Karir' => url('/karir'),
+    $title => $careerUrl
+]), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}
+</script>
+@endsection
+
+@section('content')
 
 <div class="bg-slate-50 min-h-screen py-8 sm:py-10">
     <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">

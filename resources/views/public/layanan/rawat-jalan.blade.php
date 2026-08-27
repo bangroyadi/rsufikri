@@ -1,6 +1,20 @@
 @extends('layouts.app')
 
+@section('title', 'Klinik Rawat Jalan & Dokter Spesialis | RSU Fikri Medika Karawang')
+@section('meta_description', 'Layanan poliklinik rawat jalan RSU Fikri Medika Karawang. Menyediakan konsultasi dokter spesialis anak, kandungan, penyakit dalam, bedah, mata, saraf, dan lainnya.')
+
+@section('schema_jsonld')
+<script type="application/ld+json">
+{!! json_encode(app(\App\Services\SeoService::class)->generateBreadcrumbSchema([
+    'Beranda' => url('/'),
+    'Layanan' => url('/layanan/rawat-jalan'),
+    'Rawat Jalan' => url('/layanan/rawat-jalan')
+]), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}
+</script>
+@endsection
+
 @section('content')
+<h1 class="sr-only">Instalasi Rawat Jalan & Poliklinik Spesialis RSU Fikri Medika Karawang</h1>
 
 <!-- MAIN CONTENT SECTION (WIDE CONTAINER STANDAR APLIKASI WEB MODERN) -->
 <section class="py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-10" x-data="rawatJalanApp()">

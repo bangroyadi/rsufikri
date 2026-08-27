@@ -1,6 +1,16 @@
 @extends('layouts.app')
 
-@section('title', 'Lokasi & Peta RSU Fikri Medika')
+@section('title', 'Lokasi, Alamat & Petunjuk Arah | RSU Fikri Medika Karawang')
+@section('meta_description', 'Alamat lengkap dan petunjuk arah menuju RSU Fikri Medika Karawang. Terletak strategis di jalur utama Kosambi - Telagasari, Klari, Karawang dengan akses mudah 24 jam.')
+
+@section('schema_jsonld')
+<script type="application/ld+json">
+{!! json_encode(app(\App\Services\SeoService::class)->generateBreadcrumbSchema([
+    'Beranda' => url('/'),
+    'Lokasi & Kontak' => url('/lokasi')
+]), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}
+</script>
+@endsection
 
 @section('content')
 <!-- BREADCRUMB & HERO HEADER -->

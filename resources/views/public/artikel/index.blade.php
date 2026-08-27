@@ -1,8 +1,19 @@
 @extends('layouts.app')
 
-@section('title', __('Edukasi & Artikel Kesehatan') . ' - RSU Fikri Medika')
+@section('title', 'Artikel & Edukasi Kesehatan Terpercaya | RSU Fikri Medika Karawang')
+@section('meta_description', 'Kumpulan artikel dan tips kesehatan terpercaya dari dokter dan tenaga medis profesional RSU Fikri Medika Karawang. Dapatkan informasi kesehatan terkini untuk keluarga.')
+
+@section('schema_jsonld')
+<script type="application/ld+json">
+{!! json_encode(app(\App\Services\SeoService::class)->generateBreadcrumbSchema([
+    'Beranda' => url('/'),
+    'Artikel Kesehatan' => url('/artikel')
+]), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}
+</script>
+@endsection
 
 @section('content')
+<h1 class="sr-only">Artikel & Edukasi Kesehatan RSU Fikri Medika Karawang</h1>
 <!-- MAIN ARTICLES CONTAINER -->
 <section class="py-8 sm:py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
     

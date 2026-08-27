@@ -1,15 +1,33 @@
 @extends('layouts.app')
 
-@section('content')
-
 @php
+    $seoService = app(\App\Services\SeoService::class);
     $galleryImages = isset($service) ? $service->gallery_images : [];
     $serviceImg = isset($service) && !empty($service->image)
         ? (\Illuminate\Support\Str::startsWith($service->image, ['http://', 'https://']) ? $service->image : asset($service->image))
         : null;
     $iconClass = isset($service) && $service->icon ? (str_starts_with($service->icon, 'fa-') ? $service->icon : 'fa-'.$service->icon) : 'fa-star';
     $waTitle = urlencode("Halo RSU Fikri Medika, saya ingin mengetahui lebih lanjut mengenai layanan: " . $title);
+    $serviceDesc = $seoService->sanitizeText(isset($service) ? ($service->tr('short_description') ?: $service->tr('description')) : null, 160);
+    $currentUrl = url()->current();
 @endphp
+
+@section('title', $title . ' | RSU Fikri Medika Karawang')
+@section('meta_description', $serviceDesc)
+@section('canonical_url', $currentUrl)
+@section('og_image', $serviceImg ?: asset('gedung1_web.jpg'))
+
+@section('schema_jsonld')
+<script type="application/ld+json">
+{!! json_encode($seoService->generateBreadcrumbSchema([
+    'Beranda' => url('/'),
+    'Layanan Unggulan' => url('/layanan/unggulan'),
+    $title => $currentUrl
+]), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}
+</script>
+@endsection
+
+@section('content')
 
 <div class="bg-slate-50 min-h-screen" x-data="serviceGalleryApp({{ json_encode($galleryImages) }})">
 

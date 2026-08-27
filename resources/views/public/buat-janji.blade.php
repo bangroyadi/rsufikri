@@ -1,6 +1,19 @@
 @extends('layouts.app')
 
+@section('title', 'Daftar & Buat Janji Temu Dokter Online | RSU Fikri Medika Karawang')
+@section('meta_description', 'Pendaftaran online pasien rawat jalan dan buat janji temu dokter spesialis RSU Fikri Medika Karawang. Proses cepat, mudah, dan langsung terkonfirmasi via WhatsApp.')
+
+@section('schema_jsonld')
+<script type="application/ld+json">
+{!! json_encode(app(\App\Services\SeoService::class)->generateBreadcrumbSchema([
+    'Beranda' => url('/'),
+    'Buat Janji Dokter' => url('/buat-janji')
+]), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}
+</script>
+@endsection
+
 @section('content')
+<h1 class="sr-only">Daftar & Buat Janji Temu Dokter Online RSU Fikri Medika Karawang</h1>
 
 <!-- MAIN CONTENT SECTION (MATCHING PROFIL.BLADE.PHP SPACING) -->
 <section class="py-12 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto">

@@ -338,7 +338,24 @@
         }, $config['gallery_photos'] ?? []);
         $lightboxImages = array_column($displayGallery, 'img');
     }
+
+    $seoDesc = app(\App\Services\SeoService::class)->sanitizeText($config['about_p1'] ?? (isset($service) ? $service->tr('short_description') : null), 160);
+    $pageUrl = url()->current();
 @endphp
+
+@section('title', $title . ' | RSU Fikri Medika Karawang')
+@section('meta_description', $seoDesc)
+@section('canonical_url', $pageUrl)
+
+@section('schema_jsonld')
+<script type="application/ld+json">
+{!! json_encode(app(\App\Services\SeoService::class)->generateBreadcrumbSchema([
+    'Beranda' => url('/'),
+    'Layanan' => url('/layanan/rawat-inap'),
+    $title => $pageUrl
+]), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}
+</script>
+@endsection
 
 <!-- MAIN CONTENT SECTION (WIDE CONTAINER MATCHING IGD 24 JAM) -->
 <section class="py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-10" x-data="servicePageGalleryApp({{ json_encode($lightboxImages) }})">

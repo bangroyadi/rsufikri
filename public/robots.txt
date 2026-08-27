@@ -1,2 +1,10 @@
+# robots.txt for RSU Fikri Medika Karawang
 User-agent: *
-Disallow:
+Allow: /
+Disallow: /admin/
+Disallow: /login
+Disallow: /ai/
+Disallow: /storage/applications/
+
+# Search Engine Sitemaps
+Sitemap: http://localhost/sitemap.xml

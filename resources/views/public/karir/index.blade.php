@@ -1,8 +1,19 @@
 @extends('layouts.app')
 
-@section('title', 'Karir & Rekrutmen - RSU Fikri Medika')
+@section('title', 'Karir & Lowongan Kerja Medis / Non-Medis | RSU Fikri Medika Karawang')
+@section('meta_description', 'Bergabunglah bersama keluarga besar RSU Fikri Medika Karawang. Temukan informasi lowongan kerja tenaga medis dokter, perawat, analis, farmasi, dan staf profesional.')
+
+@section('schema_jsonld')
+<script type="application/ld+json">
+{!! json_encode(app(\App\Services\SeoService::class)->generateBreadcrumbSchema([
+    'Beranda' => url('/'),
+    'Karir & Lowongan Kerja' => url('/karir')
+]), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}
+</script>
+@endsection
 
 @section('content')
+<h1 class="sr-only">Karir & Lowongan Kerja RSU Fikri Medika Karawang</h1>
 <div x-data="{
     selectedDept: '{{ addslashes($department ?? 'all') }}',
     selectedType: '{{ addslashes($type ?? 'all') }}',

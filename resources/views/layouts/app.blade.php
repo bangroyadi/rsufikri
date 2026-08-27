@@ -3,14 +3,63 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>RSU Fikri Medika - {{ __('Rumah Sakit Umum Terpercaya Berorientasi Islami & Modern') }}</title>
-    <meta name="description" content="RSU Fikri Medika adalah rumah sakit umum terpercaya di Karawang yang mengedepankan pelayanan kesehatan profesional, modern, dan berkarakter Islami.">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta name="theme-color" content="#0e7c47">
+    <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
+    <link rel="apple-touch-icon" href="{{ asset('logodasboard.png') }}">
+
+    @php
+        $seoService = app(\App\Services\SeoService::class);
+        $pageTitle = View::getSection('title') ?: ($seoTitle ?? $seoService->formatTitle($title ?? null));
+        $pageDescription = View::getSection('meta_description') ?: ($seoDescription ?? $seoService->formatDescription($description ?? null));
+        $canonicalUrl = View::getSection('canonical_url') ?: $seoService->getCanonicalUrl();
+        $ogImage = View::getSection('og_image') ?: $seoService->formatImageUrl();
+        $ogType = View::getSection('og_type') ?: 'website';
+        $robotsContent = View::getSection('robots') ?: 'index, follow';
+    @endphp
+
+    <!-- SEO Primary Meta Tags -->
+    <title>{{ $pageTitle }}</title>
+    <meta name="title" content="{{ $pageTitle }}">
+    <meta name="description" content="{{ $pageDescription }}">
+    <meta name="robots" content="{{ $robotsContent }}">
+    <link rel="canonical" href="{{ $canonicalUrl }}">
+
+    <!-- Local SEO Geo Meta Tags (Karawang, Jawa Barat) -->
+    <meta name="geo.region" content="ID-JB">
+    <meta name="geo.placename" content="Karawang">
+    <meta name="geo.position" content="-6.3475;107.3688">
+    <meta name="ICBM" content="-6.3475, 107.3688">
+
+    <!-- Open Graph / Facebook / WhatsApp -->
+    <meta property="og:type" content="{{ $ogType }}">
+    <meta property="og:site_name" content="RSU Fikri Medika Karawang">
+    <meta property="og:url" content="{{ $canonicalUrl }}">
+    <meta property="og:title" content="{{ $pageTitle }}">
+    <meta property="og:description" content="{{ $pageDescription }}">
+    <meta property="og:image" content="{{ $ogImage }}">
+    <meta property="og:locale" content="{{ str_replace('_', '-', app()->getLocale()) == 'en' ? 'en_US' : 'id_ID' }}">
+
+    <!-- Twitter / X Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="{{ $canonicalUrl }}">
+    <meta name="twitter:title" content="{{ $pageTitle }}">
+    <meta name="twitter:description" content="{{ $pageDescription }}">
+    <meta name="twitter:image" content="{{ $ogImage }}">
 
     <!-- Google Fonts & FontAwesome -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- Global Hospital Schema.org JSON-LD -->
+    <script type="application/ld+json">
+    {!! json_encode($seoService->generateHospitalSchema(), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT) !!}
+    </script>
+
+    <!-- Page Specific Schema.org JSON-LD -->
+    @yield('schema_jsonld')
 
     <!-- Alpine.js for lightweight interactive components -->
     <style>
