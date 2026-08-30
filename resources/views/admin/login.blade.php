@@ -213,7 +213,7 @@
                                value="{{ old('email') }}"
                                required
                                autocomplete="email"
-                               placeholder="admin@rsufikrimedika.com"
+                               placeholder="input email"
                                class="form-input">
                     </div>
                 </div>

@@ -19,37 +19,37 @@
 
 @section('schema_jsonld')
 <script type="application/ld+json">
-{
-    "@context": "https://schema.org/",
-    "@type": "JobPosting",
-    "title": "{{ addslashes($title) }}",
-    "description": "{{ addslashes($shortDesc) }}",
-    "identifier": {
-        "@type": "PropertyValue",
-        "name": "RSU Fikri Medika",
-        "value": "{{ $career->id }}"
-    },
-    "datePosted": "{{ $career->created_at->format('Y-m-d') }}",
-    "validThrough": "{{ $career->deadline ? $career->deadline->format('Y-m-d') : date('Y-12-31') }}",
-    "employmentType": "{{ $career->employment_type === 'Full Time' ? 'FULL_TIME' : ($career->employment_type === 'Part Time' ? 'PART_TIME' : 'CONTRACTOR') }}",
-    "hiringOrganization": {
-        "@type": "Hospital",
-        "name": "RSU Fikri Medika Karawang",
-        "sameAs": "{{ url('/') }}",
-        "logo": "{{ asset('logodasboard.png') }}"
-    },
-    "jobLocation": {
-        "@type": "Place",
-        "address": {
-            "@type": "PostalAddress",
-            "streetAddress": "Jl. Raya Kosambi - Telagasari, Klari",
-            "addressLocality": "Karawang",
-            "addressRegion": "Jawa Barat",
-            "postalCode": "41371",
-            "addressCountry": "ID"
-        }
-    }
-}
+{!! json_encode([
+    '@context' => 'https://schema.org/',
+    '@type' => 'JobPosting',
+    'title' => $title,
+    'description' => $shortDesc,
+    'identifier' => [
+        '@type' => 'PropertyValue',
+        'name' => 'RSU Fikri Medika',
+        'value' => (string) $career->id,
+    ],
+    'datePosted' => $career->created_at->format('Y-m-d'),
+    'validThrough' => $career->deadline ? $career->deadline->format('Y-m-d') : date('Y-12-31'),
+    'employmentType' => $career->employment_type === 'Full Time' ? 'FULL_TIME' : ($career->employment_type === 'Part Time' ? 'PART_TIME' : 'CONTRACTOR'),
+    'hiringOrganization' => [
+        '@type' => 'Hospital',
+        'name' => 'RSU Fikri Medika Karawang',
+        'sameAs' => url('/'),
+        'logo' => asset('logodasboard.png'),
+    ],
+    'jobLocation' => [
+        '@type' => 'Place',
+        'address' => [
+            '@type' => 'PostalAddress',
+            'streetAddress' => 'Jl. Raya Kosambi - Telagasari, Klari',
+            'addressLocality' => 'Karawang',
+            'addressRegion' => 'Jawa Barat',
+            'postalCode' => '41371',
+            'addressCountry' => 'ID',
+        ],
+    ],
+], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}
 </script>
 <script type="application/ld+json">
 {!! json_encode($seoService->generateBreadcrumbSchema([
