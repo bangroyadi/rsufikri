@@ -30,23 +30,56 @@ class ImageOptimizer
         int $quality = 82,
         bool $forceWebp = true
     ): string {
+        $folderClean = trim($folder, '/');
         $supportsWebp = function_exists('imagewebp');
         $useWebp = $forceWebp && $supportsWebp;
 
-        $targetExt = $useWebp ? 'webp' : 'jpg';
+        $targetExt = $useWebp ? 'webp' : ($file->getClientOriginalExtension() ?: 'jpg');
         $filename = md5(uniqid(microtime(), true)) . '.' . $targetExt;
-        $destinationDir = storage_path('app/public/' . trim($folder, '/'));
+        $destinationDir = storage_path('app/public/' . $folderClean);
 
         if (!file_exists($destinationDir)) {
-            mkdir($destinationDir, 0755, true);
+            @mkdir($destinationDir, 0775, true);
+        }
+
+        // Also ensure via Laravel Storage disk
+        try {
+            \Illuminate\Support\Facades\Storage::disk('public')->makeDirectory($folderClean);
+        } catch (\Throwable $e) {
+            Log::warning("Storage disk makeDirectory failed for {$folderClean}: " . $e->getMessage());
         }
 
         $targetFile = $destinationDir . '/' . $filename;
         $sourcePath = $file->getRealPath();
 
-        self::compressAndSaveImage($sourcePath, $targetFile, $maxWidth, $quality, $useWebp);
+        $compressed = false;
+        try {
+            $compressed = self::compressAndSaveImage($sourcePath, $targetFile, $maxWidth, $quality, $useWebp);
+        } catch (\Throwable $e) {
+            Log::warning("Image compression failed, falling back to direct copy: " . $e->getMessage());
+        }
 
-        return trim($folder, '/') . '/' . $filename;
+        // Verify if the target file was successfully created and is not empty
+        if (file_exists($targetFile) && filesize($targetFile) > 0) {
+            return $folderClean . '/' . $filename;
+        }
+
+        // Ultimate fallback: Store directly via Laravel Storage
+        try {
+            $storedPath = $file->storeAs($folderClean, $filename, 'public');
+            if ($storedPath) {
+                return $storedPath;
+            }
+        } catch (\Throwable $e) {
+            Log::error("Failed to store uploaded file via Storage fallback: " . $e->getMessage());
+        }
+
+        // Direct copy fallback
+        if (@copy($sourcePath, $targetFile)) {
+            return $folderClean . '/' . $filename;
+        }
+
+        return $folderClean . '/' . $filename;
     }
 
     /**
