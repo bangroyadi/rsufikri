@@ -4,6 +4,9 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Login Administrator — RSU Fikri Medika</title>
+    <link rel="icon" type="image/png" href="{{ asset('logoicon.png') }}">
+    <link rel="shortcut icon" type="image/png" href="{{ asset('logoicon.png') }}">
+    <link rel="apple-touch-icon" href="{{ asset('logoicon.png') }}">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
