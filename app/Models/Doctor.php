@@ -58,4 +58,9 @@ class Doctor extends Model
     {
         return $this->hasMany(DoctorSchedule::class);
     }
+
+    public function articles()
+    {
+        return $this->belongsToMany(Article::class, 'article_doctor')->withTimestamps();
+    }
 }

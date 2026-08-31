@@ -1183,7 +1183,7 @@
                 </div>
             </div>
         @endif
-        @if($errors->any())
+        @if(isset($errors) && $errors->any())
             <div class="flash-area">
                 <div class="flash-error">
                     <i class="fa-solid fa-circle-exclamation"></i>

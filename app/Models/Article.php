@@ -35,4 +35,9 @@ class Article extends Model
     {
         return $this->belongsTo(User::class, 'author_id');
     }
+
+    public function doctors()
+    {
+        return $this->belongsToMany(Doctor::class, 'article_doctor')->withTimestamps();
+    }
 }

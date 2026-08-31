@@ -60,12 +60,19 @@
                     <!-- LEFT META: AUTHOR & DATE -->
                     <div class="flex items-center gap-4 flex-wrap">
                         <div class="flex items-center gap-2 font-medium text-gray-700">
+                            @php
+                                $firstDoc = $article->doctors->first();
+                            @endphp
                             <div class="w-8 h-8 rounded-full bg-emerald-100 text-[#0e7c47] flex items-center justify-center font-bold text-xs shadow-inner">
-                                <i class="fa-solid fa-hospital-user"></i>
+                                <i class="{{ $firstDoc ? 'fa-solid fa-user-doctor' : 'fa-solid fa-hospital-user' }}"></i>
                             </div>
                             <div>
-                                <span class="block text-gray-900 font-bold text-xs leading-tight">{{ $article->author->name ?? 'Tim Medis RSU Fikri Medika' }}</span>
-                                <span class="text-[11px] text-gray-500">Ditinjau secara Medis</span>
+                                <span class="block text-gray-900 font-bold text-xs leading-tight">
+                                    {{ $firstDoc ? ($firstDoc->name . ($firstDoc->title_degree ? ', ' . $firstDoc->title_degree : '')) : ($article->author->name ?? 'Tim Medis RSU Fikri Medika') }}
+                                </span>
+                                <span class="text-[11px] text-[#0e7c47] font-semibold">
+                                    {{ $firstDoc ? ($firstDoc->tr('specialty') ?: ($firstDoc->polyclinic ? $firstDoc->polyclinic->tr('name') : 'Dokter Spesialis')) : 'Ditinjau secara Medis' }}
+                                </span>
                             </div>
                         </div>
 
@@ -140,7 +147,7 @@
                 </div>
             </div>
 
-            <!-- FEATURED IMAGE (MATCHING LIRA MEDIKA BANNER RATIO & STYLE) -->
+            <!-- FEATURED IMAGE -->
             @php
                 $thumbnailUrl = $article->thumbnail ? (Str::startsWith($article->thumbnail, ['http://', 'https://']) ? $article->thumbnail : asset($article->thumbnail)) : 'https://images.unsplash.com/photo-1579684385127-1ef15d508118?auto=format&fit=crop&w=1200&q=80';
             @endphp
@@ -274,51 +281,56 @@
         <!-- RIGHT: SIDEBAR (4 COLS - STICKY) -->
         <div class="lg:col-span-4 space-y-6 lg:sticky lg:top-24">
             
-            <!-- SIDEBAR CARD 1: DOKTER SPESIALIS TERKAIT -->
+            <!-- SIDEBAR CARD 1: DOKTER SPESIALIS TERKAIT (HANYA MUNCUL JIKA DITAUTKAN DOKTER) -->
             @php
-                // Get relevant specialist doctor if any
-                $specialistDoctor = \App\Models\Doctor::where('is_active', true)->with('polyclinic')->first();
-                if (!$specialistDoctor) {
-                    $specialistDoctor = \App\Models\Doctor::first();
-                }
+                $articleDoctors = $article->doctors->where('is_active', true);
             @endphp
-            @if($specialistDoctor)
+            @if($articleDoctors->isNotEmpty())
             <div class="bg-white rounded-2xl p-5 sm:p-6 border border-gray-100 shadow-sm space-y-4">
                 <div class="flex items-center justify-between pb-3 border-b border-gray-100">
                     <h3 class="font-extrabold text-sm sm:text-base text-gray-900 flex items-center gap-2">
-                        <i class="fa-solid fa-stethoscope text-[#0e7c47]"></i>
+                        <i class="fa-solid fa-user-doctor text-[#0e7c47]"></i>
                         <span>Dokter Terkait</span>
                     </h3>
-                    <span class="text-[11px] font-bold text-[#0e7c47] bg-emerald-50 px-2 py-0.5 rounded-full">Spesialis</span>
+                    <span class="text-[11px] font-bold text-[#0e7c47] bg-emerald-50 px-2 py-0.5 rounded-full">
+                        {{ $articleDoctors->count() > 1 ? $articleDoctors->count() . ' Dokter' : 'Spesialis' }}
+                    </span>
                 </div>
 
-                <div class="flex items-center gap-4">
-                    <div class="w-16 h-16 rounded-full overflow-hidden bg-gray-100 border-2 border-emerald-500/20 shrink-0">
-                        @php
-                            $docPhoto = $specialistDoctor->photo ? (Str::startsWith($specialistDoctor->photo, ['http://', 'https://']) ? $specialistDoctor->photo : asset($specialistDoctor->photo)) : 'https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&w=300&q=80';
-                        @endphp
-                        <img src="{{ $docPhoto }}" alt="{{ $specialistDoctor->name }}" class="w-full h-full object-cover">
-                    </div>
-                    <div class="min-w-0">
-                        <h4 class="font-bold text-gray-900 text-sm leading-snug truncate">{{ $specialistDoctor->name }}</h4>
-                        <p class="text-xs text-[#0e7c47] font-medium mt-0.5">{{ $specialistDoctor->tr('specialty') ?: ($specialistDoctor->polyclinic ? $specialistDoctor->polyclinic->tr('name') : 'Dokter Spesialis') }}</p>
-                        <p class="text-[11px] text-gray-500 mt-1">RSU Fikri Medika Karawang</p>
-                    </div>
+                <div class="space-y-4 divide-y divide-gray-100">
+                    @foreach($articleDoctors as $docItem)
+                    @php
+                        $docPhoto = $docItem->photo ? (Str::startsWith($docItem->photo, ['http://', 'https://']) ? $docItem->photo : asset($docItem->photo)) : 'https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&w=300&q=80';
+                        $docDegree = $docItem->title_degree ? ', ' . $docItem->title_degree : '';
+                        $docSpecialty = $docItem->tr('specialty') ?: ($docItem->polyclinic ? $docItem->polyclinic->tr('name') : 'Dokter Spesialis');
+                    @endphp
+                    <div class="pt-3.5 first:pt-0 space-y-3">
+                        <div class="flex items-center gap-3.5">
+                            <div class="w-14 h-14 rounded-2xl overflow-hidden bg-emerald-50 border-2 border-emerald-500/20 shrink-0">
+                                <img src="{{ $docPhoto }}" alt="{{ $docItem->name }}" class="w-full h-full object-cover">
+                            </div>
+                            <div class="min-w-0 flex-1">
+                                <h4 class="font-bold text-gray-900 text-xs sm:text-sm leading-snug truncate">{{ $docItem->name . $docDegree }}</h4>
+                                <p class="text-xs text-[#0e7c47] font-semibold mt-0.5 truncate">{{ $docSpecialty }}</p>
+                                <p class="text-[11px] text-gray-500 mt-0.5">RSU Fikri Medika Karawang</p>
+                            </div>
+                        </div>
 
-                </div>
-
-                <div class="grid grid-cols-2 gap-2 pt-2">
-                    <a href="{{ route('jadwal.dokter') }}" class="px-3 py-2 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-800 text-xs font-bold text-center transition-colors">
-                        Lihat Jadwal
-                    </a>
-                    <a href="{{ route('buat.janji', ['dokter_id' => $specialistDoctor->id]) }}" class="px-3 py-2 rounded-xl bg-[#0e7c47] hover:bg-[#096237] text-white text-xs font-bold text-center shadow-sm transition-colors">
-                        Buat Janji
-                    </a>
+                        <div class="grid grid-cols-2 gap-2">
+                            <a href="{{ route('jadwal.dokter', ['spesialis' => $docItem->polyclinic ? Str::slug($docItem->polyclinic->tr('name')) : null]) }}" class="px-2.5 py-1.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-800 text-[11px] font-bold text-center transition-colors">
+                                Jadwal Dokter
+                            </a>
+                            <a href="{{ route('buat.janji', ['dokter_id' => $docItem->id]) }}" class="px-2.5 py-1.5 rounded-xl bg-[#0e7c47] hover:bg-[#096237] text-white text-[11px] font-bold text-center shadow-xs transition-colors">
+                                Buat Janji
+                            </a>
+                        </div>
+                    </div>
+                    @endforeach
                 </div>
             </div>
             @endif
 
-            <!-- SIDEBAR CARD 2: ARTIKEL TERKAIT (MATCHING LIRA MEDIKA LIST) -->
+            <!-- SIDEBAR CARD 2: ARTIKEL TERKAIT -->
             @php
                 $relatedArticles = \App\Models\Article::where('is_published', true)
                     ->where('id', '!=', $article->id)
