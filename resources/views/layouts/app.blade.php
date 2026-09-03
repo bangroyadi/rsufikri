@@ -330,7 +330,26 @@
                         </div>
                     </div>
 
-                    <a href="{{ url('/jadwal-dokter') }}" class="flex items-center h-full transition-colors {{ request()->is('jadwal-dokter') ? 'text-[#0e7c47] font-bold relative after:content-[\'\'] after:absolute after:bottom-0 after:left-0 after:w-full after:h-0.5 after:bg-[#0e7c47]' : 'hover:text-[#0e7c47]' }}">{{ __('Jadwal Dokter') }}</a>
+                    <!-- DOKTER & JADWAL DROPDOWN -->
+                    <div class="relative flex items-center h-full" x-data="{ dropdownOpen: false }" @mouseenter="dropdownOpen = true" @mouseleave="dropdownOpen = false">
+                        <button class="transition-colors flex items-center gap-1.5 focus:outline-none h-full {{ request()->is('dokter*') || request()->is('jadwal-dokter*') ? 'text-[#0e7c47] font-bold relative after:content-[\'\'] after:absolute after:bottom-0 after:left-0 after:w-full after:h-0.5 after:bg-[#0e7c47]' : 'hover:text-[#0e7c47]' }}">
+                            <span>{{ __('Dokter & Jadwal') }}</span>
+                            <i class="fa-solid fa-chevron-down text-[10px] transition-transform duration-200" :class="dropdownOpen ? 'rotate-180 text-[#0e7c47]' : ''"></i>
+                        </button>
+
+                        <div x-show="dropdownOpen" 
+                             x-transition:enter="transition ease-out duration-150"
+                             x-transition:enter-start="opacity-0 translate-y-1 scale-95"
+                             x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+                             x-transition:leave="transition ease-in duration-100"
+                             x-transition:leave-start="opacity-100 translate-y-0 scale-100"
+                             x-transition:leave-end="opacity-0 translate-y-1 scale-95"
+                             class="absolute top-full left-0 w-64 bg-white rounded-xl shadow-2xl py-1 z-50 text-gray-700 text-xs font-semibold border border-gray-100 divide-y divide-gray-100"
+                             style="display: none;">
+                            <a href="{{ url('/dokter-di-karawang') }}" class="block px-4 py-3 hover:bg-emerald-50 hover:text-[#0e7c47] transition-colors border-b border-gray-100 {{ request()->is('dokter*') ? 'text-[#0e7c47] font-bold bg-emerald-50' : '' }}">{{ __('Dokter Spesialis') }}</a>
+                            <a href="{{ url('/jadwal-dokter') }}" class="block px-4 py-3 hover:bg-emerald-50 hover:text-[#0e7c47] transition-colors {{ request()->is('jadwal-dokter') ? 'text-[#0e7c47] font-bold bg-emerald-50' : '' }}">{{ __('Jadwal Dokter') }}</a>
+                        </div>
+                    </div>
                     
                     <!-- INFORMASI DROPDOWN -->
                     <div class="relative flex items-center h-full" x-data="{ dropdownOpen: false }" @mouseenter="dropdownOpen = true" @mouseleave="dropdownOpen = false">
@@ -491,10 +510,17 @@
                 </div>
             </div>
 
-            <a href="{{ url('/jadwal-dokter') }}" @click="mobileMenuOpen = false" class="flex items-center justify-between py-2 px-1 font-semibold text-gray-700 hover:text-[#0e7c47] border-b border-gray-100 text-sm">
-                <span>{{ __('Jadwal Dokter') }}</span>
-                <i class="fa-solid fa-chevron-right text-xs text-gray-400"></i>
-            </a>
+            <!-- MOBILE DOKTER ACCORDION -->
+            <div x-data="{ mobileDokterOpen: false }" class="border-b border-gray-100">
+                <button @click="mobileDokterOpen = !mobileDokterOpen" class="w-full flex items-center justify-between py-2 px-1 text-gray-700 font-semibold focus:outline-none text-sm">
+                    <span>{{ __('Dokter & Jadwal') }}</span>
+                    <i class="fa-solid fa-chevron-down text-xs transition-transform" :class="mobileDokterOpen ? 'rotate-180 text-[#0e7c47]' : 'text-gray-400'"></i>
+                </button>
+                <div x-show="mobileDokterOpen" class="pl-4 py-2 space-y-1 bg-white text-gray-700 rounded-xl my-1.5 text-xs font-medium border border-gray-100 shadow-sm divide-y divide-gray-100">
+                    <a href="{{ url('/dokter-di-karawang') }}" @click="mobileMenuOpen = false" class="block py-2.5 px-2 hover:text-[#0e7c47]">{{ __('Dokter Spesialis') }}</a>
+                    <a href="{{ url('/jadwal-dokter') }}" @click="mobileMenuOpen = false" class="block py-2.5 px-2 hover:text-[#0e7c47]">{{ __('Jadwal Dokter') }}</a>
+                </div>
+            </div>
             
             <!-- MOBILE INFORMASI ACCORDION -->
             <div x-data="{ mobileInformasiOpen: false }" class="border-b border-gray-100">
@@ -723,8 +749,13 @@
                             </a>
                         </li>
                         <li>
+                            <a href="{{ url('/dokter-di-karawang') }}" class="text-gray-800 hover:text-[#0e7c47] transition-colors">
+                                Direktori Dokter Spesialis
+                            </a>
+                        </li>
+                        <li>
                             <a href="{{ url('/jadwal-dokter') }}" class="text-gray-800 hover:text-[#0e7c47] transition-colors">
-                                Cari Dokter
+                                Jadwal Praktik Harian
                             </a>
                         </li>
                         <li>

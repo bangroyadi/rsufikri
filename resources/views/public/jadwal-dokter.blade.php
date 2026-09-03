@@ -288,7 +288,13 @@
                         <i class="fa-solid fa-{{ $doc->polyclinic?->icon ?? 'stethoscope' }}"></i>
                     </div>
                     <h4 class="text-base sm:text-lg font-black text-[#0e7c47] tracking-tight">
-                        {{ $poliName }}
+                        @if($doc->polyclinic)
+                            <a href="{{ $doc->polyclinic->route_url }}" class="hover:underline">
+                                {{ $poliName }}
+                            </a>
+                        @else
+                            {{ $poliName }}
+                        @endif
                     </h4>
                 </div>
                 <span class="text-xs font-bold px-3 py-1 rounded-full bg-emerald-50 text-[#0e7c47] border border-emerald-200">
@@ -301,22 +307,25 @@
                 
                 <!-- CIRCULAR DOCTOR PHOTO -->
                 <div class="flex-shrink-0 mx-auto md:mx-0">
-                    <div class="w-24 h-24 sm:w-28 sm:h-28 rounded-full overflow-hidden border-4 border-emerald-600 p-1 bg-white shadow-md flex items-center justify-center">
-                        @if(!empty($docPhoto))
-                            <img src="{{ $docPhoto }}" 
-                                 alt="{{ $doc->name }}" 
-                                 class="w-full h-full rounded-full object-cover"
-                                 style="object-fit: cover; object-position: center 8%; transform: translateY(4px) scale(1.04);"
-                                 onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                            <div class="w-full h-full rounded-full bg-gradient-to-tr from-[#0e7c47] to-emerald-500 text-white hidden items-center justify-center text-3xl sm:text-4xl font-bold shadow-inner">
-                                <i class="fa-solid fa-user-doctor"></i>
-                            </div>
-                        @else
-                            <div class="w-full h-full rounded-full bg-gradient-to-tr from-[#0e7c47] to-emerald-500 text-white flex items-center justify-center text-3xl sm:text-4xl font-bold shadow-inner">
-                                <i class="fa-solid fa-user-doctor"></i>
-                            </div>
-                        @endif
-                    </div>
+                    <a href="{{ $doc->route_url }}" class="block group">
+                        <div class="w-24 h-24 sm:w-28 sm:h-28 rounded-full overflow-hidden border-4 border-emerald-600 p-1 bg-white shadow-md flex items-center justify-center group-hover:scale-105 transition-transform">
+                            @if(!empty($docPhoto))
+                                <img src="{{ $docPhoto }}" 
+                                     alt="{{ $doc->name }} {{ $doc->title_degree }} dokter spesialis {{ $specText }} RSU Fikri Medika Karawang" 
+                                     loading="lazy"
+                                     class="w-full h-full rounded-full object-cover"
+                                     style="object-fit: cover; object-position: center 8%; transform: translateY(4px) scale(1.04);"
+                                     onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                <div class="w-full h-full rounded-full bg-gradient-to-tr from-[#0e7c47] to-emerald-500 text-white hidden items-center justify-center text-3xl sm:text-4xl font-bold shadow-inner">
+                                    <i class="fa-solid fa-user-doctor"></i>
+                                </div>
+                            @else
+                                <div class="w-full h-full rounded-full bg-gradient-to-tr from-[#0e7c47] to-emerald-500 text-white flex items-center justify-center text-3xl sm:text-4xl font-bold shadow-inner">
+                                    <i class="fa-solid fa-user-doctor"></i>
+                                </div>
+                            @endif
+                        </div>
+                    </a>
                 </div>
 
                 <!-- DOCTOR INFO & SCHEDULE -->
@@ -326,7 +335,9 @@
                     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                         <div>
                             <h3 class="text-lg sm:text-xl font-black text-slate-900 leading-snug">
-                                {{ $doc->name }}
+                                <a href="{{ $doc->route_url }}" class="hover:text-[#0e7c47] transition-colors">
+                                    {{ $doc->name }}
+                                </a>
                             </h3>
                             <div class="text-xs text-gray-500 font-bold mt-1">
                                 Spesialisasi: <span class="text-[#0e7c47] font-extrabold">{{ $specText }}</span>
@@ -334,11 +345,14 @@
                         </div>
 
                         <div class="flex items-center gap-2 self-start sm:self-auto">
+                            <a href="{{ $doc->route_url }}" class="inline-flex items-center justify-center px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-black uppercase tracking-wider transition-colors">
+                                <span>PROFIL</span>
+                            </a>
                             <a href="{{ url('/buat-janji?dokter_id=' . $doc->id) }}" class="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-[#0e7c47] hover:bg-[#096237] text-white text-xs font-black uppercase tracking-wider shadow-sm transition-all">
                                 <i class="fa-solid fa-calendar-check text-sm"></i>
                                 <span>BUAT JANJI</span>
                             </a>
-                            <a href="https://wa.me/6281234567890?text=Halo%20RSU%20Fikri%20Medika,%20saya%20ingin%20tanya%20jadwal%20{{ urlencode($doc->name) }}" target="_blank" class="p-2.5 rounded-xl bg-emerald-50 text-[#0e7c47] hover:bg-emerald-100 transition-colors border border-emerald-200 text-xs font-bold" title="Tanya CS WhatsApp">
+                            <a href="https://wa.me/6281287075555?text=Halo%20RSU%20Fikri%20Medika,%20saya%20ingin%20tanya%20jadwal%20{{ urlencode($doc->name) }}" target="_blank" class="p-2.5 rounded-xl bg-emerald-50 text-[#0e7c47] hover:bg-emerald-100 transition-colors border border-emerald-200 text-xs font-bold" title="Tanya CS WhatsApp">
                                 <i class="fa-brands fa-whatsapp text-base"></i>
                             </a>
                         </div>

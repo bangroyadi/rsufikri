@@ -295,20 +295,115 @@ class SeoService
      */
     public function generatePhysicianSchema(Doctor $doctor): array
     {
-        $specialty = $doctor->tr('specialty') ?: ($doctor->polyclinic?->tr('name') ?? 'Dokter Spesialis');
+        $specialty = $doctor->specialty_name;
+        $docUrl = $doctor->route_url;
+        $phone = $this->profile?->phone ?: '(0267) 861-5555';
+        $address = $this->profile?->address ?: 'Jl. Raya Kosambi - Telagasari, Klari, Karawang, Jawa Barat 41371';
+
+        $schema = [
+            '@context' => 'https://schema.org',
+            '@type' => 'Physician',
+            '@id' => $docUrl . '#physician',
+            'name' => $doctor->full_name,
+            'url' => $docUrl,
+            'medicalSpecialty' => $specialty,
+            'image' => $this->formatImageUrl($doctor->photo),
+            'telephone' => $phone,
+            'description' => $this->sanitizeText($doctor->tr('bio') ?: "Jadwal dan profil {$doctor->full_name}, {$specialty} di RSU Fikri Medika Karawang."),
+            'worksFor' => [
+                '@type' => 'Hospital',
+                'name' => 'RSU Fikri Medika Karawang',
+                'url' => url('/'),
+                'address' => [
+                    '@type' => 'PostalAddress',
+                    'streetAddress' => $address,
+                    'addressLocality' => 'Karawang',
+                    'addressRegion' => 'Jawa Barat',
+                    'postalCode' => '41371',
+                    'addressCountry' => 'ID'
+                ]
+            ],
+            'hospitalAffiliation' => [
+                '@type' => 'Hospital',
+                'name' => 'RSU Fikri Medika Karawang',
+                'url' => url('/')
+            ]
+        ];
+
+        return $schema;
+    }
+
+    /**
+     * Generate Schema.org JSON-LD for Specialty / Polyclinic Page
+     */
+    public function generateSpecialtySchema($polyclinic, $doctors = []): array
+    {
+        $poliName = is_array($polyclinic->name) ? ($polyclinic->name[app()->getLocale()] ?? $polyclinic->name['id'] ?? 'Poliklinik') : $polyclinic->name;
+        $specUrl = $polyclinic->route_url;
+        $phone = $this->profile?->phone ?: '(0267) 861-5555';
+
+        $physicianList = [];
+        foreach ($doctors as $doc) {
+            $physicianList[] = [
+                '@type' => 'Physician',
+                'name' => $doc->full_name,
+                'url' => $doc->route_url,
+                'image' => $this->formatImageUrl($doc->photo),
+                'medicalSpecialty' => $doc->specialty_name
+            ];
+        }
 
         return [
             '@context' => 'https://schema.org',
-            '@type' => 'Physician',
-            'name' => $doctor->name . ($doctor->title_degree ? ', ' . $doctor->title_degree : ''),
-            'medicalSpecialty' => $specialty,
-            'image' => $this->formatImageUrl($doctor->photo),
-            'worksFor' => [
+            '@type' => 'MedicalClinic',
+            '@id' => $specUrl . '#clinic',
+            'name' => "Poli {$poliName} RSU Fikri Medika Karawang",
+            'url' => $specUrl,
+            'telephone' => $phone,
+            'parentOrganization' => [
                 '@type' => 'Hospital',
                 'name' => 'RSU Fikri Medika Karawang',
                 'url' => url('/')
             ],
-            'description' => $this->sanitizeText($doctor->tr('bio') ?: "Dokter Spesialis {$specialty} di RSU Fikri Medika Karawang."),
+            'medicalSpecialty' => $poliName,
+            'description' => "Layanan dokter spesialis {$poliName} di RSU Fikri Medika Karawang dengan jadwal praktik dan informasi pendaftaran.",
+            'employee' => $physicianList
+        ];
+    }
+
+    /**
+     * Generate Schema.org JSON-LD for Doctor Hub Page
+     */
+    public function generateDoctorHubSchema($doctors = [], $polyclinics = []): array
+    {
+        $hubUrl = url('/dokter-di-karawang');
+        $siteUrl = url('/');
+        $phone = $this->profile?->phone ?: '(0267) 861-5555';
+
+        $departments = [];
+        foreach ($polyclinics as $poli) {
+            $pName = is_array($poli->name) ? ($poli->name[app()->getLocale()] ?? $poli->name['id'] ?? 'Poliklinik') : $poli->name;
+            $departments[] = [
+                '@type' => 'MedicalClinic',
+                'name' => "Poli {$pName}",
+                'url' => $poli->route_url
+            ];
+        }
+
+        return [
+            '@context' => 'https://schema.org',
+            '@type' => 'MedicalOrganization',
+            '@id' => $hubUrl . '#medicalorg',
+            'name' => 'Direktori Dokter Spesialis RSU Fikri Medika Karawang',
+            'url' => $hubUrl,
+            'parentOrganization' => [
+                '@type' => 'Hospital',
+                'name' => 'RSU Fikri Medika Karawang',
+                'url' => $siteUrl
+            ],
+            'telephone' => $phone,
+            'description' => 'Direktori lengkap dokter spesialis dan jadwal praktik dokter di Karawang pada RSU Fikri Medika.',
+            'department' => $departments
         ];
     }
 

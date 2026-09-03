@@ -29,7 +29,9 @@ class HomeController extends Controller
         if ($featuredServices->isEmpty()) {
             $featuredServices = Service::where('is_active', true)->orderBy('order', 'asc')->get();
         }
-        $polyclinics = Polyclinic::where('is_active', true)->get();
+        $polyclinics = Polyclinic::where('is_active', true)->with(['doctors' => function($q) {
+            $q->where('is_active', true)->with('schedules');
+        }])->get();
         
         $doctors = Doctor::with(['polyclinic', 'schedules'])
             ->where('is_active', true)

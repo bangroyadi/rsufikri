@@ -21,11 +21,12 @@ class SitemapController extends Controller
         // 1. Static Pages with High Priority
         $staticPages = [
             ['url' => url('/'), 'lastmod' => date('Y-m-d'), 'changefreq' => 'daily', 'priority' => '1.0'],
-            ['url' => url('/profil'), 'lastmod' => date('Y-m-d'), 'changefreq' => 'weekly', 'priority' => '0.8'],
+            ['url' => url('/dokter-di-karawang'), 'lastmod' => date('Y-m-d'), 'changefreq' => 'daily', 'priority' => '0.95'],
             ['url' => url('/jadwal-dokter'), 'lastmod' => date('Y-m-d'), 'changefreq' => 'daily', 'priority' => '0.9'],
+            ['url' => url('/buat-janji'), 'lastmod' => date('Y-m-d'), 'changefreq' => 'daily', 'priority' => '0.9'],
+            ['url' => url('/profil'), 'lastmod' => date('Y-m-d'), 'changefreq' => 'weekly', 'priority' => '0.8'],
             ['url' => url('/lokasi'), 'lastmod' => date('Y-m-d'), 'changefreq' => 'monthly', 'priority' => '0.8'],
             ['url' => url('/kontak'), 'lastmod' => date('Y-m-d'), 'changefreq' => 'monthly', 'priority' => '0.8'],
-            ['url' => url('/buat-janji'), 'lastmod' => date('Y-m-d'), 'changefreq' => 'daily', 'priority' => '0.9'],
             ['url' => url('/artikel'), 'lastmod' => date('Y-m-d'), 'changefreq' => 'daily', 'priority' => '0.8'],
             ['url' => url('/informasi/event'), 'lastmod' => date('Y-m-d'), 'changefreq' => 'weekly', 'priority' => '0.8'],
             ['url' => url('/informasi/penawaran-khusus'), 'lastmod' => date('Y-m-d'), 'changefreq' => 'weekly', 'priority' => '0.8'],
@@ -46,7 +47,29 @@ class SitemapController extends Controller
             $urls[] = $page;
         }
 
-        // 2. Dynamic Services
+        // 2. Dynamic Doctor Specialty Hub Pages (/dokter/{spesialisasi}-karawang)
+        $polyclinics = \App\Models\Polyclinic::where('is_active', true)->get();
+        foreach ($polyclinics as $poli) {
+            $urls[] = [
+                'url' => $poli->route_url,
+                'lastmod' => $poli->updated_at ? $poli->updated_at->format('Y-m-d') : date('Y-m-d'),
+                'changefreq' => 'daily',
+                'priority' => '0.90',
+            ];
+        }
+
+        // 2b. Dynamic Individual Doctor Profile Pages (/dokter/{slug})
+        $doctors = \App\Models\Doctor::where('is_active', true)->get();
+        foreach ($doctors as $doc) {
+            $urls[] = [
+                'url' => $doc->route_url,
+                'lastmod' => $doc->updated_at ? $doc->updated_at->format('Y-m-d') : date('Y-m-d'),
+                'changefreq' => 'daily',
+                'priority' => '0.88',
+            ];
+        }
+
+        // 2c. Dynamic Services
         $services = Service::where('is_active', true)->get();
         foreach ($services as $service) {
             $serviceUrl = url('/layanan/' . $service->slug);
@@ -58,17 +81,6 @@ class SitemapController extends Controller
                     'priority' => '0.85',
                 ];
             }
-        }
-
-        // 2b. Dynamic Doctor Specialties (Targeting "Rekomendasi Dokter [Spesialis] Karawang")
-        $polyclinics = \App\Models\Polyclinic::where('is_active', true)->get();
-        foreach ($polyclinics as $poli) {
-            $urls[] = [
-                'url' => url('/jadwal-dokter?spesialis=' . $poli->slug),
-                'lastmod' => $poli->updated_at ? $poli->updated_at->format('Y-m-d') : date('Y-m-d'),
-                'changefreq' => 'daily',
-                'priority' => '0.88',
-            ];
         }
 
         // 3. Dynamic Articles (Health Education & News)

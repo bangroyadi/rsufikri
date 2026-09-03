@@ -37,6 +37,11 @@ class Polyclinic extends Model
         return $this->hasMany(DoctorSchedule::class);
     }
 
+    public function getRouteUrlAttribute(): string
+    {
+        return url('/dokter/' . $this->slug . '-karawang');
+    }
+
     /**
      * Get formatted gallery image URLs for this polyclinic.
      */

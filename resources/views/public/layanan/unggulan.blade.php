@@ -39,7 +39,7 @@
             $fName = $featured->tr('name');
             $fDesc = $featured->tr('short_description');
             $fImg = !empty($featured->image)
-                ? (str_starts_with($featured->image, ['http://', 'https://']) ? $featured->image : asset($featured->image))
+                ? (\Illuminate\Support\Str::startsWith($featured->image, ['http://', 'https://']) ? $featured->image : asset($featured->image))
                 : asset('gedung1_web.jpg');
             $fSlug = $featured->slug ?: \Illuminate\Support\Str::slug($fName);
             $fWaText = urlencode("Halo RSU Fikri Medika, saya ingin mengetahui lebih lanjut mengenai layanan: " . $fName);
@@ -181,7 +181,7 @@
                     $sDesc = $serv->tr('short_description');
                     $sSlug = $serv->slug ?: \Illuminate\Support\Str::slug($sName);
                     $sImg = !empty($serv->image)
-                        ? (str_starts_with($serv->image, ['http://', 'https://']) ? $serv->image : asset($serv->image))
+                        ? (\Illuminate\Support\Str::startsWith($serv->image, ['http://', 'https://']) ? $serv->image : asset($serv->image))
                         : asset('gedung1_web.jpg');
                     $sWaText = urlencode("Halo RSU Fikri Medika, saya ingin mengetahui lebih lanjut mengenai layanan: " . $sName);
                 @endphp

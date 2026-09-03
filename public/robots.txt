@@ -1,10 +1,19 @@
 # robots.txt for RSU Fikri Medika Karawang
 User-agent: *
 Allow: /
+Allow: /dokter-di-karawang
+Allow: /dokter/
+Allow: /jadwal-dokter
+Allow: /layanan/
+Allow: /artikel/
+Allow: /informasi/
+Allow: /karir/
+
 Disallow: /admin/
 Disallow: /login
 Disallow: /ai/
 Disallow: /storage/applications/
 
-# Search Engine Sitemaps
+# Search Engine Sitemap
+Sitemap: https://www.rsfikrimedika.com/sitemap.xml
 Sitemap: http://localhost/sitemap.xml

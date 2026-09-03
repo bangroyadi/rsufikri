@@ -281,44 +281,71 @@
         <!-- RIGHT: SIDEBAR (4 COLS - STICKY) -->
         <div class="lg:col-span-4 space-y-6 lg:sticky lg:top-24">
             
-            <!-- SIDEBAR CARD 1: DOKTER SPESIALIS TERKAIT (HANYA MUNCUL JIKA DITAUTKAN DOKTER) -->
+            <!-- SIDEBAR CARD 1: DOKTER SPESIALIS TERKAIT (DOKTER ATAS ARTIKEL / REKOMENDASI SPESIALIS) -->
             @php
                 $articleDoctors = $article->doctors->where('is_active', true);
+                if ($articleDoctors->isEmpty()) {
+                    // Smart match doctors based on article content or category
+                    $artText = strtolower($article->tr('title') . ' ' . $article->tr('category'));
+                    if (str_contains($artText, 'dalam') || str_contains($artText, 'diabetes') || str_contains($artText, 'kolesterol') || str_contains($artText, 'lambung') || str_contains($artText, 'usia')) {
+                        $articleDoctors = \App\Models\Doctor::whereHas('polyclinic', fn($q) => $q->where('slug', 'penyakit-dalam'))->where('is_active', true)->take(2)->get();
+                    } elseif (str_contains($artText, 'anak') || str_contains($artText, 'bayi') || str_contains($artText, 'tangis')) {
+                        $articleDoctors = \App\Models\Doctor::whereHas('polyclinic', fn($q) => $q->where('slug', 'anak'))->where('is_active', true)->take(2)->get();
+                    } elseif (str_contains($artText, 'hamil') || str_contains($artText, 'kandungan') || str_contains($artText, 'ibu')) {
+                        $articleDoctors = \App\Models\Doctor::whereHas('polyclinic', fn($q) => $q->where('slug', 'obgyn-kandungan'))->where('is_active', true)->take(2)->get();
+                    } elseif (str_contains($artText, 'jantung')) {
+                        $articleDoctors = \App\Models\Doctor::whereHas('polyclinic', fn($q) => $q->where('slug', 'jantung'))->where('is_active', true)->take(2)->get();
+                    } elseif (str_contains($artText, 'flu') || str_contains($artText, 'pilek') || str_contains($artText, 'tht')) {
+                        $articleDoctors = \App\Models\Doctor::whereHas('polyclinic', fn($q) => $q->where('slug', 'tht-kl'))->where('is_active', true)->take(2)->get();
+                    } else {
+                        $articleDoctors = \App\Models\Doctor::where('is_active', true)->take(2)->get();
+                    }
+                }
             @endphp
             @if($articleDoctors->isNotEmpty())
             <div class="bg-white rounded-2xl p-5 sm:p-6 border border-gray-100 shadow-sm space-y-4">
                 <div class="flex items-center justify-between pb-3 border-b border-gray-100">
                     <h3 class="font-extrabold text-sm sm:text-base text-gray-900 flex items-center gap-2">
                         <i class="fa-solid fa-user-doctor text-[#0e7c47]"></i>
-                        <span>Dokter Terkait</span>
+                        <span>Dokter Spesialis Terkait</span>
                     </h3>
-                    <span class="text-[11px] font-bold text-[#0e7c47] bg-emerald-50 px-2 py-0.5 rounded-full">
-                        {{ $articleDoctors->count() > 1 ? $articleDoctors->count() . ' Dokter' : 'Spesialis' }}
-                    </span>
+                    <a href="{{ url('/dokter-di-karawang') }}" class="text-[11px] font-bold text-[#0e7c47] bg-emerald-50 px-2 py-0.5 rounded-full hover:underline">
+                        Lihat Dokter
+                    </a>
                 </div>
 
                 <div class="space-y-4 divide-y divide-gray-100">
                     @foreach($articleDoctors as $docItem)
                     @php
-                        $docPhoto = $docItem->photo ? (Str::startsWith($docItem->photo, ['http://', 'https://']) ? $docItem->photo : asset($docItem->photo)) : 'https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&w=300&q=80';
+                        $docPhoto = $docItem->photo;
                         $docDegree = $docItem->title_degree ? ', ' . $docItem->title_degree : '';
-                        $docSpecialty = $docItem->tr('specialty') ?: ($docItem->polyclinic ? $docItem->polyclinic->tr('name') : 'Dokter Spesialis');
+                        $docSpecialty = $docItem->specialty_name;
                     @endphp
                     <div class="pt-3.5 first:pt-0 space-y-3">
                         <div class="flex items-center gap-3.5">
-                            <div class="w-14 h-14 rounded-2xl overflow-hidden bg-emerald-50 border-2 border-emerald-500/20 shrink-0">
-                                <img src="{{ $docPhoto }}" alt="{{ $docItem->name }}" class="w-full h-full object-cover">
-                            </div>
+                            <a href="{{ $docItem->route_url }}" class="w-14 h-14 rounded-2xl overflow-hidden bg-emerald-50 border-2 border-emerald-500/20 shrink-0 block">
+                                @if(!empty($docPhoto))
+                                    <img src="{{ $docPhoto }}" alt="{{ $docItem->name }}" class="w-full h-full object-cover">
+                                @else
+                                    <div class="w-full h-full flex items-center justify-center text-emerald-700 text-xl font-bold">
+                                        <i class="fa-solid fa-user-doctor"></i>
+                                    </div>
+                                @endif
+                            </a>
                             <div class="min-w-0 flex-1">
-                                <h4 class="font-bold text-gray-900 text-xs sm:text-sm leading-snug truncate">{{ $docItem->name . $docDegree }}</h4>
+                                <h4 class="font-bold text-gray-900 text-xs sm:text-sm leading-snug truncate">
+                                    <a href="{{ $docItem->route_url }}" class="hover:text-[#0e7c47] transition-colors">
+                                        {{ $docItem->name . $docDegree }}
+                                    </a>
+                                </h4>
                                 <p class="text-xs text-[#0e7c47] font-semibold mt-0.5 truncate">{{ $docSpecialty }}</p>
                                 <p class="text-[11px] text-gray-500 mt-0.5">RSU Fikri Medika Karawang</p>
                             </div>
                         </div>
 
                         <div class="grid grid-cols-2 gap-2">
-                            <a href="{{ route('jadwal.dokter', ['spesialis' => $docItem->polyclinic ? Str::slug($docItem->polyclinic->tr('name')) : null]) }}" class="px-2.5 py-1.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-800 text-[11px] font-bold text-center transition-colors">
-                                Jadwal Dokter
+                            <a href="{{ $docItem->route_url }}" class="px-2.5 py-1.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-800 text-[11px] font-bold text-center transition-colors">
+                                Profil Dokter
                             </a>
                             <a href="{{ route('buat.janji', ['dokter_id' => $docItem->id]) }}" class="px-2.5 py-1.5 rounded-xl bg-[#0e7c47] hover:bg-[#096237] text-white text-[11px] font-bold text-center shadow-xs transition-colors">
                                 Buat Janji

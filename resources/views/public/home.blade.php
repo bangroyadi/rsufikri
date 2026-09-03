@@ -402,16 +402,30 @@
         
         if ($poli) {
             $images = $poli->gallery_images;
+            $doctorsList = $poli->doctors ? $poli->doctors->map(function($d) {
+                return [
+                    'id' => $d->id,
+                    'name' => $d->full_name,
+                    'degree' => $d->title_degree,
+                    'url' => $d->route_url,
+                    'photo' => $d->photo
+                ];
+            })->values()->toArray() : [];
         } else {
             $images = $fallbackImages;
+            $doctorsList = [];
         }
+
+        $finalSlug = $poli?->slug ?? $slug;
 
         return [
             'name' => $name,
             'desc' => $desc,
             'images' => $images,
             'id' => $poli?->id,
-            'slug' => $poli?->slug ?? $slug
+            'slug' => $finalSlug,
+            'url' => url('/dokter/' . $finalSlug . '-karawang'),
+            'doctors' => $doctorsList
         ];
     };
 
@@ -439,7 +453,7 @@
             
             <!-- 1. Penyakit Dalam -->
             @php $p1 = $getPoliData('penyakit-dalam', 'Poli Penyakit Dalam', 'Pelayanan diagnostik dan penanganan medis komprehensif penyakit organ dalam dewasa (diabetes, hipertensi, lambung, ginjal, hati).', [asset('gedung1_web.jpg'), asset('banner-igd.png')]); @endphp
-            <div @click="openPoliMenu('{{ addslashes($p1['name']) }}', '{{ addslashes($p1['desc']) }}', {{ json_encode($p1['images']) }})" 
+            <div @click="openPoliMenu({{ json_encode($p1) }})" 
                  class="group flex flex-col items-center text-center p-2 rounded-2xl transition-all duration-300 hover:-translate-y-1.5 cursor-pointer">
                 <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-gradient-to-b from-emerald-50 to-teal-50/70 border-2 border-emerald-100/90 group-hover:border-[#0e7c47] group-hover:from-emerald-100/80 group-hover:to-teal-100/80 group-hover:shadow-md group-hover:shadow-emerald-900/10 flex items-center justify-center mb-3.5 transition-all duration-300 relative group-hover:scale-105">
                     <svg class="w-10 h-10 sm:w-11 sm:h-11 transition-transform duration-300 group-hover:scale-110 drop-shadow-xs" viewBox="0 0 64 64" fill="none">
@@ -466,7 +480,7 @@
 
             <!-- 2. Anak -->
             @php $p2 = $getPoliData('anak', 'Poli Anak', 'Pelayanan kesehatan anak komprehensif, imunisasi, pemantauan tumbuh kembang, dan infeksi pediatrik.', [asset('gedung1_web.jpg'), asset('banner-igd.png')]); @endphp
-            <div @click="openPoliMenu('{{ addslashes($p2['name']) }}', '{{ addslashes($p2['desc']) }}', {{ json_encode($p2['images']) }})" 
+            <div @click="openPoliMenu({{ json_encode($p2) }})" 
                  class="group flex flex-col items-center text-center p-2 rounded-2xl transition-all duration-300 hover:-translate-y-1.5 cursor-pointer">
                 <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-gradient-to-b from-emerald-50 to-teal-50/70 border-2 border-emerald-100/90 group-hover:border-[#0e7c47] group-hover:from-emerald-100/80 group-hover:to-teal-100/80 group-hover:shadow-md group-hover:shadow-emerald-900/10 flex items-center justify-center mb-3.5 transition-all duration-300 relative group-hover:scale-105">
                     <svg class="w-10 h-10 sm:w-11 sm:h-11 transition-transform duration-300 group-hover:scale-110 drop-shadow-xs" viewBox="0 0 64 64" fill="none">
@@ -499,7 +513,7 @@
 
             <!-- 3. Obgyn (Kandungan) -->
             @php $p3 = $getPoliData('obgyn-kandungan', 'Poli Obgyn (Kandungan)', 'Pemeriksaan kehamilan, USG 4D HD Live, persalinan metode ERACS, dan kesehatan reproduksi wanita.', [asset('gedung1_web.jpg'), asset('banner-igd.png')]); @endphp
-            <div @click="openPoliMenu('{{ addslashes($p3['name']) }}', '{{ addslashes($p3['desc']) }}', {{ json_encode($p3['images']) }})" 
+            <div @click="openPoliMenu({{ json_encode($p3) }})" 
                  class="group flex flex-col items-center text-center p-2 rounded-2xl transition-all duration-300 hover:-translate-y-1.5 cursor-pointer">
                 <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-gradient-to-b from-emerald-50 to-teal-50/70 border-2 border-emerald-100/90 group-hover:border-[#0e7c47] group-hover:from-emerald-100/80 group-hover:to-teal-100/80 group-hover:shadow-md group-hover:shadow-emerald-900/10 flex items-center justify-center mb-3.5 transition-all duration-300 relative group-hover:scale-105">
                     <svg class="w-10 h-10 sm:w-11 sm:h-11 transition-transform duration-300 group-hover:scale-110 drop-shadow-xs" viewBox="0 0 64 64" fill="none">
@@ -519,7 +533,7 @@
 
             <!-- 4. Bedah -->
             @php $p4 = $getPoliData('bedah', 'Poli Bedah', 'Konsultasi dan tindakan pembedahan umum, appendicitis, hernia, tumor jinak, dan perawatan luka modern.', [asset('trauma-center.png'), asset('gedung2_web.jpg')]); @endphp
-            <div @click="openPoliMenu('{{ addslashes($p4['name']) }}', '{{ addslashes($p4['desc']) }}', {{ json_encode($p4['images']) }})" 
+            <div @click="openPoliMenu({{ json_encode($p4) }})" 
                  class="group flex flex-col items-center text-center p-2 rounded-2xl transition-all duration-300 hover:-translate-y-1.5 cursor-pointer">
                 <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-gradient-to-b from-emerald-50 to-teal-50/70 border-2 border-emerald-100/90 group-hover:border-[#0e7c47] group-hover:from-emerald-100/80 group-hover:to-teal-100/80 group-hover:shadow-md group-hover:shadow-emerald-900/10 flex items-center justify-center mb-3.5 transition-all duration-300 relative group-hover:scale-105">
                     <svg class="w-10 h-10 sm:w-11 sm:h-11 transition-transform duration-300 group-hover:scale-110 drop-shadow-xs" viewBox="0 0 64 64" fill="none">
@@ -548,7 +562,7 @@
 
             <!-- 5. Mata -->
             @php $p5 = $getPoliData('mata', 'Poli Mata', 'Poli Spesialis Mata & Refraksi Katarak (Metode Phacoemulsification modern tanpa jahitan).', [asset('spesialis-mata.png'), asset('gedung1_web.jpg')]); @endphp
-            <div @click="openPoliMenu('{{ addslashes($p5['name']) }}', '{{ addslashes($p5['desc']) }}', {{ json_encode($p5['images']) }})" 
+            <div @click="openPoliMenu({{ json_encode($p5) }})" 
                  class="group flex flex-col items-center text-center p-2 rounded-2xl transition-all duration-300 hover:-translate-y-1.5 cursor-pointer">
                 <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-gradient-to-b from-emerald-50 to-teal-50/70 border-2 border-emerald-100/90 group-hover:border-[#0e7c47] group-hover:from-emerald-100/80 group-hover:to-teal-100/80 group-hover:shadow-md group-hover:shadow-emerald-900/10 flex items-center justify-center mb-3.5 transition-all duration-300 relative group-hover:scale-105">
                     <svg class="w-10 h-10 sm:w-11 sm:h-11 transition-transform duration-300 group-hover:scale-110 drop-shadow-xs" viewBox="0 0 64 64" fill="none">
@@ -579,7 +593,7 @@
 
             <!-- 6. Jantung -->
             @php $p6 = $getPoliData('jantung', 'Poli Jantung', 'Poli Spesialis Jantung & Pembuluh Darah (Kardiologi) dengan EKG, Treadmill, dan Echocardiography.', [asset('gedung1_web.jpg'), asset('banner-igd.png')]); @endphp
-            <div @click="openPoliMenu('{{ addslashes($p6['name']) }}', '{{ addslashes($p6['desc']) }}', {{ json_encode($p6['images']) }})" 
+            <div @click="openPoliMenu({{ json_encode($p6) }})" 
                  class="group flex flex-col items-center text-center p-2 rounded-2xl transition-all duration-300 hover:-translate-y-1.5 cursor-pointer">
                 <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-gradient-to-b from-emerald-50 to-teal-50/70 border-2 border-emerald-100/90 group-hover:border-[#0e7c47] group-hover:from-emerald-100/80 group-hover:to-teal-100/80 group-hover:shadow-md group-hover:shadow-emerald-900/10 flex items-center justify-center mb-3.5 transition-all duration-300 relative group-hover:scale-105">
                     <svg class="w-10 h-10 sm:w-11 sm:h-11 transition-transform duration-300 group-hover:scale-110 drop-shadow-xs" viewBox="0 0 64 64" fill="none">
@@ -622,7 +636,7 @@
 
                 <!-- 7. Paru -->
                 @php $p7 = $getPoliData('paru', 'Poli Paru', 'Poli Spesialis Paru & Pulmonologi untuk asma, PPOK, TBC, bronkitis, dan gangguan pernapasan.', [asset('gedung1_web.jpg'), asset('banner-igd.png')]); @endphp
-                <div @click="openPoliMenu('{{ addslashes($p7['name']) }}', '{{ addslashes($p7['desc']) }}', {{ json_encode($p7['images']) }})" 
+                <div @click="openPoliMenu({{ json_encode($p7) }})" 
                      class="group flex flex-col items-center text-center p-2 rounded-2xl transition-all duration-300 hover:-translate-y-1.5 cursor-pointer">
                     <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-gradient-to-b from-emerald-50 to-teal-50/70 border-2 border-emerald-100/90 group-hover:border-[#0e7c47] group-hover:from-emerald-100/80 group-hover:to-teal-100/80 group-hover:shadow-md group-hover:shadow-emerald-900/10 flex items-center justify-center mb-3.5 transition-all duration-300 relative group-hover:scale-105">
                         <svg class="w-10 h-10 sm:w-11 sm:h-11 transition-transform duration-300 group-hover:scale-110 drop-shadow-xs" viewBox="0 0 64 64" fill="none">
@@ -641,7 +655,7 @@
                             <line x1="29" y1="14" x2="35" y2="14" stroke="#0e7c47" stroke-width="1.8"/>
                             <line x1="29" y1="18" x2="35" y2="18" stroke="#0e7c47" stroke-width="1.8"/>
                             <path d="M29 20c-3 1-8 4-11 1-5-5-9 6-10 16-1 9 5 18 13 18 6 0 8-7 8-15v-20z" fill="url(#grad-hm-lung-l)" stroke="#047857" stroke-width="2"/>
-                            <path d="M35 20c3 1 8 4 11 1 5-5 9 6 10 16 1 9-5 18-13 18-6 0-8-7-8-15v-20z" fill="url(#grad-hm-lung-r)" stroke="#047857" stroke-width="2"/>
+                            <path d="M35 20c3 1 8 4-11 1 5-5 9 6 10 16 1 9-5 18-13 18-6 0-8-7-8-15v-20z" fill="url(#grad-hm-lung-r)" stroke="#047857" stroke-width="2"/>
                             <path d="M26 27l-6 6M23 30l-3-2M38 27l6 6M41 30l3-2" stroke="#ecfdf5" stroke-width="2" stroke-linecap="round"/>
                         </svg>
                         <span class="absolute top-1 right-1 w-2.5 h-2.5 rounded-full bg-yellow-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300 shadow-xs"></span>
@@ -653,7 +667,7 @@
 
                 <!-- 8. Orthopedi -->
                 @php $p8 = $getPoliData('orthopedi', 'Poli Orthopedi', 'Penanganan cedera patah tulang, dislokasi sendi, trauma kecelakaan, dan bedah ortopedi.', [asset('trauma-center.png'), asset('gedung2_web.jpg')]); @endphp
-                <div @click="openPoliMenu('{{ addslashes($p8['name']) }}', '{{ addslashes($p8['desc']) }}', {{ json_encode($p8['images']) }})" 
+                <div @click="openPoliMenu({{ json_encode($p8) }})" 
                      class="group flex flex-col items-center text-center p-2 rounded-2xl transition-all duration-300 hover:-translate-y-1.5 cursor-pointer">
                     <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-gradient-to-b from-emerald-50 to-teal-50/70 border-2 border-emerald-100/90 group-hover:border-[#0e7c47] group-hover:from-emerald-100/80 group-hover:to-teal-100/80 group-hover:shadow-md group-hover:shadow-emerald-900/10 flex items-center justify-center mb-3.5 transition-all duration-300 relative group-hover:scale-105">
                         <svg class="w-10 h-10 sm:w-11 sm:h-11 transition-transform duration-300 group-hover:scale-110 drop-shadow-xs" viewBox="0 0 64 64" fill="none">
@@ -678,7 +692,7 @@
 
                 <!-- 9. Urologi -->
                 @php $p9 = $getPoliData('urologi', 'Poli Urologi', 'Penanganan kelainan sistem saluran kemih, batu ginjal, kandung kemih, dan prostat.', [asset('gedung1_web.jpg'), asset('banner-igd.png')]); @endphp
-                <div @click="openPoliMenu('{{ addslashes($p9['name']) }}', '{{ addslashes($p9['desc']) }}', {{ json_encode($p9['images']) }})" 
+                <div @click="openPoliMenu({{ json_encode($p9) }})" 
                      class="group flex flex-col items-center text-center p-2 rounded-2xl transition-all duration-300 hover:-translate-y-1.5 cursor-pointer">
                     <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-gradient-to-b from-emerald-50 to-teal-50/70 border-2 border-emerald-100/90 group-hover:border-[#0e7c47] group-hover:from-emerald-100/80 group-hover:to-teal-100/80 group-hover:shadow-md group-hover:shadow-emerald-900/10 flex items-center justify-center mb-3.5 transition-all duration-300 relative group-hover:scale-105">
                         <svg class="w-10 h-10 sm:w-11 sm:h-11 transition-transform duration-300 group-hover:scale-110 drop-shadow-xs" viewBox="0 0 64 64" fill="none">
@@ -706,7 +720,7 @@
 
                 <!-- 10. THT – KL -->
                 @php $p10 = $getPoliData('tht-kl', 'Poli THT – KL', 'Pemeriksaan telinga, hidung, tenggorokan, serta bedah kepala dan leher (sinusitis, amandel, polip).', [asset('gedung1_web.jpg'), asset('banner-igd.png')]); @endphp
-                <div @click="openPoliMenu('{{ addslashes($p10['name']) }}', '{{ addslashes($p10['desc']) }}', {{ json_encode($p10['images']) }})" 
+                <div @click="openPoliMenu({{ json_encode($p10) }})" 
                      class="group flex flex-col items-center text-center p-2 rounded-2xl transition-all duration-300 hover:-translate-y-1.5 cursor-pointer">
                     <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-gradient-to-b from-emerald-50 to-teal-50/70 border-2 border-emerald-100/90 group-hover:border-[#0e7c47] group-hover:from-emerald-100/80 group-hover:to-teal-100/80 group-hover:shadow-md group-hover:shadow-emerald-900/10 flex items-center justify-center mb-3.5 transition-all duration-300 relative group-hover:scale-105">
                         <svg class="w-10 h-10 sm:w-11 sm:h-11 transition-transform duration-300 group-hover:scale-110 drop-shadow-xs" viewBox="0 0 64 64" fill="none">
@@ -731,7 +745,7 @@
 
                 <!-- 11. Neurologi (Saraf) -->
                 @php $p11 = $getPoliData('neurologi-saraf', 'Poli Neurologi (Saraf)', 'Penanganan stroke, vertigo, migrain, epilepsi, nyeri saraf, dan saraf terjepit (HNP).', [asset('gedung1_web.jpg'), asset('banner-igd.png')]); @endphp
-                <div @click="openPoliMenu('{{ addslashes($p11['name']) }}', '{{ addslashes($p11['desc']) }}', {{ json_encode($p11['images']) }})" 
+                <div @click="openPoliMenu({{ json_encode($p11) }})" 
                      class="group flex flex-col items-center text-center p-2 rounded-2xl transition-all duration-300 hover:-translate-y-1.5 cursor-pointer">
                     <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-gradient-to-b from-emerald-50 to-teal-50/70 border-2 border-emerald-100/90 group-hover:border-[#0e7c47] group-hover:from-emerald-100/80 group-hover:to-teal-100/80 group-hover:shadow-md group-hover:shadow-emerald-900/10 flex items-center justify-center mb-3.5 transition-all duration-300 relative group-hover:scale-105">
                         <svg class="w-10 h-10 sm:w-11 sm:h-11 transition-transform duration-300 group-hover:scale-110 drop-shadow-xs" viewBox="0 0 64 64" fill="none">
@@ -759,7 +773,7 @@
 
                 <!-- 12. Bedah Saraf -->
                 @php $p12 = $getPoliData('bedah-saraf', 'Poli Bedah Saraf', 'Tindakan operasi otak, saraf pusat, tumor saraf, dan trauma kepala.', [asset('gedung2_web.jpg'), asset('trauma-center.png')]); @endphp
-                <div @click="openPoliMenu('{{ addslashes($p12['name']) }}', '{{ addslashes($p12['desc']) }}', {{ json_encode($p12['images']) }})" 
+                <div @click="openPoliMenu({{ json_encode($p12) }})" 
                      class="group flex flex-col items-center text-center p-2 rounded-2xl transition-all duration-300 hover:-translate-y-1.5 cursor-pointer">
                     <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-gradient-to-b from-emerald-50 to-teal-50/70 border-2 border-emerald-100/90 group-hover:border-[#0e7c47] group-hover:from-emerald-100/80 group-hover:to-teal-100/80 group-hover:shadow-md group-hover:shadow-emerald-900/10 flex items-center justify-center mb-3.5 transition-all duration-300 relative group-hover:scale-105">
                         <svg class="w-10 h-10 sm:w-11 sm:h-11 transition-transform duration-300 group-hover:scale-110 drop-shadow-xs" viewBox="0 0 64 64" fill="none">
@@ -783,7 +797,7 @@
 
                 <!-- 13. Jiwa -->
                 @php $p13 = $getPoliData('jiwa', 'Poli Jiwa', 'Konsultasi dan terapi psikiatri, kesehatan mental, gangguan kecemasan, depresi, dan insomnia.', [asset('gedung1_web.jpg'), asset('banner-igd.png')]); @endphp
-                <div @click="openPoliMenu('{{ addslashes($p13['name']) }}', '{{ addslashes($p13['desc']) }}', {{ json_encode($p13['images']) }})" 
+                <div @click="openPoliMenu({{ json_encode($p13) }})" 
                      class="group flex flex-col items-center text-center p-2 rounded-2xl transition-all duration-300 hover:-translate-y-1.5 cursor-pointer">
                     <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-gradient-to-b from-emerald-50 to-teal-50/70 border-2 border-emerald-100/90 group-hover:border-[#0e7c47] group-hover:from-emerald-100/80 group-hover:to-teal-100/80 group-hover:shadow-md group-hover:shadow-emerald-900/10 flex items-center justify-center mb-3.5 transition-all duration-300 relative group-hover:scale-105">
                         <svg class="w-10 h-10 sm:w-11 sm:h-11 transition-transform duration-300 group-hover:scale-110 drop-shadow-xs" viewBox="0 0 64 64" fill="none">
@@ -807,7 +821,7 @@
 
                 <!-- 14. Kulit dan Kelamin -->
                 @php $p14 = $getPoliData('kulit-dan-kelamin', 'Poli Kulit dan Kelamin', 'Perawatan masalah kulit (jerawat, alergi, eksim, infeksi) dan kesehatan organ reproduksi.', [asset('gedung1_web.jpg'), asset('banner-igd.png')]); @endphp
-                <div @click="openPoliMenu('{{ addslashes($p14['name']) }}', '{{ addslashes($p14['desc']) }}', {{ json_encode($p14['images']) }})" 
+                <div @click="openPoliMenu({{ json_encode($p14) }})" 
                      class="group flex flex-col items-center text-center p-2 rounded-2xl transition-all duration-300 hover:-translate-y-1.5 cursor-pointer">
                     <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-gradient-to-b from-emerald-50 to-teal-50/70 border-2 border-emerald-100/90 group-hover:border-[#0e7c47] group-hover:from-emerald-100/80 group-hover:to-teal-100/80 group-hover:shadow-md group-hover:shadow-emerald-900/10 flex items-center justify-center mb-3.5 transition-all duration-300 relative group-hover:scale-105">
                         <svg class="w-10 h-10 sm:w-11 sm:h-11 transition-transform duration-300 group-hover:scale-110 drop-shadow-xs" viewBox="0 0 64 64" fill="none">
@@ -830,7 +844,7 @@
 
                 <!-- 15. Rehab Medik -->
                 @php $p15 = $getPoliData('rehab-medik', 'Poli Rehab Medik', 'Fisioterapi, okupasi terapi, dan rehabilitasi medis pasca stroke/operasi/cedera.', [asset('gedung1_web.jpg'), asset('banner-igd.png')]); @endphp
-                <div @click="openPoliMenu('{{ addslashes($p15['name']) }}', '{{ addslashes($p15['desc']) }}', {{ json_encode($p15['images']) }})" 
+                <div @click="openPoliMenu({{ json_encode($p15) }})" 
                      class="group flex flex-col items-center text-center p-2 rounded-2xl transition-all duration-300 hover:-translate-y-1.5 cursor-pointer">
                     <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-gradient-to-b from-emerald-50 to-teal-50/70 border-2 border-emerald-100/90 group-hover:border-[#0e7c47] group-hover:from-emerald-100/80 group-hover:to-teal-100/80 group-hover:shadow-md group-hover:shadow-emerald-900/10 flex items-center justify-center mb-3.5 transition-all duration-300 relative group-hover:scale-105">
                         <svg class="w-10 h-10 sm:w-11 sm:h-11 transition-transform duration-300 group-hover:scale-110 drop-shadow-xs" viewBox="0 0 64 64" fill="none">
@@ -847,7 +861,7 @@
 
                 <!-- 16. Spesialis Gigi (Periodonti) -->
                 @php $p16 = $getPoliData('spesialis-gigi-periodonti', 'Poli Spesialis Gigi (Periodonti)', 'Perawatan khusus jaringan penyangga gigi, gusi berdarah, periodontitis, dan pembersihan karang mendalam.', [asset('gedung1_web.jpg'), asset('banner-igd.png')]); @endphp
-                <div @click="openPoliMenu('{{ addslashes($p16['name']) }}', '{{ addslashes($p16['desc']) }}', {{ json_encode($p16['images']) }})" 
+                <div @click="openPoliMenu({{ json_encode($p16) }})" 
                      class="group flex flex-col items-center text-center p-2 rounded-2xl transition-all duration-300 hover:-translate-y-1.5 cursor-pointer">
                     <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-gradient-to-b from-emerald-50 to-teal-50/70 border-2 border-emerald-100/90 group-hover:border-[#0e7c47] group-hover:from-emerald-100/80 group-hover:to-teal-100/80 group-hover:shadow-md group-hover:shadow-emerald-900/10 flex items-center justify-center mb-3.5 transition-all duration-300 relative group-hover:scale-105">
                         <svg class="w-10 h-10 sm:w-11 sm:h-11 transition-transform duration-300 group-hover:scale-110 drop-shadow-xs" viewBox="0 0 64 64" fill="none">
@@ -870,7 +884,7 @@
 
                 <!-- 17. Bedah Mulut -->
                 @php $p17 = $getPoliData('bedah-mulut', 'Poli Bedah Mulut', 'Operasi gigi bungsu (odontektomi), kista rongga mulut, fraktur rahang, dan bedah maksilofasial.', [asset('gedung2_web.jpg'), asset('trauma-center.png')]); @endphp
-                <div @click="openPoliMenu('{{ addslashes($p17['name']) }}', '{{ addslashes($p17['desc']) }}', {{ json_encode($p17['images']) }})" 
+                <div @click="openPoliMenu({{ json_encode($p17) }})" 
                      class="group flex flex-col items-center text-center p-2 rounded-2xl transition-all duration-300 hover:-translate-y-1.5 cursor-pointer">
                     <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-gradient-to-b from-emerald-50 to-teal-50/70 border-2 border-emerald-100/90 group-hover:border-[#0e7c47] group-hover:from-emerald-100/80 group-hover:to-teal-100/80 group-hover:shadow-md group-hover:shadow-emerald-900/10 flex items-center justify-center mb-3.5 transition-all duration-300 relative group-hover:scale-105">
                         <svg class="w-10 h-10 sm:w-11 sm:h-11 transition-transform duration-300 group-hover:scale-110 drop-shadow-xs" viewBox="0 0 64 64" fill="none">
@@ -888,7 +902,7 @@
 
                 <!-- 18. Gigi -->
                 @php $p18 = $getPoliData('gigi', 'Poli Gigi', 'Kesehatan gigi umum, tambal gigi estetik, pencabutan gigi, pembersihan karang gigi (scaling), dan perawatan saluran akar.', [asset('gedung1_web.jpg'), asset('banner-igd.png')]); @endphp
-                <div @click="openPoliMenu('{{ addslashes($p18['name']) }}', '{{ addslashes($p18['desc']) }}', {{ json_encode($p18['images']) }})" 
+                <div @click="openPoliMenu({{ json_encode($p18) }})" 
                      class="group flex flex-col items-center text-center p-2 rounded-2xl transition-all duration-300 hover:-translate-y-1.5 cursor-pointer">
                     <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-gradient-to-b from-emerald-50 to-teal-50/70 border-2 border-emerald-100/90 group-hover:border-[#0e7c47] group-hover:from-emerald-100/80 group-hover:to-teal-100/80 group-hover:shadow-md group-hover:shadow-emerald-900/10 flex items-center justify-center mb-3.5 transition-all duration-300 relative group-hover:scale-105">
                         <svg class="w-10 h-10 sm:w-11 sm:h-11 transition-transform duration-300 group-hover:scale-110 drop-shadow-xs" viewBox="0 0 64 64" fill="none">
@@ -912,7 +926,7 @@
 
                 <!-- 19. Radiologi -->
                 @php $p19 = $getPoliData('radiologi', 'Poli Radiologi', 'Pemeriksaan radiologi digital X-Ray (Rontgen), USG Doppler, Panoramic Dental, dan imaging diagnostik.', [asset('gedung1_web.jpg'), asset('banner-igd.png')]); @endphp
-                <div @click="openPoliMenu('{{ addslashes($p19['name']) }}', '{{ addslashes($p19['desc']) }}', {{ json_encode($p19['images']) }})" 
+                <div @click="openPoliMenu({{ json_encode($p19) }})" 
                      class="group flex flex-col items-center text-center p-2 rounded-2xl transition-all duration-300 hover:-translate-y-1.5 cursor-pointer">
                     <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-gradient-to-b from-emerald-50 to-teal-50/70 border-2 border-emerald-100/90 group-hover:border-[#0e7c47] group-hover:from-emerald-100/80 group-hover:to-teal-100/80 group-hover:shadow-md group-hover:shadow-emerald-900/10 flex items-center justify-center mb-3.5 transition-all duration-300 relative group-hover:scale-105">
                         <svg class="w-10 h-10 sm:w-11 sm:h-11 transition-transform duration-300 group-hover:scale-110 drop-shadow-xs" viewBox="0 0 64 64" fill="none">
@@ -932,19 +946,17 @@
                 @if(isset($extraPolis) && $extraPolis->count() > 0)
                     @foreach($extraPolis as $exPoli)
                     @php
-                        $exName = is_array($exPoli->name) ? ($exPoli->name[app()->getLocale()] ?? $exPoli->name['id'] ?? '') : $exPoli->name;
-                        $exDesc = is_array($exPoli->description) ? ($exPoli->description[app()->getLocale()] ?? $exPoli->description['id'] ?? '') : ($exPoli->description ?? '');
-                        $exImgs = $exPoli->gallery_images;
+                        $exPoliData = $getPoliData($exPoli->slug, is_array($exPoli->name) ? ($exPoli->name[app()->getLocale()] ?? $exPoli->name['id'] ?? '') : $exPoli->name, is_array($exPoli->description) ? ($exPoli->description[app()->getLocale()] ?? $exPoli->description['id'] ?? '') : ($exPoli->description ?? ''), $exPoli->gallery_images);
                         $cleanIcon = str_replace(['fa-solid fa-', 'fa-regular fa-', 'fa-'], '', $exPoli->icon ?? 'stethoscope');
                     @endphp
-                    <div @click="openPoliMenu('{{ addslashes($exName) }}', '{{ addslashes($exDesc) }}', {{ json_encode($exImgs) }})" 
+                    <div @click="openPoliMenu({{ json_encode($exPoliData) }})" 
                          class="group flex flex-col items-center text-center p-2 rounded-2xl transition-all duration-300 hover:-translate-y-1.5 cursor-pointer">
                         <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-gradient-to-b from-emerald-50 to-teal-50/70 border-2 border-emerald-100/90 group-hover:border-[#0e7c47] group-hover:from-emerald-100/80 group-hover:to-teal-100/80 group-hover:shadow-md group-hover:shadow-emerald-900/10 flex items-center justify-center mb-3.5 transition-all duration-300 relative group-hover:scale-105">
                             <i class="fa-solid fa-{{ $cleanIcon }} text-2xl sm:text-3xl text-[#0e7c47] group-hover:scale-110 transition-transform"></i>
                             <span class="absolute top-1 right-1 w-2.5 h-2.5 rounded-full bg-yellow-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300 shadow-xs"></span>
                         </div>
                         <span class="text-xs sm:text-sm font-bold text-[#0e7c47] group-hover:text-amber-600 transition-colors leading-snug">
-                            {{ str_replace('Poli ', '', $exName) }}
+                            {{ str_replace('Poli ', '', $exPoliData['name']) }}
                         </span>
                     </div>
                     @endforeach
@@ -978,49 +990,98 @@
          style="display: none;">
         
         <div @click.away="activePoliChoiceModal = false" 
-             class="bg-white w-full max-w-md rounded-2xl sm:rounded-3xl shadow-2xl p-5 sm:p-8 space-y-4 sm:space-y-6 relative max-h-[90vh] overflow-y-auto">
+             class="bg-white w-full max-w-lg rounded-3xl shadow-2xl p-6 sm:p-8 space-y-5 relative max-h-[90vh] overflow-y-auto border border-emerald-100">
             
-            <button @click="activePoliChoiceModal = false" class="absolute right-4 sm:right-6 top-4 sm:top-6 w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-gray-100 text-slate-500 hover:bg-gray-200 flex items-center justify-center transition-colors">
+            <button @click="activePoliChoiceModal = false" class="absolute right-4 sm:right-6 top-4 sm:top-6 w-9 h-9 rounded-full bg-gray-100 text-slate-500 hover:bg-gray-200 flex items-center justify-center transition-colors">
                 <i class="fa-solid fa-xmark text-sm sm:text-base"></i>
             </button>
 
-            <div class="space-y-1 pr-6">
-                <span class="text-xs font-bold text-[#0e7c47] uppercase tracking-wider">Poliklinik Spesialis</span>
-                <h3 class="text-lg sm:text-xl font-black text-slate-900 leading-tight" x-text="selectedPoliTitle"></h3>
-                <p class="text-xs text-slate-500 font-medium" x-text="selectedPoliDesc"></p>
+            <div class="space-y-1.5 pr-8">
+                <div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-50 text-[#0e7c47] text-[11px] font-black border border-emerald-200">
+                    <i class="fa-solid fa-stethoscope"></i>
+                    <span>Poliklinik Spesialis Karawang</span>
+                </div>
+                <h3 class="text-xl sm:text-2xl font-black text-slate-900 leading-tight" x-text="selectedPoliTitle"></h3>
+                <p class="text-xs text-slate-600 leading-relaxed" x-text="selectedPoliDesc"></p>
             </div>
 
-            <!-- DUAL CHOICE ACTION BUTTONS -->
-            <div class="space-y-2.5 sm:space-y-3 pt-1">
+            <!-- LIST DOKTER SPESIALIS DI POLI INI -->
+            <template x-if="selectedPoliDoctors && selectedPoliDoctors.length > 0">
+                <div class="space-y-2.5 bg-slate-50 p-4 rounded-2xl border border-slate-200/80">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-black text-slate-800 flex items-center gap-1.5">
+                            <i class="fa-solid fa-user-doctor text-[#0e7c47]"></i>
+                            <span>Dokter Spesialis di Poli Ini:</span>
+                        </span>
+                        <span class="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800" x-text="selectedPoliDoctors.length + ' Dokter'"></span>
+                    </div>
+                    
+                    <div class="space-y-2 max-h-48 overflow-y-auto pr-1">
+                        <template x-for="(doc, dIdx) in selectedPoliDoctors" :key="dIdx">
+                            <a :href="doc.url" class="flex items-center justify-between p-2.5 rounded-xl bg-white hover:bg-emerald-50 border border-slate-200 hover:border-emerald-300 transition-all group shadow-2xs">
+                                <div class="flex items-center gap-2.5 min-w-0">
+                                    <div class="w-9 h-9 rounded-lg overflow-hidden bg-emerald-100 border border-emerald-300 shrink-0 flex items-center justify-center">
+                                        <template x-if="doc.photo">
+                                            <img :src="doc.photo" :alt="doc.name" class="w-full h-full object-cover">
+                                        </template>
+                                        <template x-if="!doc.photo">
+                                            <div class="w-full h-full bg-[#0e7c47] text-white flex items-center justify-center text-xs">
+                                                <i class="fa-solid fa-user-doctor"></i>
+                                            </div>
+                                        </template>
+                                    </div>
+                                    <div class="min-w-0">
+                                        <h5 class="text-xs font-extrabold text-slate-900 group-hover:text-[#0e7c47] truncate transition-colors" x-text="doc.name"></h5>
+                                        <span class="text-[10px] text-slate-500 block truncate" x-text="doc.degree || 'Dokter Spesialis'"></span>
+                                    </div>
+                                </div>
+                                <span class="text-[10px] font-bold text-[#0e7c47] group-hover:translate-x-0.5 transition-transform shrink-0 flex items-center gap-1">
+                                    <span>Profil & Jadwal</span>
+                                    <i class="fa-solid fa-chevron-right text-[8px]"></i>
+                                </span>
+                            </a>
+                        </template>
+                    </div>
+                </div>
+            </template>
+
+            <!-- ACTION BUTTONS -->
+            <div class="space-y-2.5 pt-1">
+                <!-- 1. LIHAT PROFIL & JADWAL POLIKLINIK LENGKAP -->
+                <a :href="selectedPoliUrl" 
+                   class="w-full p-3.5 sm:p-4 rounded-2xl bg-[#0e7c47] hover:bg-[#096237] text-white transition-all text-left flex items-center gap-3.5 group shadow-sm block">
+                    <div class="w-10 h-10 rounded-xl bg-white/20 text-white flex items-center justify-center text-lg font-bold shadow-xs shrink-0">
+                        <i class="fa-solid fa-calendar-days"></i>
+                    </div>
+                    <div class="flex-1">
+                        <h4 class="font-extrabold text-xs sm:text-sm leading-tight text-white">Lihat Halaman Dokter Spesialis & Jadwal</h4>
+                        <p class="text-[10px] sm:text-[11px] text-emerald-100 font-medium">Informasi dokter, jam praktik harian, dan pendaftaran di Karawang</p>
+                    </div>
+                    <i class="fa-solid fa-arrow-right text-xs text-white group-hover:translate-x-1 transition-transform"></i>
+                </a>
+
+                <!-- 2. LIHAT GALERI FOTO POLIKLINIK -->
                 <button @click="activePoliChoiceModal = false; openGallery(selectedPoliTitle, selectedPoliDesc, selectedPoliImages)" 
-                        class="w-full p-3.5 sm:p-4 rounded-2xl bg-emerald-50 hover:bg-[#0e7c47] text-[#0e7c47] hover:text-white transition-all text-left flex items-center gap-3 sm:gap-3.5 group shadow-xs">
-                    <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-white text-[#0e7c47] flex items-center justify-center text-base sm:text-lg font-bold shadow-xs shrink-0">
+                        type="button"
+                        class="w-full p-3.5 sm:p-4 rounded-2xl bg-slate-50 hover:bg-emerald-50 text-slate-800 hover:text-[#0e7c47] transition-all text-left flex items-center gap-3.5 group border border-slate-200/80 hover:border-emerald-300">
+                    <div class="w-10 h-10 rounded-xl bg-white text-[#0e7c47] border border-emerald-200 flex items-center justify-center text-lg font-bold shadow-2xs shrink-0">
                         <i class="fa-solid fa-images"></i>
                     </div>
-                    <div>
-                        <h4 class="font-extrabold text-xs sm:text-sm leading-tight">1. Lihat Galeri Foto Poliklinik</h4>
-                        <p class="text-[10px] sm:text-[11px] opacity-80 font-medium">Visualisasi ruangan & fasilitas poliklinik</p>
+                    <div class="flex-1">
+                        <h4 class="font-extrabold text-xs sm:text-sm leading-tight">Lihat Galeri Foto Fasilitas Poliklinik</h4>
+                        <p class="text-[10px] sm:text-[11px] text-slate-500 font-medium">Visualisasi ruangan pemeriksaan & fasilitas poli</p>
                     </div>
+                    <i class="fa-solid fa-chevron-right text-xs text-slate-400 group-hover:text-[#0e7c47]"></i>
                 </button>
-
-                <a href="{{ url('/jadwal-dokter') }}" 
-                   class="w-full p-3.5 sm:p-4 rounded-2xl bg-slate-50 hover:bg-emerald-50 text-slate-800 hover:text-[#0e7c47] transition-all text-left flex items-center gap-3 sm:gap-3.5 group shadow-xs block">
-                    <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-white text-[#0e7c47] flex items-center justify-center text-base sm:text-lg font-bold shadow-xs shrink-0">
-                        <i class="fa-solid fa-user-doctor"></i>
-                    </div>
-                    <div>
-                        <h4 class="font-extrabold text-xs sm:text-sm leading-tight">2. Lihat Jadwal Dokter Spesialis</h4>
-                        <p class="text-[10px] sm:text-[11px] text-gray-500 font-medium">Cek jam praktek & nama dokter spesialis</p>
-                    </div>
-                </a>
             </div>
 
-            <div class="pt-2 border-t border-gray-100 flex items-center justify-between gap-2">
-                <a href="{{ url('/buat-janji') }}" class="px-4 sm:px-5 py-2.5 rounded-xl bg-[#0e7c47] hover:bg-emerald-700 text-white font-bold text-xs transition-colors shadow-xs text-center">
-                    <i class="fa-solid fa-calendar-plus mr-1"></i> Buat Janji Online
+            <div class="pt-3 border-t border-gray-100 flex items-center justify-between gap-3">
+                <a :href="'{{ url('/buat-janji') }}' + (selectedPoliId ? '?poli_id=' + selectedPoliId : '')" class="flex-1 py-2.5 px-4 rounded-xl bg-[#0e7c47] hover:bg-[#096237] text-white font-extrabold text-xs transition-colors shadow-xs text-center flex items-center justify-center gap-1.5">
+                    <i class="fa-solid fa-calendar-plus text-xs"></i>
+                    <span>Buat Janji Online</span>
                 </a>
-                <button @click="activePoliChoiceModal = false" class="px-3.5 sm:px-4 py-2.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-slate-700 font-bold text-xs">
-                    Batal
+                <button @click="activePoliChoiceModal = false" class="px-5 py-2.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-slate-700 font-bold text-xs">
+                    Tutup
                 </button>
             </div>
 
@@ -1134,6 +1195,9 @@ function poliSpesialisHomeApp() {
         selectedPoliTitle: '',
         selectedPoliDesc: '',
         selectedPoliImages: [],
+        selectedPoliUrl: '{{ url('/jadwal-dokter') }}',
+        selectedPoliDoctors: [],
+        selectedPoliId: '',
 
         activeModalGallery: false,
         galleryTitle: '',
@@ -1141,10 +1205,22 @@ function poliSpesialisHomeApp() {
         galleryImages: [],
         activeImageIndex: 0,
 
-        openPoliMenu(title, desc, images) {
-            this.selectedPoliTitle = title;
-            this.selectedPoliDesc = desc;
-            this.selectedPoliImages = Array.isArray(images) ? images : [];
+        openPoliMenu(dataOrTitle, desc, images, url, doctors, id) {
+            if (typeof dataOrTitle === 'object' && dataOrTitle !== null) {
+                this.selectedPoliTitle = dataOrTitle.name || '';
+                this.selectedPoliDesc = dataOrTitle.desc || '';
+                this.selectedPoliImages = Array.isArray(dataOrTitle.images) ? dataOrTitle.images : [];
+                this.selectedPoliUrl = dataOrTitle.url || '{{ url('/jadwal-dokter') }}';
+                this.selectedPoliDoctors = Array.isArray(dataOrTitle.doctors) ? dataOrTitle.doctors : [];
+                this.selectedPoliId = dataOrTitle.id || '';
+            } else {
+                this.selectedPoliTitle = dataOrTitle || '';
+                this.selectedPoliDesc = desc || '';
+                this.selectedPoliImages = Array.isArray(images) ? images : [];
+                this.selectedPoliUrl = url || '{{ url('/jadwal-dokter') }}';
+                this.selectedPoliDoctors = Array.isArray(doctors) ? doctors : [];
+                this.selectedPoliId = id || '';
+            }
             this.activePoliChoiceModal = true;
         },
 
