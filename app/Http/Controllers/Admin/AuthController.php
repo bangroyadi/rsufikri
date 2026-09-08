@@ -18,19 +18,33 @@ class AuthController extends Controller
 
     public function login(Request $request)
     {
-        $credentials = $request->validate([
-            'email' => ['required', 'email'],
+        $input = $request->input('login') ?? $request->input('email');
+
+        $request->validate([
             'password' => ['required'],
         ]);
 
-        if (Auth::attempt($credentials, $request->boolean('remember'))) {
+        if (empty($input)) {
+            return back()->withErrors([
+                'login' => 'Email atau Username wajib diisi.',
+                'email' => 'Email atau Username wajib diisi.',
+            ])->withInput();
+        }
+
+        $remember = $request->boolean('remember');
+        $password = $request->input('password');
+
+        // Allow login using either email or name / username
+        if (Auth::attempt(['email' => $input, 'password' => $password], $remember) ||
+            Auth::attempt(['name' => $input, 'password' => $password], $remember)) {
             $request->session()->regenerate();
             return redirect()->intended(route('admin.dashboard'));
         }
 
         return back()->withErrors([
-            'email' => 'Email atau password yang Anda masukkan salah.',
-        ])->onlyInput('email');
+            'login' => 'Email / Username atau password yang Anda masukkan salah.',
+            'email' => 'Email / Username atau password yang Anda masukkan salah.',
+        ])->withInput();
     }
 
     public function logout(Request $request)

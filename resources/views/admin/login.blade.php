@@ -208,15 +208,15 @@
                 @csrf
 
                 <div class="form-group">
-                    <label class="form-label">Alamat Email</label>
+                    <label class="form-label">Email atau Username</label>
                     <div class="form-control-wrap">
-                        <i class="fa-regular fa-envelope"></i>
-                        <input type="email"
-                               name="email"
-                               value="{{ old('email') }}"
+                        <i class="fa-regular fa-user"></i>
+                        <input type="text"
+                               name="login"
+                               value="{{ old('login', old('email')) }}"
                                required
-                               autocomplete="email"
-                               placeholder="input email"
+                               autocomplete="username"
+                               placeholder="input email atau username"
                                class="form-input">
                     </div>
                 </div>

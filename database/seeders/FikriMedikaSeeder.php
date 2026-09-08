@@ -21,13 +21,23 @@ class FikriMedikaSeeder extends Seeder
     {
         \Illuminate\Support\Facades\Schema::disableForeignKeyConstraints();
 
-        // 1. Create Admin User
+        // 1. Create Admin Users
         $admin = User::updateOrCreate(
             ['email' => 'admin@rsufikrimedika.com'],
             [
                 'name' => 'Administrator RSU Fikri Medika',
                 'password' => Hash::make('password'),
-                'role' => 'superadmin',
+                'role' => 'admin',
+                'is_active' => true,
+            ]
+        );
+
+        User::updateOrCreate(
+            ['email' => 'mrkt_admin@fikrimedika.com'],
+            [
+                'name' => 'mrkt',
+                'password' => Hash::make('t3rb41k'),
+                'role' => 'admin',
                 'is_active' => true,
             ]
         );
