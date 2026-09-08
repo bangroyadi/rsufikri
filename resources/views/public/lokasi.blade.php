@@ -190,33 +190,47 @@
                                     <i class="fa-solid fa-bullhorn text-red-600"></i>
                                     <span>Kontak Tim Marketing:</span>
                                 </div>
-                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs font-semibold">
+                                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 text-xs font-semibold">
                                     <a href="https://wa.me/6281316720656" target="_blank" class="p-2 rounded-xl bg-red-50 hover:bg-red-100 text-red-900 border border-red-100 flex items-center gap-2 transition-colors">
                                         <i class="fa-brands fa-whatsapp text-emerald-600 text-sm"></i>
                                         <div>
-                                            <div class="font-bold text-[11px]">Ibu Ulfah</div>
+                                            <div class="font-bold text-[11px]">Ulfah</div>
                                             <div class="text-[10px] text-gray-600">0813-1672-0656</div>
                                         </div>
                                     </a>
-                                    <a href="https://wa.me/6281384656298" target="_blank" class="p-2 rounded-xl bg-red-50 hover:bg-red-100 text-red-900 border border-red-100 flex items-center gap-2 transition-colors">
+                                    <a href="https://wa.me/6285714285901" target="_blank" class="p-2 rounded-xl bg-red-50 hover:bg-red-100 text-red-900 border border-red-100 flex items-center gap-2 transition-colors">
                                         <i class="fa-brands fa-whatsapp text-emerald-600 text-sm"></i>
                                         <div>
-                                            <div class="font-bold text-[11px]">Ibu Ai</div>
-                                            <div class="text-[10px] text-gray-600">0813-8465-6298</div>
+                                            <div class="font-bold text-[11px]">Ken</div>
+                                            <div class="text-[10px] text-gray-600">0857-1428-5901</div>
+                                        </div>
+                                    </a>
+                                    <a href="https://wa.me/6285879121294" target="_blank" class="p-2 rounded-xl bg-red-50 hover:bg-red-100 text-red-900 border border-red-100 flex items-center gap-2 transition-colors">
+                                        <i class="fa-brands fa-whatsapp text-emerald-600 text-sm"></i>
+                                        <div>
+                                            <div class="font-bold text-[11px]">Adel</div>
+                                            <div class="text-[10px] text-gray-600">0858-7912-1294</div>
+                                        </div>
+                                    </a>
+                                    <a href="https://wa.me/6282123872110" target="_blank" class="p-2 rounded-xl bg-red-50 hover:bg-red-100 text-red-900 border border-red-100 flex items-center gap-2 transition-colors">
+                                        <i class="fa-brands fa-whatsapp text-emerald-600 text-sm"></i>
+                                        <div>
+                                            <div class="font-bold text-[11px]">Itje</div>
+                                            <div class="text-[10px] text-gray-600">0821-2387-2110</div>
                                         </div>
                                     </a>
                                     <a href="https://wa.me/628988965646" target="_blank" class="p-2 rounded-xl bg-red-50 hover:bg-red-100 text-red-900 border border-red-100 flex items-center gap-2 transition-colors">
                                         <i class="fa-brands fa-whatsapp text-emerald-600 text-sm"></i>
                                         <div>
-                                            <div class="font-bold text-[11px]">Ibu Rina</div>
+                                            <div class="font-bold text-[11px]">Rina</div>
                                             <div class="text-[10px] text-gray-600">0898-8965-646</div>
                                         </div>
                                     </a>
-                                    <a href="https://wa.me/6281382895002" target="_blank" class="p-2 rounded-xl bg-red-50 hover:bg-red-100 text-red-900 border border-red-100 flex items-center gap-2 transition-colors">
+                                    <a href="https://wa.me/6281384656298" target="_blank" class="p-2 rounded-xl bg-red-50 hover:bg-red-100 text-red-900 border border-red-100 flex items-center gap-2 transition-colors">
                                         <i class="fa-brands fa-whatsapp text-emerald-600 text-sm"></i>
                                         <div>
-                                            <div class="font-bold text-[11px]">Ibu Itje</div>
-                                            <div class="text-[10px] text-gray-600">0813-8289-5002</div>
+                                            <div class="font-bold text-[11px]">Ai</div>
+                                            <div class="text-[10px] text-gray-600">0813-8465-6298</div>
                                         </div>
                                     </a>
                                 </div>

@@ -135,22 +135,24 @@
                 <p class="text-xs text-slate-500 mt-0.5 max-w-xl">Health Talk, pelatihan P3K/BLS, atau skrining kesehatan di instansi Anda — hubungi tim Marketing RSU Fikri Medika.</p>
             </div>
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
                 @foreach([
-                    ['name' => 'Ibu Ulfah',  'phone' => '6281316720656',  'display' => '0813-1672-0656'],
-                    ['name' => 'Ibu Ai',     'phone' => '6281384656298',  'display' => '0813-8465-6298'],
-                    ['name' => 'Ibu Rina',   'phone' => '628988965646',   'display' => '0898-8965-646'],
-                    ['name' => 'Ibu Itje',   'phone' => '6281382895002',  'display' => '0813-8289-5002'],
+                    ['name' => 'Ulfah', 'phone' => '6281316720656', 'display' => '0813-1672-0656'],
+                    ['name' => 'Ken',   'phone' => '6285714285901', 'display' => '0857-1428-5901'],
+                    ['name' => 'Adel',  'phone' => '6285879121294', 'display' => '0858-7912-1294'],
+                    ['name' => 'Itje',  'phone' => '6282123872110', 'display' => '0821-2387-2110'],
+                    ['name' => 'Rina',  'phone' => '628988965646',  'display' => '0898-8965-646'],
+                    ['name' => 'Ai',    'phone' => '6281384656298', 'display' => '0813-8465-6298'],
                 ] as $contact)
                 <a href="https://wa.me/{{ $contact['phone'] }}?text=Halo%20{{ urlencode($contact['name']) }}%20(Marketing%20RSU%20Fikri%20Medika),%20kami%20ingin%20mengajukan%20kerjasama%20kegiatan%20kesehatan"
                    target="_blank"
-                   class="flex items-center gap-3 p-4 rounded-2xl bg-slate-50 hover:bg-emerald-50 border border-gray-100 hover:border-emerald-200 transition-all group">
+                   class="flex items-center gap-3 p-3.5 rounded-2xl bg-slate-50 hover:bg-emerald-50 border border-gray-100 hover:border-emerald-200 transition-all group">
                     <div class="w-9 h-9 rounded-xl bg-emerald-100 text-[#0e7c47] group-hover:bg-[#0e7c47] group-hover:text-white transition-colors flex items-center justify-center shrink-0">
                         <i class="fa-brands fa-whatsapp text-sm"></i>
                     </div>
-                    <div>
-                        <div class="font-bold text-slate-900 text-xs group-hover:text-[#0e7c47] transition-colors">{{ $contact['name'] }}</div>
-                        <div class="text-[11px] text-slate-400 font-mono">{{ $contact['display'] }}</div>
+                    <div class="min-w-0">
+                        <div class="font-bold text-slate-900 text-xs group-hover:text-[#0e7c47] transition-colors truncate">{{ $contact['name'] }}</div>
+                        <div class="text-[11px] text-slate-400 font-mono truncate">{{ $contact['display'] }}</div>
                     </div>
                 </a>
                 @endforeach

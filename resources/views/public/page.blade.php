@@ -560,52 +560,76 @@
                 </a>
             </div>
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-                <a href="https://wa.me/6281316720656?text=Halo%20Ibu%20Ulfah%20(RSU%20Fikri%20Medika),%20saya%20ingin%20konsultasi%20mengenai%20{{ urlencode($title) }}"
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+                <a href="https://wa.me/6281316720656?text=Halo%20Ulfah%20(RSU%20Fikri%20Medika),%20saya%20ingin%20konsultasi%20mengenai%20{{ urlencode($title) }}"
                    target="_blank"
-                   class="p-4 rounded-2xl bg-slate-50 hover:bg-emerald-50/70 border border-gray-100 hover:border-emerald-200 transition-all duration-200 flex items-center gap-3.5 group">
-                    <div class="w-10 h-10 rounded-2xl bg-emerald-100 text-[#0e7c47] group-hover:bg-[#0e7c47] group-hover:text-white transition-colors flex items-center justify-center text-base font-bold shrink-0">
+                   class="p-3.5 rounded-2xl bg-slate-50 hover:bg-emerald-50/70 border border-gray-100 hover:border-emerald-200 transition-all duration-200 flex items-center gap-3 group">
+                    <div class="w-10 h-10 rounded-xl bg-emerald-100 text-[#0e7c47] group-hover:bg-[#0e7c47] group-hover:text-white transition-colors flex items-center justify-center text-base font-bold shrink-0">
                         <i class="fa-brands fa-whatsapp"></i>
                     </div>
-                    <div>
-                        <div class="font-bold text-gray-900 text-xs group-hover:text-[#0e7c47] transition-colors">Ibu Ulfah</div>
-                        <div class="text-[11px] text-gray-500 font-mono mt-0.5">0813-1672-0656</div>
+                    <div class="min-w-0">
+                        <div class="font-bold text-gray-900 text-xs group-hover:text-[#0e7c47] transition-colors truncate">Ulfah</div>
+                        <div class="text-[11px] text-gray-500 font-mono mt-0.5 truncate">0813-1672-0656</div>
                     </div>
                 </a>
 
-                <a href="https://wa.me/6281384656298?text=Halo%20Ibu%20Ai%20(RSU%20Fikri%20Medika),%20saya%20ingin%20konsultasi%20mengenai%20{{ urlencode($title) }}"
+                <a href="https://wa.me/6285714285901?text=Halo%20Ken%20(RSU%20Fikri%20Medika),%20saya%20ingin%20konsultasi%20mengenai%20{{ urlencode($title) }}"
                    target="_blank"
-                   class="p-4 rounded-2xl bg-slate-50 hover:bg-emerald-50/70 border border-gray-100 hover:border-emerald-200 transition-all duration-200 flex items-center gap-3.5 group">
-                    <div class="w-10 h-10 rounded-2xl bg-emerald-100 text-[#0e7c47] group-hover:bg-[#0e7c47] group-hover:text-white transition-colors flex items-center justify-center text-base font-bold shrink-0">
+                   class="p-3.5 rounded-2xl bg-slate-50 hover:bg-emerald-50/70 border border-gray-100 hover:border-emerald-200 transition-all duration-200 flex items-center gap-3 group">
+                    <div class="w-10 h-10 rounded-xl bg-emerald-100 text-[#0e7c47] group-hover:bg-[#0e7c47] group-hover:text-white transition-colors flex items-center justify-center text-base font-bold shrink-0">
                         <i class="fa-brands fa-whatsapp"></i>
                     </div>
-                    <div>
-                        <div class="font-bold text-gray-900 text-xs group-hover:text-[#0e7c47] transition-colors">Ibu Ai</div>
-                        <div class="text-[11px] text-gray-500 font-mono mt-0.5">0813-8465-6298</div>
+                    <div class="min-w-0">
+                        <div class="font-bold text-gray-900 text-xs group-hover:text-[#0e7c47] transition-colors truncate">Ken</div>
+                        <div class="text-[11px] text-gray-500 font-mono mt-0.5 truncate">0857-1428-5901</div>
                     </div>
                 </a>
 
-                <a href="https://wa.me/628988965646?text=Halo%20Ibu%20Rina%20(RSU%20Fikri%20Medika),%20saya%20ingin%20konsultasi%20mengenai%20{{ urlencode($title) }}"
+                <a href="https://wa.me/6285879121294?text=Halo%20Adel%20(RSU%20Fikri%20Medika),%20saya%20ingin%20konsultasi%20mengenai%20{{ urlencode($title) }}"
                    target="_blank"
-                   class="p-4 rounded-2xl bg-slate-50 hover:bg-emerald-50/70 border border-gray-100 hover:border-emerald-200 transition-all duration-200 flex items-center gap-3.5 group">
-                    <div class="w-10 h-10 rounded-2xl bg-emerald-100 text-[#0e7c47] group-hover:bg-[#0e7c47] group-hover:text-white transition-colors flex items-center justify-center text-base font-bold shrink-0">
+                   class="p-3.5 rounded-2xl bg-slate-50 hover:bg-emerald-50/70 border border-gray-100 hover:border-emerald-200 transition-all duration-200 flex items-center gap-3 group">
+                    <div class="w-10 h-10 rounded-xl bg-emerald-100 text-[#0e7c47] group-hover:bg-[#0e7c47] group-hover:text-white transition-colors flex items-center justify-center text-base font-bold shrink-0">
                         <i class="fa-brands fa-whatsapp"></i>
                     </div>
-                    <div>
-                        <div class="font-bold text-gray-900 text-xs group-hover:text-[#0e7c47] transition-colors">Ibu Rina</div>
-                        <div class="text-[11px] text-gray-500 font-mono mt-0.5">0898-8965-646</div>
+                    <div class="min-w-0">
+                        <div class="font-bold text-gray-900 text-xs group-hover:text-[#0e7c47] transition-colors truncate">Adel</div>
+                        <div class="text-[11px] text-gray-500 font-mono mt-0.5 truncate">0858-7912-1294</div>
                     </div>
                 </a>
 
-                <a href="https://wa.me/6281382895002?text=Halo%20Ibu%20Itje%20(RSU%20Fikri%20Medika),%20saya%20ingin%20konsultasi%20mengenai%20{{ urlencode($title) }}"
+                <a href="https://wa.me/6282123872110?text=Halo%20Itje%20(RSU%20Fikri%20Medika),%20saya%20ingin%20konsultasi%20mengenai%20{{ urlencode($title) }}"
                    target="_blank"
-                   class="p-4 rounded-2xl bg-slate-50 hover:bg-emerald-50/70 border border-gray-100 hover:border-emerald-200 transition-all duration-200 flex items-center gap-3.5 group">
-                    <div class="w-10 h-10 rounded-2xl bg-emerald-100 text-[#0e7c47] group-hover:bg-[#0e7c47] group-hover:text-white transition-colors flex items-center justify-center text-base font-bold shrink-0">
+                   class="p-3.5 rounded-2xl bg-slate-50 hover:bg-emerald-50/70 border border-gray-100 hover:border-emerald-200 transition-all duration-200 flex items-center gap-3 group">
+                    <div class="w-10 h-10 rounded-xl bg-emerald-100 text-[#0e7c47] group-hover:bg-[#0e7c47] group-hover:text-white transition-colors flex items-center justify-center text-base font-bold shrink-0">
                         <i class="fa-brands fa-whatsapp"></i>
                     </div>
-                    <div>
-                        <div class="font-bold text-gray-900 text-xs group-hover:text-[#0e7c47] transition-colors">Ibu Itje</div>
-                        <div class="text-[11px] text-gray-500 font-mono mt-0.5">0813-8289-5002</div>
+                    <div class="min-w-0">
+                        <div class="font-bold text-gray-900 text-xs group-hover:text-[#0e7c47] transition-colors truncate">Itje</div>
+                        <div class="text-[11px] text-gray-500 font-mono mt-0.5 truncate">0821-2387-2110</div>
+                    </div>
+                </a>
+
+                <a href="https://wa.me/628988965646?text=Halo%20Rina%20(RSU%20Fikri%20Medika),%20saya%20ingin%20konsultasi%20mengenai%20{{ urlencode($title) }}"
+                   target="_blank"
+                   class="p-3.5 rounded-2xl bg-slate-50 hover:bg-emerald-50/70 border border-gray-100 hover:border-emerald-200 transition-all duration-200 flex items-center gap-3 group">
+                    <div class="w-10 h-10 rounded-xl bg-emerald-100 text-[#0e7c47] group-hover:bg-[#0e7c47] group-hover:text-white transition-colors flex items-center justify-center text-base font-bold shrink-0">
+                        <i class="fa-brands fa-whatsapp"></i>
+                    </div>
+                    <div class="min-w-0">
+                        <div class="font-bold text-gray-900 text-xs group-hover:text-[#0e7c47] transition-colors truncate">Rina</div>
+                        <div class="text-[11px] text-gray-500 font-mono mt-0.5 truncate">0898-8965-646</div>
+                    </div>
+                </a>
+
+                <a href="https://wa.me/6281384656298?text=Halo%20Ai%20(RSU%20Fikri%20Medika),%20saya%20ingin%20konsultasi%20mengenai%20{{ urlencode($title) }}"
+                   target="_blank"
+                   class="p-3.5 rounded-2xl bg-slate-50 hover:bg-emerald-50/70 border border-gray-100 hover:border-emerald-200 transition-all duration-200 flex items-center gap-3 group">
+                    <div class="w-10 h-10 rounded-xl bg-emerald-100 text-[#0e7c47] group-hover:bg-[#0e7c47] group-hover:text-white transition-colors flex items-center justify-center text-base font-bold shrink-0">
+                        <i class="fa-brands fa-whatsapp"></i>
+                    </div>
+                    <div class="min-w-0">
+                        <div class="font-bold text-gray-900 text-xs group-hover:text-[#0e7c47] transition-colors truncate">Ai</div>
+                        <div class="text-[11px] text-gray-500 font-mono mt-0.5 truncate">0813-8465-6298</div>
                     </div>
                 </a>
             </div>
