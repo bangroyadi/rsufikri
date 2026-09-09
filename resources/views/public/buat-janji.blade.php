@@ -79,49 +79,138 @@
                         <label class="block text-xs sm:text-sm font-bold text-gray-900 mb-1.5 flex items-center justify-between">
                             <span class="flex items-center gap-1.5">
                                 <i class="fa-solid fa-user text-[#0e7c47] text-xs"></i>
-                                <span>{{ __('Nama Lengkap Pasien') }}</span>
+                                <span>{{ __('Nama Pasien') }}</span>
                             </span>
                             <span class="text-xs text-red-500 font-bold">* {{ __('Wajib') }}</span>
                         </label>
-                        <input type="text" x-model="form.nama" placeholder="Masukkan nama sesuai KTP / Identitas" required
+                        <input type="text" x-model="form.nama" placeholder="Masukkan nama pasien sesuai KTP / KK" required
                                class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:border-[#0e7c47] focus:ring-2 focus:ring-[#0e7c47]/20 text-xs sm:text-sm font-medium text-gray-900 placeholder-gray-400 bg-white transition-all shadow-xs">
                     </div>
 
-                    <!-- NO HP & RENCANA TANGGAL -->
+                    <!-- TGL LAHIR & NIK -->
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                        <!-- NO HP -->
+                        <!-- TGL LAHIR PASIEN -->
                         <div>
                             <label class="block text-xs sm:text-sm font-bold text-gray-900 mb-1.5 flex items-center justify-between">
                                 <span class="flex items-center gap-1.5">
-                                    <i class="fa-brands fa-whatsapp text-emerald-600 text-xs"></i>
-                                    <span>{{ __('No. HP / WhatsApp Active') }}</span>
+                                    <i class="fa-regular fa-calendar text-[#0e7c47] text-xs"></i>
+                                    <span>{{ __('Tgl Lahir Pasien') }}</span>
                                 </span>
                                 <span class="text-xs text-red-500 font-bold">* {{ __('Wajib') }}</span>
                             </label>
-                            <input type="tel" x-model="form.no_hp" placeholder="Contoh: 081234567890" required
-                                   class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:border-[#0e7c47] focus:ring-2 focus:ring-[#0e7c47]/20 text-xs sm:text-sm font-medium text-gray-900 placeholder-gray-400 bg-white transition-all shadow-xs">
+                            <input type="date" x-model="form.tgl_lahir" required
+                                   class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:border-[#0e7c47] focus:ring-2 focus:ring-[#0e7c47]/20 text-xs sm:text-sm font-medium text-gray-900 bg-white transition-all shadow-xs">
                         </div>
 
-                        <!-- RENCANA TANGGAL BEROBAT -->
+                        <!-- NIK -->
                         <div>
-                            <label class="block text-xs sm:text-sm font-bold text-gray-900 mb-1.5 flex items-center gap-1.5">
-                                <i class="fa-regular fa-calendar-check text-[#0e7c47] text-xs"></i>
-                                <span>{{ __('Rencana Tanggal Berobat') }}</span>
+                            <label class="block text-xs sm:text-sm font-bold text-gray-900 mb-1.5 flex items-center justify-between">
+                                <span class="flex items-center gap-1.5">
+                                    <i class="fa-solid fa-id-card text-[#0e7c47] text-xs"></i>
+                                    <span>{{ __('NIK (Nomor Induk Kependudukan)') }}</span>
+                                </span>
+                                <span class="text-xs text-red-500 font-bold">* {{ __('Wajib') }}</span>
                             </label>
-                            <input type="date" x-model="form.tanggal"
-                                   class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:border-[#0e7c47] focus:ring-2 focus:ring-[#0e7c47]/20 text-xs sm:text-sm font-medium text-gray-900 bg-white transition-all shadow-xs">
+                            <input type="text" x-model="form.nik" placeholder="16 digit NIK KTP / KK" maxlength="16" required
+                                   class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:border-[#0e7c47] focus:ring-2 focus:ring-[#0e7c47]/20 text-xs sm:text-sm font-medium text-gray-900 placeholder-gray-400 bg-white transition-all shadow-xs">
                         </div>
                     </div>
 
-                    <!-- JENIS JAMINAN SELECTOR CARDS (MATCHING PROFIL.BLADE.PHP CARDS) -->
+                    <!-- NAMA AYAH & NAMA IBU -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                        <!-- NAMA AYAH -->
+                        <div>
+                            <label class="block text-xs sm:text-sm font-bold text-gray-900 mb-1.5 flex items-center gap-1.5">
+                                <i class="fa-solid fa-user-tie text-[#0e7c47] text-xs"></i>
+                                <span>{{ __('Nama Ayah') }}</span>
+                            </label>
+                            <input type="text" x-model="form.nama_ayah" placeholder="Masukkan nama ayah kandung"
+                                   class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:border-[#0e7c47] focus:ring-2 focus:ring-[#0e7c47]/20 text-xs sm:text-sm font-medium text-gray-900 placeholder-gray-400 bg-white transition-all shadow-xs">
+                        </div>
+
+                        <!-- NAMA IBU -->
+                        <div>
+                            <label class="block text-xs sm:text-sm font-bold text-gray-900 mb-1.5 flex items-center gap-1.5">
+                                <i class="fa-solid fa-person-dress text-[#0e7c47] text-xs"></i>
+                                <span>{{ __('Nama Ibu') }}</span>
+                            </label>
+                            <input type="text" x-model="form.nama_ibu" placeholder="Masukkan nama ibu kandung"
+                                   class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:border-[#0e7c47] focus:ring-2 focus:ring-[#0e7c47]/20 text-xs sm:text-sm font-medium text-gray-900 placeholder-gray-400 bg-white transition-all shadow-xs">
+                        </div>
+                    </div>
+
+                    <!-- ALAMAT LENGKAP -->
+                    <div>
+                        <label class="block text-xs sm:text-sm font-bold text-gray-900 mb-1.5 flex items-center justify-between">
+                            <span class="flex items-center gap-1.5">
+                                <i class="fa-solid fa-location-dot text-[#0e7c47] text-xs"></i>
+                                <span>{{ __('Alamat Lengkap') }}</span>
+                            </span>
+                            <span class="text-xs text-red-500 font-bold">* {{ __('Wajib') }}</span>
+                        </label>
+                        <textarea x-model="form.alamat" rows="2" placeholder="Masukkan alamat lengkap RT/RW, Dusun/Desa, Kecamatan, Kabupaten..." required
+                                  class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:border-[#0e7c47] focus:ring-2 focus:ring-[#0e7c47]/20 text-xs sm:text-sm font-medium text-gray-900 placeholder-gray-400 bg-white transition-all shadow-xs"></textarea>
+                    </div>
+
+                    <!-- NO HP AKTIF -->
+                    <div>
+                        <label class="block text-xs sm:text-sm font-bold text-gray-900 mb-1.5 flex items-center justify-between">
+                            <span class="flex items-center gap-1.5">
+                                <i class="fa-brands fa-whatsapp text-emerald-600 text-xs"></i>
+                                <span>{{ __('Nomor HP Aktif (WhatsApp)') }}</span>
+                            </span>
+                            <span class="text-xs text-red-500 font-bold">* {{ __('Wajib') }}</span>
+                        </label>
+                        <input type="tel" x-model="form.no_hp" placeholder="Contoh: 081234567890" required
+                               class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:border-[#0e7c47] focus:ring-2 focus:ring-[#0e7c47]/20 text-xs sm:text-sm font-medium text-gray-900 placeholder-gray-400 bg-white transition-all shadow-xs">
+                    </div>
+
+                    <!-- HARI/TGL BEROBAT & JAM KEDATANGAN -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                        <!-- HARI/TGL BEROBAT -->
+                        <div>
+                            <label class="block text-xs sm:text-sm font-bold text-gray-900 mb-1.5 flex items-center justify-between">
+                                <span class="flex items-center gap-1.5">
+                                    <i class="fa-regular fa-calendar-check text-[#0e7c47] text-xs"></i>
+                                    <span>{{ __('Hari / Tgl Berobat') }}</span>
+                                </span>
+                                <span class="text-xs text-red-500 font-bold">* {{ __('Wajib') }}</span>
+                            </label>
+                            <input type="date" x-model="form.tanggal" required
+                                   class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:border-[#0e7c47] focus:ring-2 focus:ring-[#0e7c47]/20 text-xs sm:text-sm font-medium text-gray-900 bg-white transition-all shadow-xs">
+                            <div class="text-[11px] text-emerald-700 font-semibold mt-1" x-show="formattedHariTanggal" x-text="'📅 ' + formattedHariTanggal"></div>
+                        </div>
+
+                        <!-- JAM KEDATANGAN KE RS -->
+                        <div>
+                            <label class="block text-xs sm:text-sm font-bold text-gray-900 mb-1.5 flex items-center gap-1.5">
+                                <i class="fa-regular fa-clock text-[#0e7c47] text-xs"></i>
+                                <span>{{ __('Jam Kedatangan ke RS') }}</span>
+                            </label>
+                            <div class="relative">
+                                <input type="text" x-model="form.jam_kedatangan" placeholder="Contoh: 09:00 WIB / Pagi"
+                                       class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:border-[#0e7c47] focus:ring-2 focus:ring-[#0e7c47]/20 text-xs sm:text-sm font-medium text-gray-900 placeholder-gray-400 bg-white transition-all shadow-xs">
+                            </div>
+                            <!-- Quick Time Picks -->
+                            <div class="flex flex-wrap gap-1.5 mt-1.5">
+                                <template x-for="timeSlot in ['08:00 WIB', '10:00 WIB', '13:00 WIB', '16:00 WIB', '18:00 WIB']" :key="timeSlot">
+                                    <button type="button" @click="form.jam_kedatangan = timeSlot" 
+                                            :class="form.jam_kedatangan === timeSlot ? 'bg-[#0e7c47] text-white' : 'bg-gray-100 text-gray-700 hover:bg-emerald-50'"
+                                            class="text-[10px] px-2 py-0.5 rounded-md font-semibold transition-all" x-text="timeSlot"></button>
+                                </template>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- JENIS JAMINAN SELECTOR CARDS -->
                     <div>
                         <label class="block text-xs sm:text-sm font-bold text-gray-900 mb-1.5">
-                            <span>{{ __('Jenis Jaminan / Pembayaran Pasien') }}</span>
+                            <span>{{ __('Jaminan / Pembayaran Pasien') }}</span>
                         </label>
                         <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
                             <!-- PASIEN UMUM -->
-                            <button type="button" @click="form.jaminan = 'Pasien Umum / Mandiri'" 
-                                    :class="form.jaminan === 'Pasien Umum / Mandiri' ? 'border-[#0e7c47] bg-emerald-50/80 text-[#0e7c47] font-bold ring-2 ring-[#0e7c47]/20' : 'border-gray-200 bg-white text-gray-700 hover:border-emerald-200'"
+                            <button type="button" @click="form.jaminan = 'Umum / Mandiri'" 
+                                    :class="form.jaminan === 'Umum / Mandiri' ? 'border-[#0e7c47] bg-emerald-50/80 text-[#0e7c47] font-bold ring-2 ring-[#0e7c47]/20' : 'border-gray-200 bg-white text-gray-700 hover:border-emerald-200'"
                                     class="p-3.5 rounded-2xl border text-left flex items-center gap-3 transition-all text-xs">
                                 <div class="w-8 h-8 rounded-xl bg-yellow-400 text-slate-950 flex items-center justify-center text-sm font-bold shrink-0 shadow-xs">
                                     <i class="fa-solid fa-wallet"></i>
@@ -141,7 +230,7 @@
                                 </div>
                                 <div>
                                     <div class="font-bold text-gray-900">{{ __('BPJS Kesehatan') }}</div>
-                                    <div class="text-[10px] text-gray-500 font-medium">{{ __('Membawa Rujukan') }}</div>
+                                    <div class="text-[10px] text-gray-500 font-medium">{{ __('Rujukan Faskes') }}</div>
                                 </div>
                             </button>
 
@@ -160,26 +249,13 @@
                         </div>
                     </div>
 
-                    <!-- ALAMAT LENGKAP -->
-                    <div>
-                        <label class="block text-xs sm:text-sm font-bold text-gray-900 mb-1.5 flex items-center justify-between">
-                            <span class="flex items-center gap-1.5">
-                                <i class="fa-solid fa-location-dot text-[#0e7c47] text-xs"></i>
-                                <span>{{ __('Alamat Lengkap Pasien') }}</span>
-                            </span>
-                            <span class="text-xs text-red-500 font-bold">* {{ __('Wajib') }}</span>
-                        </label>
-                        <textarea x-model="form.alamat" rows="2" placeholder="Masukkan alamat lengkap RT/RW, Desa, Kecamatan, Kabupaten..." required
-                                  class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:border-[#0e7c47] focus:ring-2 focus:ring-[#0e7c47]/20 text-xs sm:text-sm font-medium text-gray-900 placeholder-gray-400 bg-white transition-all shadow-xs"></textarea>
-                    </div>
-
-                    <!-- POLIKLINIK & DOKTER SELECTION -->
+                    <!-- TUJUAN POLI & DOKTER SELECTION -->
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 pt-1">
                         <!-- POLIKLINIK (CUSTOM DROPDOWN) -->
                         <div x-data="{ openPoli: false, searchPoli: '' }" @click.outside="openPoli = false" class="relative">
                             <label class="block text-xs sm:text-sm font-bold text-gray-900 mb-1.5 flex items-center gap-1.5">
                                 <i class="fa-solid fa-hospital-user text-[#0e7c47] text-xs"></i>
-                                <span>{{ __('Poliklinik Tujuan (Opsional)') }}</span>
+                                <span>{{ __('Tujuan Poli (Poliklinik)') }}</span>
                             </label>
                             
                             <!-- Trigger Button -->
@@ -234,7 +310,7 @@
                         <div x-data="{ openDoc: false, searchDoc: '' }" @click.outside="openDoc = false" class="relative">
                             <label class="block text-xs sm:text-sm font-bold text-gray-900 mb-1.5 flex items-center gap-1.5">
                                 <i class="fa-solid fa-user-doctor text-[#0e7c47] text-xs"></i>
-                                <span>{{ __('Dokter Spesialis (Opsional)') }}</span>
+                                <span>{{ __('Dokter Spesialis') }}</span>
                             </label>
 
                             <!-- Trigger Button -->
@@ -285,16 +361,16 @@
                         </div>
                     </div>
 
-                    <!-- KELUHAN UTAMA -->
+                    <!-- KELUHAN UTAMA (OPSIONAL) -->
                     <div>
                         <label class="block text-xs sm:text-sm font-bold text-gray-900 mb-1.5 flex items-center justify-between">
                             <span class="flex items-center gap-1.5">
                                 <i class="fa-solid fa-notes-medical text-[#0e7c47] text-xs"></i>
                                 <span>{{ __('Keluhan Utama / Alasan Berobat') }}</span>
                             </span>
-                            <span class="text-xs text-red-500 font-bold">* {{ __('Wajib') }}</span>
+                            <span class="text-[11px] text-gray-500 font-normal">({{ __('Opsional') }})</span>
                         </label>
-                        <textarea x-model="form.keluhan" rows="3" placeholder="Tuliskan keluhan medis atau gejala yang dirasakan saat ini..." required
+                        <textarea x-model="form.keluhan" rows="2" placeholder="Tuliskan keluhan medis atau gejala yang dirasakan (opsional)..."
                                   class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:border-[#0e7c47] focus:ring-2 focus:ring-[#0e7c47]/20 text-xs sm:text-sm font-medium text-gray-900 placeholder-gray-400 bg-white transition-all shadow-xs"></textarea>
                     </div>
 
@@ -333,14 +409,14 @@
                     <div class="self-start max-w-[85%] bg-white p-3 rounded-2xl rounded-tl-xs shadow-xs text-xs text-gray-800 space-y-1">
                         <div class="font-bold text-[#075e54] text-[10px]">Call Center RSU Fikri Medika</div>
                         <p class="leading-relaxed font-medium">
-                            Selamat datang di Call Center RSU Fikri Medika Karawang. Format pendaftaran Anda akan tersusun secara otomatis pada pesan di bawah ini.
+                            Selamat datang di Call Center RSU Fikri Medika Karawang. Format pendaftaran resmi Anda tersusun otomatis pada pesan di bawah ini.
                         </p>
                     </div>
 
                     <!-- OUTGOING LIVE PREVIEW BUBBLE -->
                     <div class="self-end max-w-[90%] bg-[#dcf8c6] p-3.5 rounded-2xl rounded-tr-xs shadow-xs text-xs text-slate-900 space-y-1.5 border border-emerald-200">
                         <div class="text-[10px] font-bold text-emerald-800 uppercase tracking-wider border-b border-emerald-200/60 pb-1 flex justify-between items-center">
-                            <span>Format Teks Pendaftaran</span>
+                            <span>Format WA Resmi Pendaftaran</span>
                             <span class="text-emerald-700 font-semibold" x-text="copied ? '✓ Copied' : ''"></span>
                         </div>
                         
@@ -362,7 +438,7 @@
                         <span>{{ __('Kirim Pendaftaran ke WhatsApp Call Center') }}</span>
                     </button>
 
-                    <a href="https://api.whatsapp.com/send/?phone=6282280749999&text=Selamat+datang+di+Call+Center+RSU+Fikri+Medika%0ASilahkan+isi+format+berikut%3A%0ANama%3A%0ANo.+HP%3A%0AAlamat%3A%0AKeluhan%3A&type=phone_number&app_absent=0" 
+                    <a :href="blankWaUrl" 
                        target="_blank"
                        class="w-full sm:w-auto py-3.5 px-4 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold text-xs transition-colors border border-gray-200 flex items-center justify-center gap-1.5 text-center shrink-0">
                         <i class="fa-solid fa-arrow-up-right-from-square text-xs text-[#0e7c47]"></i>
@@ -401,7 +477,7 @@
                     <span class="text-[10px] px-2 py-0.5 rounded-full bg-emerald-600 text-white">24 Jam</span>
                 </div>
 
-                <a href="https://api.whatsapp.com/send/?phone=6282280749999&text=Selamat+datang+di+Call+Center+RSU+Fikri+Medika%0ASilahkan+isi+format+berikut%3A%0ANama%3A%0ANo.+HP%3A%0AAlamat%3A%0AKeluhan%3A&type=phone_number&app_absent=0" 
+                <a :href="blankWaUrl" 
                    target="_blank"
                    class="w-full py-3 px-4 rounded-xl bg-yellow-400 hover:bg-yellow-300 text-slate-950 font-black text-xs transition-colors shadow flex items-center justify-center gap-2">
                     <i class="fa-brands fa-whatsapp text-sm"></i>
@@ -479,12 +555,17 @@ function buatJanjiForm() {
             status_pasien: 'baru',
             no_rm: '',
             nama: '',
-            no_hp: '',
+            tgl_lahir: '',
+            nik: '',
             alamat: '',
+            nama_ayah: '',
+            nama_ibu: '',
             poliklinik_id: selectedPoliId || '',
             dokter_id: selectedDoctorId || '',
+            jaminan: 'Umum / Mandiri',
             tanggal: new Date().toISOString().split('T')[0],
-            jaminan: 'Pasien Umum / Mandiri',
+            no_hp: '',
+            jam_kedatangan: '',
             keluhan: ''
         },
         doctorsList: doctors,
@@ -540,30 +621,74 @@ function buatJanjiForm() {
             return this.getPoliName(poli);
         },
 
-        get generatedMessage() {
-            let msg = `Selamat datang di Call Center RSU Fikri Medika\nSilahkan isi format berikut:\n`;
-            msg += `Nama: ${this.form.nama || ''}\n`;
-            msg += `No. HP: ${this.form.no_hp || ''}\n`;
-            msg += `Alamat: ${this.form.alamat || ''}\n`;
-            msg += `Keluhan: ${this.form.keluhan || ''}`;
+        get formattedTujuanPoliDokter() {
+            let parts = [];
+            if (this.selectedPoliName) parts.push(this.selectedPoliName);
+            if (this.selectedDoctorName) parts.push(this.selectedDoctorName);
+            return parts.join(' & ') || '';
+        },
 
-            // Attach extra details cleanly
+        get formattedTglLahir() {
+            if (!this.form.tgl_lahir) return '';
+            try {
+                const d = new Date(this.form.tgl_lahir + 'T00:00:00');
+                const months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+                const dayNum = String(d.getDate()).padStart(2, '0');
+                const monthName = months[d.getMonth()];
+                const year = d.getFullYear();
+                return `${dayNum} ${monthName} ${year}`;
+            } catch(e) {
+                return this.form.tgl_lahir;
+            }
+        },
+
+        get formattedHariTanggal() {
+            if (!this.form.tanggal) return '';
+            try {
+                const d = new Date(this.form.tanggal + 'T00:00:00');
+                const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+                const months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+                const dayName = days[d.getDay()];
+                const dayNum = String(d.getDate()).padStart(2, '0');
+                const monthName = months[d.getMonth()];
+                const year = d.getFullYear();
+                return `${dayName}, ${dayNum} ${monthName} ${year}`;
+            } catch(e) {
+                return this.form.tanggal;
+            }
+        },
+
+        get generatedMessage() {
+            let msg = `Nama pasien : ${this.form.nama || ''}\n` +
+                      `Tgl lahir pasien : ${this.formattedTglLahir || this.form.tgl_lahir || ''}\n` +
+                      `NIK : ${this.form.nik || ''}\n` +
+                      `Alamat Lengkap: ${this.form.alamat || ''}\n` +
+                      `Nama Ayah : ${this.form.nama_ayah || ''}\n` +
+                      `Nama Ibu : ${this.form.nama_ibu || ''}\n` +
+                      `Tujuan Poli & dokter : ${this.formattedTujuanPoliDokter || ''}\n` +
+                      `Jaminan : ${this.form.jaminan || ''}\n` +
+                      `Hari/Tgl berobat : ${this.formattedHariTanggal || this.form.tanggal || ''}\n` +
+                      `Nomor HP aktif : ${this.form.no_hp || ''}\n` +
+                      `Jam kedatangan ke RS : ${this.form.jam_kedatangan || ''}`;
+
             let extras = [];
             if (this.form.status_pasien === 'lama') {
-                extras.push(`Status: Pasien Lama (No. RM: ${this.form.no_rm || '-'})`);
-            } else {
-                extras.push(`Status: Pasien Baru`);
+                extras.push(`Status Pasien: Pasien Lama (No. RM: ${this.form.no_rm || '-'})`);
             }
-            if (this.selectedPoliName) extras.push(`Poliklinik: ${this.selectedPoliName}`);
-            if (this.selectedDoctorName) extras.push(`Dokter: ${this.selectedDoctorName}`);
-            if (this.form.tanggal) extras.push(`Rencana Berobat: ${this.form.tanggal}`);
-            if (this.form.jaminan) extras.push(`Jaminan: ${this.form.jaminan}`);
-
+            if (this.form.keluhan) {
+                extras.push(`Keluhan / Alasan Berobat: ${this.form.keluhan}`);
+            }
             if (extras.length > 0) {
-                msg += `\n\n--- Detail Tambahan ---\n` + extras.join('\n');
+                msg += `\n\n--- Catatan Tambahan ---\n` + extras.join('\n');
             }
 
             return msg;
+        },
+
+        get blankWaUrl() {
+            const blankTemplate = `Nama pasien :\nTgl lahir pasien :\nNIK :\nAlamat Lengkap:\nNama Ayah :\nNama Ibu :\nTujuan Poli & dokter :\nJaminan :\nHari/Tgl berobat : \nNomor HP aktif :\nJam kedatangan ke RS : `;
+            const phone = '6282280749999';
+            return `https://api.whatsapp.com/send/?phone=${phone}&text=${encodeURIComponent(blankTemplate)}&type=phone_number&app_absent=0`;
         },
 
         submitToWhatsapp() {
