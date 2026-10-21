@@ -293,7 +293,7 @@
                             <strong>RSU Fikri Medika</strong> berdiri pada tahun 2008 dan didirikan dengan semangat untuk mendekatkan akses pelayanan kesehatan sekunder bagi masyarakat Karawang dan sekitarnya. Sejak awal berdirinya, rumah sakit ini terus mengalami perkembangan yang signifikan, baik dari segi penambahan fasilitas fisik, peningkatan jumlah dokter spesialis, maupun digitalisasi proses bisnis.
                         </p>
                         <p style="margin-bottom: 0;">
-                            Transformasi digital yang dimulai dari sistem billing sederhana kini telah berkembang menjadi sistem informasi rumah sakit terintegrasi yang mencakup implementasi Rekam Medis Elektronik (RME) secara menyeluruh. Di bawah kepemimpinan Direktur <strong>Apt. Bintari Ari Kusumawati, S.Farm., MMRS</strong>, RSU Fikri Medika berkomitmen penuh untuk menjalani siklus akreditasi berkala sebagai bentuk penjaminan mutu pelayanan dan keselamatan pasien.
+                            Transformasi digital yang dimulai dari sistem billing sederhana kini telah berkembang menjadi sistem informasi rumah sakit terintegrasi yang mencakup implementasi Rekam Medis Elektronik (RME) secara menyeluruh. Di bawah kepemimpinan Direktur <strong>Apt. Bintari Ari Kusumawati, S.Farm., MMRS</strong>, RSU Fikri Medika Berkomitmen penuh terhadap Pelayanan Mutu Keselamatan Pasien dan Service Excelent.
                         </p>
                     </div>
                 </div>
@@ -333,7 +333,7 @@
                     <div style="margin-top: 8px;">
                         <h3 style="font-size: 21px; font-weight: 700; color: #0f172a; margin-bottom: 6px;">Visi RSU Fikri Medika</h3>
                         <p style="font-size: 14.5px; color: #334155; line-height: 1.6; margin: 0;">
-                            Menjadikan Rumah Sakit Swasta yang menyediakan layanan berkualitas, unggul dan terpercaya di Karawang.
+                            Menjadikan Rumah Sakit Swasta yang menyediakan layanan berkualitas, unggul dan terpercaya di Jawa Barat.
                         </p>
                     </div>
 

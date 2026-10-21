@@ -64,25 +64,49 @@
         <div class="flex flex-col md:flex-row items-center md:items-start gap-6 sm:gap-8">
             
             <!-- DOCTOR PHOTO -->
-            <div class="shrink-0">
-                <div class="w-36 h-36 sm:w-44 sm:h-44 rounded-3xl overflow-hidden border-4 border-emerald-600/90 p-1 bg-gradient-to-b from-emerald-50 to-teal-50 shadow-md relative flex items-center justify-center">
+            <div class="shrink-0 flex justify-center">
+                <div class="doctor-photo-container relative overflow-hidden rounded-2xl shadow-md bg-slate-100 flex items-center justify-center">
                     @if(!empty($photoUrl))
                         <img src="{{ $photoUrl }}" 
                              alt="{{ $doctor->name }} {{ $doctor->title_degree }} dokter spesialis {{ $specialtyText }} RSU Fikri Medika Karawang" 
-                             class="w-full h-full object-cover rounded-2xl"
-                             style="object-fit: cover; object-position: center 10%;"
+                             class="doctor-photo-img"
                              onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="w-full h-full rounded-2xl bg-gradient-to-tr from-[#096237] to-[#0e7c47] text-white hidden items-center justify-center text-5xl font-bold shadow-inner">
-                            <i class="fa-solid fa-user-doctor text-4xl text-white"></i>
+                        <div class="w-full h-full bg-gradient-to-tr from-[#096237] to-[#0e7c47] text-white hidden items-center justify-center text-5xl font-bold">
+                            <i class="fa-solid fa-user-doctor text-5xl text-white"></i>
                         </div>
                     @else
-                        <div class="w-full h-full rounded-2xl bg-gradient-to-tr from-[#096237] via-[#0e7c47] to-[#159b5a] text-white flex flex-col items-center justify-center gap-2 shadow-inner">
-                            <i class="fa-solid fa-user-doctor text-4xl sm:text-5xl text-white drop-shadow-sm"></i>
-                            <span class="text-[10px] font-extrabold text-emerald-100 uppercase tracking-widest">RSU FIKRI MEDIKA</span>
+                        <div class="w-full h-full bg-gradient-to-tr from-[#096237] via-[#0e7c47] to-[#159b5a] text-white flex flex-col items-center justify-center gap-3">
+                            <i class="fa-solid fa-user-doctor text-5xl sm:text-6xl text-white drop-shadow-sm"></i>
+                            <span class="text-xs font-extrabold text-emerald-100 uppercase tracking-widest">RSU FIKRI MEDIKA</span>
                         </div>
                     @endif
                 </div>
             </div>
+
+            <style>
+                .doctor-photo-container {
+                    width: 280px !important;
+                    height: 350px !important;
+                    max-width: 100% !important;
+                    border: none !important;
+                    border-radius: 1rem !important;
+                    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05) !important;
+                }
+                .doctor-photo-img {
+                    width: 100% !important;
+                    height: 100% !important;
+                    object-fit: cover !important;
+                    object-position: center top !important;
+                    display: block !important;
+                    border: none !important;
+                }
+                @media (max-width: 640px) {
+                    .doctor-photo-container {
+                        width: 220px !important;
+                        height: 275px !important;
+                    }
+                }
+            </style>
 
             <!-- DOCTOR MAIN INFO -->
             <div class="space-y-4 flex-1 text-center md:text-left">
