@@ -237,7 +237,8 @@ class HomeController extends Controller
         $category = $request->query('kategori', 'all');
         $query = $request->query('q');
 
-        $promosQuery = Promo::where('is_active', true)->orderBy('order', 'asc')->orderBy('created_at', 'desc');
+        // Urutan: Penawaran terbaru di-create tampil paling atas
+        $promosQuery = Promo::where('is_active', true)->latest('created_at')->latest('id');
 
         if (!empty($category) && $category !== 'all') {
             $promosQuery->where('category', $category);
@@ -253,28 +254,31 @@ class HomeController extends Controller
             });
         }
 
-        $promos = $promosQuery->get();
-        $featuredPromos = Promo::where('is_active', true)->where('is_featured', true)->orderBy('order', 'asc')->get();
+        // Maksimal 6 konten penawaran per halaman
+        $promos = $promosQuery->paginate(6)->withQueryString();
+        $featuredPromos = Promo::where('is_active', true)->where('is_featured', true)->latest('created_at')->get();
         $categories = Promo::where('is_active', true)->distinct()->pluck('category')->filter()->values();
+        $totalAllCount = Promo::where('is_active', true)->count();
 
-        return view('public.promo.index', compact('promos', 'featuredPromos', 'categories', 'profile', 'category', 'query'));
+        return view('public.promo.index', compact('promos', 'featuredPromos', 'categories', 'profile', 'category', 'query', 'totalAllCount'));
     }
 
     public function promoShow($slug)
     {
         $profile = HospitalProfile::first();
         $promo = Promo::where('slug', $slug)->where('is_active', true)->firstOrFail();
-        $otherPromos = Promo::where('is_active', true)->where('id', '!=', $promo->id)->take(3)->get();
+        $otherPromos = Promo::where('is_active', true)->where('id', '!=', $promo->id)->latest('created_at')->take(3)->get();
 
         return view('public.promo.index', [
-            'promos' => Promo::where('is_active', true)->orderBy('order', 'asc')->get(),
-            'featuredPromos' => Promo::where('is_active', true)->where('is_featured', true)->get(),
+            'promos' => Promo::where('is_active', true)->latest('created_at')->latest('id')->paginate(6)->withQueryString(),
+            'featuredPromos' => Promo::where('is_active', true)->where('is_featured', true)->latest('created_at')->get(),
             'categories' => Promo::where('is_active', true)->distinct()->pluck('category')->filter()->values(),
             'profile' => $profile,
             'category' => 'all',
             'query' => '',
             'activePromoSlug' => $slug,
             'selectedPromo' => $promo,
+            'totalAllCount' => Promo::where('is_active', true)->count(),
         ]);
     }
 

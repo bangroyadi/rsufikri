@@ -4,7 +4,9 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Banner;
+use App\Services\ImageOptimizer;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class AdminBannerController extends Controller
 {
@@ -26,7 +28,15 @@ class AdminBannerController extends Controller
 
         $imageUrl = $validated['image'] ?? null;
         if ($request->hasFile('image_file')) {
-            $path = $request->file('image_file')->store('banners', 'public');
+            // Otomatis kompres dan konversi ke format WebP kualitas tinggi (1920px Full HD, quality 85)
+            $path = ImageOptimizer::optimizeAndStore(
+                $request->file('image_file'),
+                'banners',
+                1920,
+                85,
+                true,
+                1080
+            );
             $imageUrl = 'storage/' . $path;
         }
 
@@ -42,7 +52,7 @@ class AdminBannerController extends Controller
             'is_active' => true,
         ]);
 
-        return back()->with('success', 'Banner homepage berhasil ditambahkan!');
+        return back()->with('success', 'Banner homepage berhasil ditambahkan dan gambar otomatis dioptimasi!');
     }
 
     public function update(Request $request, $id)
@@ -59,9 +69,23 @@ class AdminBannerController extends Controller
 
         $imageUrl = $banner->image;
         if ($request->hasFile('image_file')) {
-            $path = $request->file('image_file')->store('banners', 'public');
+            // Hapus file gambar lama jika tersimpan lokal di storage
+            self::deleteOldBannerImage($banner->image);
+
+            // Otomatis kompres dan konversi ke format WebP kualitas tinggi (1920px Full HD, quality 85)
+            $path = ImageOptimizer::optimizeAndStore(
+                $request->file('image_file'),
+                'banners',
+                1920,
+                85,
+                true,
+                1080
+            );
             $imageUrl = 'storage/' . $path;
         } elseif ($request->filled('image')) {
+            if ($banner->image !== $validated['image']) {
+                self::deleteOldBannerImage($banner->image);
+            }
             $imageUrl = $validated['image'];
         }
 
@@ -72,13 +96,31 @@ class AdminBannerController extends Controller
             'image' => $imageUrl,
         ]);
 
-        return back()->with('success', 'Banner homepage berhasil diperbarui!');
+        return back()->with('success', 'Banner homepage berhasil diperbarui dan gambar otomatis dioptimasi!');
     }
 
     public function destroy($id)
     {
         $banner = Banner::findOrFail($id);
+        self::deleteOldBannerImage($banner->image);
         $banner->delete();
         return back()->with('success', 'Banner berhasil dihapus!');
+    }
+
+    /**
+     * Hapus file gambar banner lama dari storage disk public jika ada.
+     */
+    protected static function deleteOldBannerImage(?string $imagePath): void
+    {
+        if (empty($imagePath)) {
+            return;
+        }
+
+        if (str_starts_with($imagePath, 'storage/banners/')) {
+            $relativePath = str_replace('storage/', '', $imagePath);
+            if (Storage::disk('public')->exists($relativePath)) {
+                Storage::disk('public')->delete($relativePath);
+            }
+        }
     }
 }

@@ -17,25 +17,28 @@ class ImageOptimizer
      * Converts to high-efficiency WebP format by default for superior speed & quality.
      * 
      * @param UploadedFile $file Uploaded file instance
-     * @param string $folder Target subfolder in storage/app/public (e.g. 'events', 'doctors', 'services')
-     * @param int $maxWidth Max width resolution (e.g. 1600px for banners/galleries, 800px for avatars)
-     * @param int $quality Starting quality (default: 82%)
+     * @param string $folder Target subfolder in storage/app/public (e.g. 'banners', 'events', 'doctors', 'services')
+     * @param int $maxWidth Max width resolution (e.g. 1920px for banners, 800px for avatars)
+     * @param int $quality Starting quality (default: 85%)
      * @param bool $forceWebp Whether to convert to WebP format (default: true)
-     * @return string Relative storage path (e.g. 'services/filename.webp')
+     * @param int|null $maxHeight Optional max height resolution (e.g. 1080px for banners)
+     * @return string Relative storage path (e.g. 'banners/banner_xxxx.webp')
      */
     public static function optimizeAndStore(
         UploadedFile $file,
         string $folder,
-        int $maxWidth = 1600,
-        int $quality = 82,
-        bool $forceWebp = true
+        int $maxWidth = 1920,
+        int $quality = 85,
+        bool $forceWebp = true,
+        ?int $maxHeight = 1080
     ): string {
         $folderClean = trim($folder, '/');
         $supportsWebp = function_exists('imagewebp');
         $useWebp = $forceWebp && $supportsWebp;
 
         $targetExt = $useWebp ? 'webp' : ($file->getClientOriginalExtension() ?: 'jpg');
-        $filename = md5(uniqid(microtime(), true)) . '.' . $targetExt;
+        $prefix = !empty($folderClean) ? rtrim($folderClean, 's') : 'img';
+        $filename = $prefix . '_' . time() . '_' . bin2hex(random_bytes(4)) . '.' . $targetExt;
         $destinationDir = storage_path('app/public/' . $folderClean);
 
         if (!file_exists($destinationDir)) {
@@ -54,7 +57,7 @@ class ImageOptimizer
 
         $compressed = false;
         try {
-            $compressed = self::compressAndSaveImage($sourcePath, $targetFile, $maxWidth, $quality, $useWebp);
+            $compressed = self::compressAndSaveImage($sourcePath, $targetFile, $maxWidth, $quality, $useWebp, $maxHeight);
         } catch (\Throwable $e) {
             Log::warning("Image compression failed, falling back to direct copy: " . $e->getMessage());
         }
@@ -83,14 +86,15 @@ class ImageOptimizer
     }
 
     /**
-     * Core compression engine with guaranteed <= 1MB file size enforcement
+     * Core compression engine with guaranteed high visual quality & <= 1MB file size enforcement
      */
     public static function compressAndSaveImage(
         string $sourcePath,
         string $targetPath,
-        int $maxWidth = 1600,
-        int $quality = 82,
-        bool $useWebp = true
+        int $maxWidth = 1920,
+        int $quality = 85,
+        bool $useWebp = true,
+        ?int $maxHeight = null
     ): bool {
         if (!file_exists($sourcePath)) {
             return false;
@@ -118,6 +122,9 @@ class ImageOptimizer
             case IMAGETYPE_WEBP:
                 $image = @imagecreatefromwebp($sourcePath);
                 break;
+            case IMAGETYPE_GIF:
+                $image = function_exists('imagecreatefromgif') ? @imagecreatefromgif($sourcePath) : null;
+                break;
             case IMAGETYPE_BMP:
                 $image = function_exists('imagecreatefrombmp') ? @imagecreatefrombmp($sourcePath) : null;
                 break;
@@ -135,30 +142,76 @@ class ImageOptimizer
             return true;
         }
 
-        // Calculate aspect ratio dimensions
+        // Handle JPEG EXIF orientation tag if present (smartphones/cameras)
+        if ($type === IMAGETYPE_JPEG && function_exists('exif_read_data')) {
+            try {
+                $exif = @exif_read_data($sourcePath);
+                if (!empty($exif['Orientation'])) {
+                    switch ($exif['Orientation']) {
+                        case 3:
+                            $rotated = @imagerotate($image, 180, 0);
+                            if ($rotated) { imagedestroy($image); $image = $rotated; }
+                            break;
+                        case 6:
+                            $rotated = @imagerotate($image, -90, 0);
+                            if ($rotated) {
+                                imagedestroy($image);
+                                $image = $rotated;
+                                $tmp = $origWidth;
+                                $origWidth = $origHeight;
+                                $origHeight = $tmp;
+                            }
+                            break;
+                        case 8:
+                            $rotated = @imagerotate($image, 90, 0);
+                            if ($rotated) {
+                                imagedestroy($image);
+                                $image = $rotated;
+                                $tmp = $origWidth;
+                                $origWidth = $origHeight;
+                                $origHeight = $tmp;
+                            }
+                            break;
+                    }
+                }
+            } catch (\Throwable $e) {
+                // Ignore EXIF parsing issues
+            }
+        }
+
+        // Calculate aspect ratio dimensions - never upscale smaller images
         $newWidth = $origWidth;
         $newHeight = $origHeight;
 
-        if ($origWidth > $maxWidth) {
-            $newWidth = $maxWidth;
-            $newHeight = (int) round(($origHeight / $origWidth) * $maxWidth);
+        if ($origWidth > $maxWidth || ($maxHeight && $origHeight > $maxHeight)) {
+            $ratioW = $maxWidth / $origWidth;
+            $ratioH = $maxHeight ? ($maxHeight / $origHeight) : 1;
+            $scale = min($ratioW, $ratioH);
+            $newWidth = (int) max(1, round($origWidth * $scale));
+            $newHeight = (int) max(1, round($origHeight * $scale));
         }
 
         // Create high-color truecolor canvas
         $canvas = imagecreatetruecolor($newWidth, $newHeight);
 
-        // Retain alpha transparency for PNG / WebP
-        imagealphablending($canvas, false);
-        imagesavealpha($canvas, true);
-        $transparent = imagecolorallocatealpha($canvas, 255, 255, 255, 127);
-        imagefilledrectangle($canvas, 0, 0, $newWidth, $newHeight, $transparent);
-
-        // High quality bicubic resampling
-        imagecopyresampled($canvas, $image, 0, 0, 0, 0, $newWidth, $newHeight, $origWidth, $origHeight);
-
         // Determine if webp is requested and supported
         $supportsWebp = function_exists('imagewebp');
         $saveAsWebp = $useWebp && $supportsWebp;
+
+        // Preserve alpha transparency for WebP & PNG, fill white for JPEG
+        if ($saveAsWebp || $type === IMAGETYPE_PNG || $type === IMAGETYPE_WEBP) {
+            imagealphablending($canvas, false);
+            imagesavealpha($canvas, true);
+            $transparent = imagecolorallocatealpha($canvas, 0, 0, 0, 127);
+            imagefilledrectangle($canvas, 0, 0, $newWidth, $newHeight, $transparent);
+        } else {
+            $white = imagecolorallocate($canvas, 255, 255, 255);
+            imagefilledrectangle($canvas, 0, 0, $newWidth, $newHeight, $white);
+            imagealphablending($canvas, true);
+        }
+
+        // High quality bicubic resampling
+        imagecopyresampled($canvas, $image, 0, 0, 0, 0, $newWidth, $newHeight, $origWidth, $origHeight);
 
         // Save image with target quality
         $currentQuality = $quality;
@@ -182,13 +235,13 @@ class ImageOptimizer
 
             // Check if file size is strictly <= 1 MB (1048576 bytes)
             $fileSize = @filesize($targetPath);
-            if ($fileSize && $fileSize > self::MAX_TARGET_BYTES && $currentQuality > 40) {
+            if ($fileSize && $fileSize > self::MAX_TARGET_BYTES && $currentQuality > 45) {
                 // Reduce quality slightly and retry to guarantee < 1MB
-                $currentQuality -= 10;
+                $currentQuality -= 5;
             } else {
                 break;
             }
-        } while ($currentQuality >= 40);
+        } while ($currentQuality >= 45);
 
         // Cleanup GD memory
         imagedestroy($image);

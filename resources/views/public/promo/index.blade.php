@@ -14,32 +14,27 @@
 
 @section('content')
 <h1 class="sr-only">Penawaran Khusus & Paket Promo Kesehatan RSU Fikri Medika Karawang</h1>
-<div x-data="{ 
-    selectedCategory: 'all',
-    search: '{{ addslashes($query ?? '') }}'
-}" class="bg-slate-50 min-h-screen">
+<div class="bg-slate-50 min-h-screen">
 
     <!-- MAIN CONTAINER -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10 space-y-8">
         
         <!-- CATEGORY FILTER BAR -->
-        <div class="bg-white p-3 sm:p-4 rounded-2xl sm:rounded-3xl shadow-sm border border-slate-200/80 flex items-center justify-between gap-3 overflow-x-auto">
+        <div style="scrollbar-width: none; -ms-overflow-style: none;" class="bg-white p-3 sm:p-4 rounded-2xl sm:rounded-3xl shadow-sm border border-slate-200/80 flex items-center justify-between gap-3 overflow-x-auto [&::-webkit-scrollbar]:hidden">
             <div class="flex items-center gap-2 shrink-0">
-                <button type="button" 
-                        @click="selectedCategory = 'all'" 
-                        :class="selectedCategory === 'all' ? 'bg-[#0e7c47] text-white shadow-sm' : 'bg-slate-50 text-slate-600 hover:bg-slate-100 border border-slate-200'"
-                        class="px-4 py-2 rounded-xl text-xs font-extrabold transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5">
+                <a href="{{ route('promo.index') }}" 
+                   class="px-4 py-2 rounded-xl text-xs font-extrabold transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 {{ empty($category) || $category === 'all' ? 'bg-[#0e7c47] text-white shadow-sm' : 'bg-slate-50 text-slate-600 hover:bg-slate-100 border border-slate-200' }}">
                     <i class="fa-solid fa-layer-group text-xs"></i>
-                    <span>Semua Paket ({{ $promos->count() }})</span>
-                </button>
+                    <span>Semua Paket ({{ $totalAllCount ?? $promos->total() }})</span>
+                </a>
 
                 @foreach($categories as $cat)
-                <button type="button" 
-                        @click="selectedCategory = '{{ addslashes($cat) }}'" 
-                        :class="selectedCategory === '{{ addslashes($cat) }}' ? 'bg-[#0e7c47] text-white shadow-sm' : 'bg-slate-50 text-slate-600 hover:bg-slate-100 border border-slate-200'"
-                        class="px-4 py-2 rounded-xl text-xs font-extrabold transition-all cursor-pointer whitespace-nowrap">
+                @if(strtolower(trim($cat)) !== 'all' && strtolower(trim($cat)) !== 'semua' && !str_starts_with(strtolower(trim($cat)), 'semua paket'))
+                <a href="{{ route('promo.index', ['kategori' => $cat]) }}" 
+                   class="px-4 py-2 rounded-xl text-xs font-extrabold transition-all cursor-pointer whitespace-nowrap {{ $category === $cat ? 'bg-[#0e7c47] text-white shadow-sm' : 'bg-slate-50 text-slate-600 hover:bg-slate-100 border border-slate-200' }}">
                     {{ $cat }}
-                </button>
+                </a>
+                @endif
                 @endforeach
             </div>
 
@@ -58,8 +53,7 @@
                 $pFeatures = is_array($promo->features) ? $promo->features : [];
                 $waText = urlencode("Halo RSU Fikri Medika, saya tertarik dengan " . $pTitle . " dan ingin klaim promo ini.");
             @endphp
-            <div x-show="(selectedCategory === 'all' || selectedCategory === '{{ addslashes($promo->category) }}') && (search === '' || '{{ addslashes(strtolower($pTitle . ' ' . $pShortDesc . ' ' . $promo->category)) }}'.includes(search.toLowerCase()))" 
-                 class="bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-xl border border-slate-200/90 hover:border-emerald-300 transition-all duration-300 flex flex-col group hover:-translate-y-1.5">
+            <div class="bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-xl border border-slate-200/90 hover:border-emerald-300 transition-all duration-300 flex flex-col group hover:-translate-y-1.5">
                 
                 <!-- PROMO IMAGE / FLYER -->
                 <div class="relative w-full aspect-16/10 bg-slate-900 overflow-hidden">
@@ -143,9 +137,24 @@
                 <i class="fa-solid fa-tag text-4xl text-slate-300"></i>
                 <h3 class="font-black text-slate-800 text-lg">Belum Ada Promo yang Sesuai</h3>
                 <p class="text-xs text-slate-500">Silakan pilih kategori lain atau hubungi customer care untuk penawaran terkini.</p>
+                @if(!empty($category) && $category !== 'all')
+                <div class="pt-2">
+                    <a href="{{ route('promo.index') }}" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#0e7c47] text-white text-xs font-bold hover:bg-[#096237] transition-all">
+                        <i class="fa-solid fa-rotate-left"></i>
+                        <span>Lihat Semua Promo</span>
+                    </a>
+                </div>
+                @endif
             </div>
             @endforelse
         </div>
+
+        <!-- PAGINATION (MAKSIMAL 6 KONTEN PER HALAMAN) -->
+        @if($promos->hasPages())
+        <div class="pt-2 flex justify-center">
+            {{ $promos->links() }}
+        </div>
+        @endif
 
         <!-- MARKETING & KEMITRAAN DIRECT SECTION -->
         <div class="bg-white rounded-3xl p-6 sm:p-10 shadow-sm border border-slate-200 space-y-6">
