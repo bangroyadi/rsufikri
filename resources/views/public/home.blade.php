@@ -65,6 +65,7 @@
 
     <!-- SLIDE IMAGES — container with stable height -->
     <div style="position: relative; width: 100%; overflow: hidden;"
+         class="w-full aspect-[16/6] md:aspect-[21/8] min-h-[180px] sm:min-h-[280px] md:min-h-[380px] bg-slate-900"
          x-ref="slideContainer">
         {{-- Spacer slide (first image sets the container height) --}}
         @if($banners->count() > 0)
@@ -76,11 +77,12 @@
              aria-hidden="true"
              draggable="false"
              loading="eager"
+             onerror="this.onerror=null; this.src='{{ asset('baner1_web.jpg') }}';"
              style="width: 100%; height: auto; display: block; visibility: hidden; pointer-events: none;">
         @endif
 
         {{-- All slides absolutely positioned so they never affect container height --}}
-        @foreach($banners as $index => $banner)
+        @forelse($banners as $index => $banner)
         @php
             $bannerImg = Str::startsWith($banner->image, ['http://', 'https://']) ? $banner->image : asset($banner->image);
         @endphp
@@ -98,6 +100,7 @@
                      alt="Banner RSU Fikri Medika"
                      draggable="false"
                      loading="{{ $index === 0 ? 'eager' : 'lazy' }}"
+                     onerror="this.onerror=null; this.src='{{ asset('baner1_web.jpg') }}';"
                      style="width: 100%; height: 100%; display: block; object-fit: cover; pointer-events: none;">
             </a>
             @else
@@ -105,10 +108,17 @@
                  alt="Banner RSU Fikri Medika"
                  draggable="false"
                  loading="{{ $index === 0 ? 'eager' : 'lazy' }}"
+                 onerror="this.onerror=null; this.src='{{ asset('baner1_web.jpg') }}';"
                  style="width: 100%; height: 100%; display: block; object-fit: cover; pointer-events: none;">
             @endif
         </div>
-        @endforeach
+        @empty
+        <div style="position: absolute; inset: 0; width: 100%; height: 100%;">
+            <img src="{{ asset('baner1_web.jpg') }}"
+                 alt="RSU Fikri Medika"
+                 style="width: 100%; height: 100%; display: block; object-fit: cover;">
+        </div>
+        @endforelse
     </div>
 
 
