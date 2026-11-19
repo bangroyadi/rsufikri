@@ -12,6 +12,20 @@
     </div>
     @endif
 
+    @if($errors->any())
+    <div style="background-color: #fef2f2; border: 1px solid #fecaca; color: #dc2626;" class="p-4 rounded-2xl font-bold text-sm space-y-1 shadow-xs">
+        <div class="flex items-center gap-2">
+            <i class="fa-solid fa-triangle-exclamation text-base"></i>
+            <span>Terdapat kendala saat memproses banner:</span>
+        </div>
+        <ul class="list-disc list-inside text-xs font-semibold pl-2 space-y-0.5">
+            @foreach($errors->all() as $err)
+                <li>{{ $err }}</li>
+            @endforeach
+        </ul>
+    </div>
+    @endif
+
     <!-- PAGE HEADER WITH TOP ADD BUTTON -->
     <div style="background-color: #ffffff; border: 1px solid #e2e8f0;" class="p-6 rounded-3xl shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
@@ -47,6 +61,9 @@
                     @php
                         $bTitle = is_array($b->title) ? ($b->title['id'] ?? '') : $b->title;
                         $bBtn = is_array($b->button_text) ? ($b->button_text['id'] ?? '') : ($b->button_text ?? 'CTA');
+                        $cleanedImg = str_ireplace('storage/App/Public/', 'storage/', $b->image);
+                        $cleanedImg = str_ireplace('App/Public/', '', $cleanedImg);
+                        $imgSrc = Str::startsWith($cleanedImg, 'http') || Str::startsWith($cleanedImg, '/') ? $cleanedImg : asset($cleanedImg);
                     @endphp
                     <tr class="hover:bg-slate-50/80 transition-colors">
                         <td class="p-4 font-mono font-bold text-slate-400">
@@ -54,7 +71,7 @@
                         </td>
                         <td class="p-4">
                             <div class="w-14 h-10 rounded-lg overflow-hidden border border-slate-200 bg-slate-100 shrink-0">
-                                <img src="{{ Str::startsWith($b->image, 'http') || Str::startsWith($b->image, '/') ? $b->image : asset($b->image) }}" alt="Banner" class="w-full h-full object-cover">
+                                <img src="{{ $imgSrc }}" alt="Banner" onerror="this.onerror=null; this.src='{{ asset('baner1_web.jpg') }}';" class="w-full h-full object-cover">
                             </div>
                         </td>
                         <td class="p-4 font-bold text-slate-900 text-sm max-w-xs truncate">
@@ -67,7 +84,7 @@
                         </td>
                         <td class="p-4 text-center">
                             <div class="flex items-center justify-center gap-2">
-                                <button @click="editBan = { id: {{ $b->id }}, title_id: '{{ addslashes($bTitle) }}', button_text_id: '{{ addslashes($bBtn) }}', button_link: '{{ addslashes($b->button_link ?? '') }}', image: '{{ addslashes($b->image) }}' }; editPreviewUrl = null; editModalOpen = true" style="background-color: #fffbeb; color: #d97706; border: 1px solid #fde68a;" class="p-2 rounded-xl hover:bg-amber-100 transition-colors cursor-pointer" title="Edit Banner">
+                                <button @click="editBan = { id: {{ $b->id }}, title_id: '{{ addslashes($bTitle) }}', button_text_id: '{{ addslashes($bBtn) }}', button_link: '{{ addslashes($b->button_link ?? '') }}', image: '{{ addslashes($cleanedImg) }}' }; editPreviewUrl = null; editModalOpen = true" style="background-color: #fffbeb; color: #d97706; border: 1px solid #fde68a;" class="p-2 rounded-xl hover:bg-amber-100 transition-colors cursor-pointer" title="Edit Banner">
                                     <i class="fa-solid fa-pen-to-square text-xs"></i>
                                 </button>
                                 <form action="{{ route('admin.banners.destroy', $b->id) }}" method="POST" onsubmit="return confirm('Hapus banner ini?')">
@@ -119,12 +136,15 @@
 
                 <!-- FILE UPLOAD OR URL -->
                 <div style="background-color: #f8fafc; border: 1px solid #e2e8f0;" class="p-4 rounded-2xl space-y-3">
-                    <label class="block text-xs font-extrabold text-slate-900 uppercase tracking-wider">Gambar Banner</label>
+                    <div class="flex items-center justify-between">
+                        <label class="block text-xs font-extrabold text-slate-900 uppercase tracking-wider">Gambar Banner</label>
+                        <span class="text-[10px] font-bold text-slate-400 bg-slate-200/60 px-2 py-0.5 rounded-md">Batas PHP: {{ ini_get('upload_max_filesize') }}</span>
+                    </div>
                     
                     <div>
                         <span class="text-[11px] font-bold text-slate-600 block mb-1">📷 Upload Gambar dari Komputer:</span>
-                        <input type="file" name="image_file" accept="image/png, image/jpeg, image/jpg, image/webp" 
-                               @change="addPreviewUrl = $event.target.files[0] ? URL.createObjectURL($event.target.files[0]) : null"
+                        <input type="file" name="image_file" x-ref="addFileInput" accept="image/png, image/jpeg, image/jpg, image/webp" 
+                               @change="addPreviewUrl = $event.target.files[0] ? URL.createObjectURL($event.target.files[0]) : null; if($event.target.files[0]) { $refs.addTextInput.value = ''; }"
                                class="w-full text-xs text-slate-500 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-extrabold file:bg-emerald-50 file:text-[#0e7c47] hover:file:bg-emerald-100 cursor-pointer">
 
                         <!-- Pratinjau Gambar Pilihan -->
@@ -145,7 +165,7 @@
 
                     <div>
                         <span class="text-[11px] font-bold text-slate-600 block mb-1">🔗 Tempel Link / URL Gambar:</span>
-                        <input type="text" name="image" placeholder="hero-doctor.png / https://..." class="w-full px-3 py-2 rounded-xl border border-slate-300 bg-white text-xs outline-none">
+                        <input type="text" name="image" x-ref="addTextInput" @input="if($event.target.value) { addPreviewUrl = null; if($refs.addFileInput) $refs.addFileInput.value = ''; }" placeholder="hero-doctor.png / https://..." class="w-full px-3 py-2 rounded-xl border border-slate-300 bg-white text-xs outline-none">
                     </div>
 
                     <!-- Keterangan Otomatis Kompres & Kualitas HD -->
@@ -203,12 +223,15 @@
 
                 <!-- FILE UPLOAD OR URL -->
                 <div style="background-color: #f8fafc; border: 1px solid #e2e8f0;" class="p-4 rounded-2xl space-y-3">
-                    <label class="block text-xs font-extrabold text-slate-900 uppercase tracking-wider">Ubah Gambar Banner</label>
+                    <div class="flex items-center justify-between">
+                        <label class="block text-xs font-extrabold text-slate-900 uppercase tracking-wider">Ubah Gambar Banner</label>
+                        <span class="text-[10px] font-bold text-slate-400 bg-slate-200/60 px-2 py-0.5 rounded-md">Batas PHP: {{ ini_get('upload_max_filesize') }}</span>
+                    </div>
                     
                     <div>
                         <span class="text-[11px] font-bold text-slate-600 block mb-1">📷 Upload Gambar Baru dari Komputer:</span>
-                        <input type="file" name="image_file" accept="image/png, image/jpeg, image/jpg, image/webp" 
-                               @change="editPreviewUrl = $event.target.files[0] ? URL.createObjectURL($event.target.files[0]) : null"
+                        <input type="file" name="image_file" x-ref="editFileInput" accept="image/png, image/jpeg, image/jpg, image/webp" 
+                               @change="editPreviewUrl = $event.target.files[0] ? URL.createObjectURL($event.target.files[0]) : null; if($event.target.files[0]) { editBan.image = ''; }"
                                class="w-full text-xs text-slate-500 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-extrabold file:bg-emerald-50 file:text-[#0e7c47] hover:file:bg-emerald-100 cursor-pointer">
 
                         <!-- Pratinjau Gambar Baru jika ada yang dipilih -->
@@ -231,7 +254,7 @@
                                     <span><i class="fa-regular fa-image mr-1"></i> Gambar Banner Saat Ini:</span>
                                 </div>
                                 <div class="w-full h-32 rounded-lg overflow-hidden bg-slate-100 border border-slate-200">
-                                    <img :src="editBan.image ? (editBan.image.startsWith('http') || editBan.image.startsWith('/') ? editBan.image : '{{ asset('') }}' + editBan.image) : ''" class="w-full h-full object-cover">
+                                    <img :src="editBan.image ? (editBan.image.startsWith('http') || editBan.image.startsWith('/') ? editBan.image.replace(/storage\/App\/Public\//i, 'storage/') : '{{ asset('') }}' + editBan.image.replace(/storage\/App\/Public\//i, 'storage/')) : ''" onerror="this.onerror=null; this.src='{{ asset('baner1_web.jpg') }}';" class="w-full h-full object-cover">
                                 </div>
                             </div>
                         </template>
@@ -241,7 +264,7 @@
 
                     <div>
                         <span class="text-[11px] font-bold text-slate-600 block mb-1">🔗 Tempel Link / URL Gambar:</span>
-                        <input type="text" name="image" x-model="editBan.image" class="w-full px-3 py-2 rounded-xl border border-slate-300 bg-white text-xs outline-none">
+                        <input type="text" name="image" x-model="editBan.image" @input="if(editBan.image) { editPreviewUrl = null; if($refs.editFileInput) $refs.editFileInput.value = ''; }" class="w-full px-3 py-2 rounded-xl border border-slate-300 bg-white text-xs outline-none">
                     </div>
 
                     <!-- Keterangan Otomatis Kompres & Kualitas HD -->

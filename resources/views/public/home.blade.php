@@ -70,7 +70,9 @@
         {{-- Spacer slide (first image sets the container height) --}}
         @if($banners->count() > 0)
         @php
-            $firstImg = Str::startsWith($banners->first()->image, ['http://', 'https://']) ? $banners->first()->image : asset($banners->first()->image);
+            $rawFirst = str_ireplace('storage/App/Public/', 'storage/', $banners->first()->image);
+            $rawFirst = str_ireplace('App/Public/', '', $rawFirst);
+            $firstImg = Str::startsWith($rawFirst, ['http://', 'https://']) ? $rawFirst : asset($rawFirst);
         @endphp
         <img src="{{ $firstImg }}"
              alt=""
@@ -84,7 +86,9 @@
         {{-- All slides absolutely positioned so they never affect container height --}}
         @forelse($banners as $index => $banner)
         @php
-            $bannerImg = Str::startsWith($banner->image, ['http://', 'https://']) ? $banner->image : asset($banner->image);
+            $rawBanner = str_ireplace('storage/App/Public/', 'storage/', $banner->image);
+            $rawBanner = str_ireplace('App/Public/', '', $rawBanner);
+            $bannerImg = Str::startsWith($rawBanner, ['http://', 'https://']) ? $rawBanner : asset($rawBanner);
         @endphp
         <div x-show="activeSlide === {{ $index }}"
              style="position: absolute; inset: 0; width: 100%; height: 100%;"

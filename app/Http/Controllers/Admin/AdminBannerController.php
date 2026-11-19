@@ -12,12 +12,34 @@ class AdminBannerController extends Controller
 {
     public function index()
     {
+        // Auto-perbaiki jika ada data path lama yang mengandung casing 'App/Public' di database
+        $brokenBanners = Banner::where('image', 'like', '%App/Public%')->get();
+        foreach ($brokenBanners as $bb) {
+            $cleaned = str_ireplace('storage/App/Public/', 'storage/', $bb->image);
+            $cleaned = str_ireplace('App/Public/', '', $cleaned);
+            $bb->update(['image' => $cleaned]);
+        }
+
         $banners = Banner::orderBy('order', 'asc')->get();
         return view('admin.banners.index', compact('banners'));
     }
 
     public function store(Request $request)
     {
+        // Deteksi apakah file melebihi upload_max_filesize di php.ini hosting
+        if (isset($_FILES['image_file']) && $_FILES['image_file']['error'] !== UPLOAD_ERR_NO_FILE && $_FILES['image_file']['error'] !== UPLOAD_ERR_OK) {
+            $errCode = $_FILES['image_file']['error'];
+            $maxUpload = ini_get('upload_max_filesize');
+            $msg = match ($errCode) {
+                UPLOAD_ERR_INI_SIZE, UPLOAD_ERR_FORM_SIZE => "Ukuran file foto terlalu besar untuk server hosting (Batas upload hosting saat ini: {$maxUpload}). Silakan perkecil ukuran file atau naikkan batas upload_max_filesize di cPanel PHP Selector.",
+                UPLOAD_ERR_PARTIAL => "File foto hanya terunggah sebagian karena koneksi terputus. Silakan coba lagi.",
+                UPLOAD_ERR_NO_TMP_DIR => "Server hosting kehilangan folder penyimpanan sementara (missing tmp dir).",
+                UPLOAD_ERR_CANT_WRITE => "Gagal menulis file ke disk server hosting (periksa izin tulis folder / disk space).",
+                default => "Terjadi kendala saat upload file ke server (Kode PHP: {$errCode}).",
+            };
+            return back()->withInput()->withErrors(['image_file' => $msg]);
+        }
+
         $validated = $request->validate([
             'title_id' => 'required|string|max:255',
             'button_text_id' => 'nullable|string|max:255',
@@ -27,17 +49,26 @@ class AdminBannerController extends Controller
         ]);
 
         $imageUrl = $validated['image'] ?? null;
+        if (!empty($imageUrl)) {
+            $imageUrl = str_ireplace('storage/App/Public/', 'storage/', $imageUrl);
+            $imageUrl = str_ireplace('App/Public/', '', $imageUrl);
+        }
+
         if ($request->hasFile('image_file')) {
-            // Otomatis kompres dan konversi ke format WebP kualitas tinggi (1920px Full HD, quality 85)
-            $path = ImageOptimizer::optimizeAndStore(
-                $request->file('image_file'),
-                'banners',
-                1920,
-                85,
-                true,
-                1080
-            );
-            $imageUrl = 'storage/' . $path;
+            try {
+                // Otomatis kompres dan konversi ke format WebP kualitas tinggi (1920px Full HD, quality 85)
+                $path = ImageOptimizer::optimizeAndStore(
+                    $request->file('image_file'),
+                    'banners',
+                    1920,
+                    85,
+                    true,
+                    1080
+                );
+                $imageUrl = 'storage/' . $path;
+            } catch (\Throwable $e) {
+                return back()->withInput()->withErrors(['image_file' => 'Gagal memproses gambar banner: ' . $e->getMessage()]);
+            }
         }
 
         $maxOrder = Banner::max('order') ?? 0;
@@ -59,6 +90,20 @@ class AdminBannerController extends Controller
     {
         $banner = Banner::findOrFail($id);
 
+        // Deteksi apakah file melebihi upload_max_filesize di php.ini hosting
+        if (isset($_FILES['image_file']) && $_FILES['image_file']['error'] !== UPLOAD_ERR_NO_FILE && $_FILES['image_file']['error'] !== UPLOAD_ERR_OK) {
+            $errCode = $_FILES['image_file']['error'];
+            $maxUpload = ini_get('upload_max_filesize');
+            $msg = match ($errCode) {
+                UPLOAD_ERR_INI_SIZE, UPLOAD_ERR_FORM_SIZE => "Ukuran file foto terlalu besar untuk server hosting (Batas upload hosting saat ini: {$maxUpload}). Silakan perkecil ukuran file atau naikkan batas upload_max_filesize di cPanel PHP Selector.",
+                UPLOAD_ERR_PARTIAL => "File foto hanya terunggah sebagian karena koneksi terputus. Silakan coba lagi.",
+                UPLOAD_ERR_NO_TMP_DIR => "Server hosting kehilangan folder penyimpanan sementara (missing tmp dir).",
+                UPLOAD_ERR_CANT_WRITE => "Gagal menulis file ke disk server hosting (periksa izin tulis folder / disk space).",
+                default => "Terjadi kendala saat upload file ke server (Kode PHP: {$errCode}).",
+            };
+            return back()->withInput()->withErrors(['image_file' => $msg]);
+        }
+
         $validated = $request->validate([
             'title_id' => 'required|string|max:255',
             'button_text_id' => 'nullable|string|max:255',
@@ -69,24 +114,32 @@ class AdminBannerController extends Controller
 
         $imageUrl = $banner->image;
         if ($request->hasFile('image_file')) {
-            // Hapus file gambar lama jika tersimpan lokal di storage
-            self::deleteOldBannerImage($banner->image);
+            try {
+                // Hapus file gambar lama jika tersimpan lokal di storage
+                self::deleteOldBannerImage($banner->image);
 
-            // Otomatis kompres dan konversi ke format WebP kualitas tinggi (1920px Full HD, quality 85)
-            $path = ImageOptimizer::optimizeAndStore(
-                $request->file('image_file'),
-                'banners',
-                1920,
-                85,
-                true,
-                1080
-            );
-            $imageUrl = 'storage/' . $path;
+                // Otomatis kompres dan konversi ke format WebP kualitas tinggi (1920px Full HD, quality 85)
+                $path = ImageOptimizer::optimizeAndStore(
+                    $request->file('image_file'),
+                    'banners',
+                    1920,
+                    85,
+                    true,
+                    1080
+                );
+                $imageUrl = 'storage/' . $path;
+            } catch (\Throwable $e) {
+                return back()->withInput()->withErrors(['image_file' => 'Gagal memproses gambar banner: ' . $e->getMessage()]);
+            }
         } elseif ($request->filled('image')) {
-            if ($banner->image !== $validated['image']) {
+            $cleaned = trim($validated['image']);
+            $cleaned = str_ireplace('storage/App/Public/', 'storage/', $cleaned);
+            $cleaned = str_ireplace('App/Public/', '', $cleaned);
+
+            if ($banner->image !== $cleaned) {
                 self::deleteOldBannerImage($banner->image);
             }
-            $imageUrl = $validated['image'];
+            $imageUrl = $cleaned;
         }
 
         $banner->update([

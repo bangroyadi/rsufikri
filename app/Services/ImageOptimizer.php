@@ -70,7 +70,7 @@ class ImageOptimizer
         // Ultimate fallback: Store directly via Laravel Storage
         try {
             $storedPath = $file->storeAs($folderClean, $filename, 'public');
-            if ($storedPath) {
+            if ($storedPath && \Illuminate\Support\Facades\Storage::disk('public')->exists($storedPath)) {
                 return $storedPath;
             }
         } catch (\Throwable $e) {
@@ -78,11 +78,11 @@ class ImageOptimizer
         }
 
         // Direct copy fallback
-        if (@copy($sourcePath, $targetFile)) {
+        if (@copy($sourcePath, $targetFile) && file_exists($targetFile) && filesize($targetFile) > 0) {
             return $folderClean . '/' . $filename;
         }
 
-        return $folderClean . '/' . $filename;
+        throw new \RuntimeException("Gagal menyimpan file gambar ke direktori server hosting (storage/app/public/{$folderClean}). Pastikan folder penyimpanan tersedia dan memiliki hak akses tulis (chmod 775 atau 755).");
     }
 
     /**
