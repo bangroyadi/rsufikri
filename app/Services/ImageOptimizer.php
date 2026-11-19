@@ -70,7 +70,7 @@ class ImageOptimizer
         // Ultimate fallback: Store directly via Laravel Storage
         try {
             $storedPath = $file->storeAs($folderClean, $filename, 'public');
-            if ($storedPath && \Illuminate\Support\Facades\Storage::disk('public')->exists($storedPath)) {
+            if (!empty($storedPath)) {
                 return $storedPath;
             }
         } catch (\Throwable $e) {
