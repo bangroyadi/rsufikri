@@ -34,29 +34,7 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10 space-y-8">
 
         {{-- ═══════════════════════════════════════════
-             1. HEADER SECTION
-        ═══════════════════════════════════════════ --}}
-        <div class="bg-white p-6 sm:p-8 rounded-3xl shadow-xs border border-gray-100 space-y-3">
-            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-100 text-[#0e7c47] text-xs font-black uppercase tracking-wider">
-                <i class="fa-solid {{ $iconClass }} text-[#0e7c47]"></i>
-                <span>Layanan Unggulan RSU Fikri Medika</span>
-            </div>
-            <h1 class="text-2xl sm:text-3xl lg:text-4xl font-black text-slate-900 tracking-tight leading-tight">
-                {{ $title }}
-            </h1>
-            @if(isset($service) && !empty($service->tr('short_description')))
-            <p class="text-xs sm:text-sm text-slate-600 leading-relaxed font-normal max-w-3xl">
-                {{ $service->tr('short_description') }}
-            </p>
-            @else
-            <p class="text-xs sm:text-sm text-slate-600 leading-relaxed font-normal max-w-3xl">
-                Komitmen RSU Fikri Medika dalam memberikan pelayanan terbaik, cepat, dan berstandar medis tinggi dengan mengedepankan empati dan prinsip-prinsip profesional untuk kesehatan Anda dan keluarga.
-            </p>
-            @endif
-        </div>
-
-        {{-- ═══════════════════════════════════════════
-             2. SPOTLIGHT CARD (GAMBAR KIRI, KONTEN KANAN)
+             SPOTLIGHT CARD (GAMBAR KIRI, KONTEN KANAN)
         ═══════════════════════════════════════════ --}}
         <div class="relative bg-white rounded-3xl shadow-xs hover:shadow-md border border-gray-100 overflow-hidden transition-all duration-300">
             <div class="grid grid-cols-1 lg:grid-cols-12 items-stretch">
@@ -113,9 +91,9 @@
                         </div>
 
                         {{-- TITLE --}}
-                        <h2 class="text-xl sm:text-2xl font-black text-slate-900 leading-snug">
+                        <h1 class="text-2xl sm:text-3xl font-black text-slate-900 leading-snug">
                             {{ $title }}
-                        </h2>
+                        </h1>
 
                         {{-- DESCRIPTION --}}
                         @if(isset($service) && !empty($service->tr('description')))
