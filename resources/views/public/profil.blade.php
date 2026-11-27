@@ -300,7 +300,7 @@
 
                 <!-- RIGHT: GEDUNG RSU FIKRI MEDIKA PHOTO -->
                 <div class="mitra-img-floating">
-                    <img src="{{ asset('gedung_profile.jpg') }}?v={{ file_exists(public_path('gedung_profile.jpg')) ? filemtime(public_path('gedung_profile.jpg')) : 2 }}" 
+                    <img src="{{ asset('gedung_tentang_kami.jpg') }}" 
                          alt="Gedung RSU Fikri Medika">
                 </div>
 
